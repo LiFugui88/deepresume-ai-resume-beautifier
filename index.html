@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DeepResume - AI Resume Beautifier | Free Resume Builder</title>
+  <meta name="description"
+    content="Transform your resume into a high-end, Bento-style architectural masterpiece using Gemini AI. DeepResume is a free, AI-powered resume beautifier." />
+  <meta name="keywords"
+    content="resume builder, AI resume, resume beautifier, free resume template, bento style resume, CV maker" />
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://deep-resume.xyz/" />
+  <meta property="og:title" content="DeepResume - AI Resume Beautifier" />
+  <meta property="og:description"
+    content="Transform your resume into a high-end, Bento-style architectural masterpiece using Gemini AI." />
+  <meta property="og:image" content="https://deep-resume.xyz/og-image.png" />
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image" />
+  <meta property="twitter:url" content="https://deep-resume.xyz/" />
+  <meta property="twitter:title" content="DeepResume - AI Resume Beautifier" />
+  <meta property="twitter:description"
+    content="Transform your resume into a high-end, Bento-style architectural masterpiece using Gemini AI." />
+  <meta property="twitter:image" content="https://deep-resume.xyz/og-image.png" />
+  <link rel="canonical" href="https://deep-resume.xyz/" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- 
+      Fonts:
+      - Syne: Artistic Headers
+      - Space Grotesk: Tech Body
+      - Noto Sans SC: Chinese Sans
+      - Noto Serif SC: Chinese Serif
+      - Playfair Display: Executive Serif
+      - JetBrains Mono: Tech/Code
+      - Inter: Neutral Sans
+      - DM Sans: Clean Modern
+      - Plus Jakarta Sans: Geometric
+    -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;500;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif+SC:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@400;700;800&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --color-accent: #002FA7;
+      /* Klein Blue */
+      --color-secondary: #ca0000;
+      /* Red */
+      --color-dark: #0F172A;
+      --color-paper: #F8FAFC;
+    }
+
+    body {
+      background-color: var(--color-paper);
+      color: var(--color-dark);
+      font-family: 'Plus Jakarta Sans', 'Noto Sans SC', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--color-dark);
+    }
+
+    /* Print Optimization */
+    @media print {
+      @page {
+        margin: 0;
+        size: auto;
+      }
+
+      body {
+        margin: 0;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      .no-print {
+        display: none !important;
+      }
+
+      .print-only {
+        display: block !important;
+      }
+    }
+  </style>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['Syne', 'Noto Sans SC', 'sans-serif'],
+            body: ['Plus Jakarta Sans', 'Noto Sans SC', 'sans-serif'],
+            serif: ['Playfair Display', 'Noto Serif SC', 'serif'],
+            mono: ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular'],
+            sans: ['DM Sans', 'Noto Sans SC', 'sans-serif'],
+          },
+          colors: {
+            accent: '#002FA7', // Klein Blue
+            secondary: '#ca0000', // Red
+            paper: '#F8FAFC',
+            ink: '#0F172A',
+            'ink-light': '#64748B',
+            // Map standard blue to our Klein blue for templates
+            blue: {
+              50: '#f0f4ff',
+              100: '#e0eaff',
+              200: '#c7d9ff',
+              300: '#9ebaff',
+              400: '#6f92ff',
+              500: '#456aff',
+              600: '#002FA7', // Primary Klein Blue
+              700: '#002FA7',
+              800: '#1e40af',
+              900: '#1e3a8a',
+            }
+          },
+          backgroundImage: {
+            'grid-pattern': "linear-gradient(to right, #e2e8f0 1px, transparent 1px), linear-gradient(to bottom, #e2e8f0 1px, transparent 1px)",
+          }
+        }
+      }
+    }
+  </script>
+  <script type="importmap">
+{
+  "imports": {
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.554.0",
+    "framer-motion": "https://aistudiocdn.com/framer-motion@^12.23.24",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.30.0",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "react": "https://aistudiocdn.com/react@^19.2.0"
+  }
+}
+</script>
+  <link rel="stylesheet" href="/index.css">
+</head>
+
+<body>
+  <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+
+</html>
