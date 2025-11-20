@@ -261,7 +261,7 @@ const App: React.FC = () => {
             {/* Background Grid */}
             <div className="fixed inset-0 bg-grid-pattern bg-[size:40px_40px] opacity-40 pointer-events-none no-print" />
 
-            <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
+            <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} language={language} />
 
             {/* Nav */}
             <nav className="fixed top-0 left-0 w-full h-16 border-b border-ink/10 bg-paper/80 backdrop-blur-md z-50 flex items-center justify-between px-6 md:px-12 no-print">
