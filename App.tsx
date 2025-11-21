@@ -1,6 +1,6 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Upload, Download, RefreshCw, AlertCircle, Layout, Globe2, Briefcase, Grid, Palette, CheckCircle2, Lock, LogIn, LogOut, User } from 'lucide-react';
+import { Upload, UploadCloud, Download, RefreshCw, AlertCircle, Layout, Globe2, Briefcase, Grid, Palette, CheckCircle2, Lock, LogIn, LogOut, User } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { analyzeResume } from './services/geminiService';
 import { supabase } from './services/supabase';
