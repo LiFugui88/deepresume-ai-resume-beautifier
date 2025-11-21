@@ -134,10 +134,23 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
         const data = await response.json() as any;
         let content = data.choices[0].message.content;
 
-        // Clean up markdown code blocks if present
-        content = content.replace(/^```json\s*/, "").replace(/\s*```$/, "");
+        // 1. Remove <think> tags if present (common in thinking models)
+        content = content.replace(/<think>[\s\S]*?<\/think>/g, "");
 
-        // Validate JSON
+        // 2. Extract JSON from markdown code blocks if present
+        const jsonMatch = content.match(/```json\s*([\s\S]*?)\s*```/);
+        if (jsonMatch) {
+            content = jsonMatch[1];
+        } else {
+            // Fallback: Try to find the first '{' and last '}'
+            const firstBrace = content.indexOf('{');
+            const lastBrace = content.lastIndexOf('}');
+            if (firstBrace !== -1 && lastBrace !== -1) {
+                content = content.substring(firstBrace, lastBrace + 1);
+            }
+        }
+
+        // 3. Validate JSON
         try {
             JSON.parse(content);
         } catch (e) {

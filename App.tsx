@@ -28,8 +28,10 @@ const UI_TEXT = {
         create_new: "START OVER",
         print_instr: "PRINT SETTINGS: Save as PDF • Background Graphics: ON • Margins: None",
         cat_classic: "Classic Series (Free)",
-        cat_bento: "Bento Style (Paid)",
-        cat_gradient: "Gradient Style (Paid)",
+        cat_bento: "Bento Style (Free Generation)",
+        cat_gradient: "Gradient Style (Free Generation)",
+        lifetime: "LIFETIME $9.9",
+        members_only: "MEMBERS ONLY",
         login: "LOGIN",
         logout: "LOGOUT",
         templates: {
@@ -69,8 +71,10 @@ const UI_TEXT = {
         create_new: "重新制作",
         print_instr: "打印设置：另存为 PDF • 勾选背景图形 • 边距：无",
         cat_classic: "经典系列 (免费)",
-        cat_bento: "便当风格 (付费)",
-        cat_gradient: "弥散渐变 (付费)",
+        cat_bento: "便当风格 (免费生成)",
+        cat_gradient: "弥散渐变 (免费生成)",
+        lifetime: "终身会员 $9.9",
+        members_only: "仅会员下载",
         login: "登录",
         logout: "退出",
         templates: {
@@ -286,6 +290,13 @@ const App: React.FC = () => {
 
                     {user ? (
                         <div className="flex items-center gap-3">
+                            <button
+                                onClick={handleUpgrade}
+                                className="hidden md:flex items-center gap-2 font-mono text-xs bg-gradient-to-r from-amber-200 to-yellow-400 text-yellow-900 px-4 py-1.5 rounded-full hover:shadow-lg hover:scale-105 transition-all uppercase font-bold"
+                            >
+                                <Lock size={12} />
+                                {t.lifetime}
+                            </button>
                             {isAdmin && (
                                 <button
                                     onClick={() => setShowAdmin(true)}
@@ -306,13 +317,22 @@ const App: React.FC = () => {
                             </button>
                         </div>
                     ) : (
-                        <button
-                            onClick={() => setShowAuthModal(true)}
-                            className="flex items-center gap-2 font-mono text-xs bg-ink text-white px-4 py-2 rounded-full hover:bg-accent transition-colors uppercase shadow-lg shadow-ink/20"
-                        >
-                            <LogIn size={14} />
-                            {t.login}
-                        </button>
+                        <div className="flex items-center gap-3">
+                            <button
+                                onClick={() => setShowAuthModal(true)}
+                                className="hidden md:flex items-center gap-2 font-mono text-xs bg-gradient-to-r from-amber-200 to-yellow-400 text-yellow-900 px-4 py-1.5 rounded-full hover:shadow-lg hover:scale-105 transition-all uppercase font-bold"
+                            >
+                                <Lock size={12} />
+                                {t.lifetime}
+                            </button>
+                            <button
+                                onClick={() => setShowAuthModal(true)}
+                                className="flex items-center gap-2 font-mono text-xs bg-ink text-white px-4 py-2 rounded-full hover:bg-accent transition-colors uppercase shadow-lg shadow-ink/20"
+                            >
+                                <LogIn size={14} />
+                                {t.login}
+                            </button>
+                        </div>
                     )}
                 </div>
             </nav>
@@ -477,7 +497,14 @@ const App: React.FC = () => {
                                             {category === 'classic' && <CheckCircle2 size={14} className="text-accent" />}
                                         </button>
                                         <button
-                                            onClick={() => { setCategory('bento'); setTemplate('rio'); }}
+                                            onClick={() => {
+                                                if (!user) {
+                                                    setShowAuthModal(true);
+                                                    return;
+                                                }
+                                                setCategory('bento');
+                                                setTemplate('rio');
+                                            }}
                                             className={`w-full px-4 py-3 text-xs font-bold rounded-lg transition-all flex items-center justify-between group ${category === 'bento' ? 'bg-white shadow-sm text-ink border border-ink/5' : 'text-ink-light hover:text-ink hover:bg-white/50'}`}
                                         >
                                             <div className="flex items-center gap-2">
@@ -487,7 +514,14 @@ const App: React.FC = () => {
                                             {category === 'bento' && <CheckCircle2 size={14} className="text-accent" />}
                                         </button>
                                         <button
-                                            onClick={() => { setCategory('gradient'); setTemplate('aurora'); }}
+                                            onClick={() => {
+                                                if (!user) {
+                                                    setShowAuthModal(true);
+                                                    return;
+                                                }
+                                                setCategory('gradient');
+                                                setTemplate('aurora');
+                                            }}
                                             className={`w-full px-4 py-3 text-xs font-bold rounded-lg transition-all flex items-center justify-between group ${category === 'gradient' ? 'bg-white shadow-sm text-ink border border-ink/5' : 'text-ink-light hover:text-ink hover:bg-white/50'}`}
                                         >
                                             <div className="flex items-center gap-2">
@@ -533,7 +567,7 @@ const App: React.FC = () => {
                                                 <Lock size={16} className="opacity-80" />
                                                 {t.save_pdf}
                                                 <span className="bg-white/20 px-2 py-0.5 rounded text-[10px] ml-1">
-                                                    {language === 'en' ? '$0.99/USE' : '$0.99/次'}
+                                                    {t.members_only}
                                                 </span>
                                             </>
                                         ) : (
