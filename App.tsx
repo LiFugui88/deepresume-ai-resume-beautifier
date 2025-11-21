@@ -389,13 +389,28 @@ const App: React.FC = () => {
                             exit={{ opacity: 0, y: -20 }}
                             className="flex-1 flex flex-col items-center justify-center max-w-xl w-full mx-auto px-4"
                         >
-                            <div className="text-center space-y-6 w-full">
-                                <div className="space-y-2">
-                                    <h1 className="font-display text-4xl md:text-5xl font-bold text-ink tracking-tight leading-tight">
-                                        {t.title}
+                            <div className="text-center space-y-8 w-full">
+                                <div className="space-y-4">
+                                    <div className="inline-block mb-2">
+                                        <span className="bg-accent/5 text-accent px-4 py-1.5 rounded-full text-xs font-bold tracking-wider uppercase border border-accent/10">
+                                            {t.slogan}
+                                        </span>
+                                    </div>
+                                    <h1 className="font-display text-5xl md:text-6xl lg:text-7xl font-bold tracking-tighter leading-tight text-ink">
+                                        {language === 'en' ? (
+                                            <>
+                                                ELEVATE YOUR <br />
+                                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent to-purple-600">CAREER</span>
+                                            </>
+                                        ) : (
+                                            <>
+                                                重塑 <br />
+                                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent to-purple-600">职业形象</span>
+                                            </>
+                                        )}
                                     </h1>
                                     <p className="font-sans text-lg text-ink-light max-w-md mx-auto leading-relaxed">
-                                        {t.subtitle}
+                                        {t.upload_desc}
                                     </p>
                                 </div>
 
@@ -403,13 +418,13 @@ const App: React.FC = () => {
                                 <div className="flex justify-center gap-4 mb-8">
                                     <button
                                         onClick={() => setInputMode('upload')}
-                                        className={`px-6 py-2 rounded-full font-bold text-sm transition-all ${inputMode === 'upload' ? 'bg-ink text-white shadow-lg' : 'bg-white text-ink-light hover:bg-paper'}`}
+                                        className={`px-6 py-2 rounded-full font-bold text-sm transition-all ${inputMode === 'upload' ? 'bg-ink text-white shadow-lg shadow-ink/20' : 'bg-white text-ink-light hover:bg-paper border border-ink/5'}`}
                                     >
                                         {language === 'en' ? 'Upload PDF' : '上传简历'}
                                     </button>
                                     <button
                                         onClick={() => setInputMode('manual')}
-                                        className={`px-6 py-2 rounded-full font-bold text-sm transition-all ${inputMode === 'manual' ? 'bg-ink text-white shadow-lg' : 'bg-white text-ink-light hover:bg-paper'}`}
+                                        className={`px-6 py-2 rounded-full font-bold text-sm transition-all ${inputMode === 'manual' ? 'bg-ink text-white shadow-lg shadow-ink/20' : 'bg-white text-ink-light hover:bg-paper border border-ink/5'}`}
                                     >
                                         {language === 'en' ? 'Create from Scratch' : '手动录入'}
                                     </button>
