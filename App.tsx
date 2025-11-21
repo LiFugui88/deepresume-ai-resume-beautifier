@@ -387,232 +387,287 @@ const App: React.FC = () => {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -20 }}
-                                    </div>
-        </div>
+                            className="flex-1 flex flex-col items-center justify-center max-w-xl w-full mx-auto px-4"
+                        >
+                            <div className="text-center space-y-6 w-full">
+                                <div className="space-y-2">
+                                    <h1 className="font-display text-4xl md:text-5xl font-bold text-ink tracking-tight leading-tight">
+                                        {t.title}
+                                    </h1>
+                                    <p className="font-sans text-lg text-ink-light max-w-md mx-auto leading-relaxed">
+                                        {t.subtitle}
+                                    </p>
+                                </div>
 
-                                {
-        errorMsg && (
-            <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="text-red-500 font-mono text-xs flex items-center justify-center gap-2 mt-4 bg-red-50 px-4 py-2 rounded-full"
-            >
-                <AlertCircle size={14} />
-                {errorMsg}
-            </motion.div>
-        )
-    }
-                            </div >
-                        </motion.div >
+                                {/* Mode Toggle */}
+                                <div className="flex justify-center gap-4 mb-8">
+                                    <button
+                                        onClick={() => setInputMode('upload')}
+                                        className={`px-6 py-2 rounded-full font-bold text-sm transition-all ${inputMode === 'upload' ? 'bg-ink text-white shadow-lg' : 'bg-white text-ink-light hover:bg-paper'}`}
+                                    >
+                                        {language === 'en' ? 'Upload PDF' : '上传简历'}
+                                    </button>
+                                    <button
+                                        onClick={() => setInputMode('manual')}
+                                        className={`px-6 py-2 rounded-full font-bold text-sm transition-all ${inputMode === 'manual' ? 'bg-ink text-white shadow-lg' : 'bg-white text-ink-light hover:bg-paper'}`}
+                                    >
+                                        {language === 'en' ? 'Create from Scratch' : '手动录入'}
+                                    </button>
+                                </div>
+
+                                {inputMode === 'upload' ? (
+                                    <div className="relative group w-full">
+                                        <div className="absolute -inset-1 bg-gradient-to-r from-accent to-purple-600 rounded-3xl blur opacity-20 group-hover:opacity-40 transition duration-1000 group-hover:duration-200" />
+                                        <label className="relative flex flex-col items-center justify-center w-full h-64 border-2 border-dashed border-ink/10 rounded-2xl bg-white/50 hover:bg-white hover:border-accent/50 transition-all cursor-pointer overflow-hidden backdrop-blur-sm">
+                                            <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                                <div className="w-16 h-16 mb-4 rounded-2xl bg-blue-50 text-accent flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                                                    <UploadCloud size={32} />
+                                                </div>
+                                                <p className="mb-2 text-lg font-bold text-ink">
+                                                    {t.upload_btn}
+                                                </p>
+                                                <p className="text-xs text-ink-light font-medium">
+                                                    {t.upload_hint}
+                                                </p>
+                                            </div>
+                                            <input
+                                                type="file"
+                                                className="hidden"
+                                                accept=".pdf"
+                                                onChange={handleFileUpload}
+                                            />
+                                        </label>
+                                    </div>
+                                ) : (
+                                    <ManualEntryForm
+                                        onSubmit={handleManualSubmit}
+                                        onCancel={() => setInputMode('upload')}
+                                        isAnalyzing={state === AppState.ANALYZING}
+                                        language={language}
+                                    />
+                                )}
+
+                                {errorMsg && (
+                                    <motion.div
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        className="text-red-500 font-mono text-xs flex items-center justify-center gap-2 mt-4 bg-red-50 px-4 py-2 rounded-full"
+                                    >
+                                        <AlertCircle size={14} />
+                                        {errorMsg}
+                                    </motion.div>
+                                )}
+                            </div>
+                        </motion.div>
                     )}
 
-{/* Processing State */ }
-{
-    state === AppState.ANALYZING && (
-        <motion.div
-            key="analyzing"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="flex-1 flex flex-col items-center justify-center"
-        >
-            <div className="flex flex-col items-center gap-8">
-                <div className="relative w-24 h-24">
-                    <motion.div
-                        className="absolute inset-0 border-4 border-ink/10 rounded-2xl"
-                    />
-                    <motion.div
-                        className="absolute inset-0 border-t-4 border-accent rounded-2xl"
-                        animate={{ rotate: 360 }}
-                        transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-                    />
-                    <div className="absolute inset-0 flex items-center justify-center">
-                        <Logo size={40} />
-                    </div>
-                </div>
-                <div className="text-center space-y-2">
-                    <h2 className="font-display text-3xl font-bold text-ink">{t.analyzing}</h2>
-                    <p className="font-mono text-sm text-ink-light animate-pulse">{t.analyzing_desc}</p>
-                </div>
-            </div>
-        </motion.div>
-    )
-}
+                    {/* Processing State */}
+                    {
+                        state === AppState.ANALYZING && (
+                            <motion.div
+                                key="analyzing"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                className="flex-1 flex flex-col items-center justify-center"
+                            >
+                                <div className="flex flex-col items-center gap-8">
+                                    <div className="relative w-24 h-24">
+                                        <motion.div
+                                            className="absolute inset-0 border-4 border-ink/10 rounded-2xl"
+                                        />
+                                        <motion.div
+                                            className="absolute inset-0 border-t-4 border-accent rounded-2xl"
+                                            animate={{ rotate: 360 }}
+                                            transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                                        />
+                                        <div className="absolute inset-0 flex items-center justify-center">
+                                            <Logo size={40} />
+                                        </div>
+                                    </div>
+                                    <div className="text-center space-y-2">
+                                        <h2 className="font-display text-3xl font-bold text-ink">{t.analyzing}</h2>
+                                        <p className="font-mono text-sm text-ink-light animate-pulse">{t.analyzing_desc}</p>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        )
+                    }
 
-{/* Error State */ }
-{
-    state === AppState.ERROR && (
-        <motion.div
-            key="error"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="flex-1 flex flex-col items-center justify-center"
-        >
-            <div className="text-center space-y-6 max-w-md px-4">
-                <div className="mx-auto w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center text-red-600">
-                    <AlertCircle size={32} />
-                </div>
-                <h2 className="font-display text-2xl font-bold text-ink">{t.error}</h2>
-                <p className="font-mono text-sm text-ink-light">
-                    {errorMsg || (language === 'en' ? "Could not process file structure." : "无法解析文件结构。")}
-                </p>
-                <button
-                    onClick={reset}
-                    className="bg-ink text-white px-8 py-3 rounded-xl font-bold text-sm hover:bg-accent transition-colors flex items-center gap-2 mx-auto shadow-lg"
-                >
-                    <RefreshCw size={16} />
-                    {t.try_again}
-                </button>
-            </div>
-        </motion.div>
-    )
-}
+                    {/* Error State */}
+                    {
+                        state === AppState.ERROR && (
+                            <motion.div
+                                key="error"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                className="flex-1 flex flex-col items-center justify-center"
+                            >
+                                <div className="text-center space-y-6 max-w-md px-4">
+                                    <div className="mx-auto w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center text-red-600">
+                                        <AlertCircle size={32} />
+                                    </div>
+                                    <h2 className="font-display text-2xl font-bold text-ink">{t.error}</h2>
+                                    <p className="font-mono text-sm text-ink-light">
+                                        {errorMsg || (language === 'en' ? "Could not process file structure." : "无法解析文件结构。")}
+                                    </p>
+                                    <button
+                                        onClick={reset}
+                                        className="bg-ink text-white px-8 py-3 rounded-xl font-bold text-sm hover:bg-accent transition-colors flex items-center gap-2 mx-auto shadow-lg"
+                                    >
+                                        <RefreshCw size={16} />
+                                        {t.try_again}
+                                    </button>
+                                </div>
+                            </motion.div>
+                        )
+                    }
                 </AnimatePresence >
 
-    {/* Preview State */ }
-{
-    state === AppState.PREVIEW && resumeData && (
-        <motion.div
-            key="preview"
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="flex flex-col lg:flex-row gap-8 px-4 md:px-12 max-w-[1800px] mx-auto w-full"
-        >
-            {/* Controls Sidebar (Left on Desktop) */}
-            <div className="lg:w-80 shrink-0 flex flex-col gap-6 order-2 lg:order-1 no-print">
-                <div className="bg-white border border-ink/10 rounded-3xl p-6 space-y-6 sticky top-24 shadow-xl">
-                    <div>
-                        <h3 className="font-display font-bold text-xl mb-1 text-ink">{t.action_center}</h3>
-                        <p className="text-xs text-ink-light font-medium">{t.review_desc}</p>
-                    </div>
-
-                    {/* Category Toggle - Vertical Layout */}
-                    <div className="flex flex-col gap-3">
-                        <label className="text-[10px] font-bold tracking-widest text-ink-light uppercase flex items-center gap-2">
-                            <Layout size={12} /> CATEGORY
-                        </label>
-                        <div className="flex flex-col gap-2 bg-paper p-2 rounded-xl border border-ink/5">
-                            <button
-                                onClick={() => { setCategory('classic'); setTemplate('standard'); }}
-                                className={`w-full px-4 py-3 text-xs font-bold rounded-lg transition-all flex items-center justify-between group ${category === 'classic' ? 'bg-white shadow-sm text-ink border border-ink/5' : 'text-ink-light hover:text-ink hover:bg-white/50'}`}
-                            >
-                                <div className="flex items-center gap-2">
-                                    <Briefcase size={14} className={category === 'classic' ? 'text-accent' : 'text-ink-light'} />
-                                    <span>{t.cat_classic}</span>
-                                </div>
-                                {category === 'classic' && <CheckCircle2 size={14} className="text-accent" />}
-                            </button>
-                            <button
-                                onClick={() => {
-                                    if (!user) {
-                                        setShowAuthModal(true);
-                                        return;
-                                    }
-                                    setCategory('bento');
-                                    setTemplate('rio');
-                                }}
-                                className={`w-full px-4 py-3 text-xs font-bold rounded-lg transition-all flex items-center justify-between group ${category === 'bento' ? 'bg-white shadow-sm text-ink border border-ink/5' : 'text-ink-light hover:text-ink hover:bg-white/50'}`}
-                            >
-                                <div className="flex items-center gap-2">
-                                    <Grid size={14} className={category === 'bento' ? 'text-accent' : 'text-ink-light'} />
-                                    <span>{t.cat_bento}</span>
-                                </div>
-                                {category === 'bento' && <CheckCircle2 size={14} className="text-accent" />}
-                            </button>
-                            <button
-                                onClick={() => {
-                                    if (!user) {
-                                        setShowAuthModal(true);
-                                        return;
-                                    }
-                                    setCategory('gradient');
-                                    setTemplate('aurora');
-                                }}
-                                className={`w-full px-4 py-3 text-xs font-bold rounded-lg transition-all flex items-center justify-between group ${category === 'gradient' ? 'bg-white shadow-sm text-ink border border-ink/5' : 'text-ink-light hover:text-ink hover:bg-white/50'}`}
-                            >
-                                <div className="flex items-center gap-2">
-                                    <Palette size={14} className={category === 'gradient' ? 'text-accent' : 'text-ink-light'} />
-                                    <span>{t.cat_gradient}</span>
-                                </div>
-                                {category === 'gradient' && <CheckCircle2 size={14} className="text-accent" />}
-                            </button>
-                        </div>
-                    </div>
-
-                    {/* Template List */}
-                    <div className="space-y-3">
-                        <label className="text-[10px] font-bold tracking-widest text-ink-light uppercase flex items-center gap-2">
-                            <Layout size={12} /> {t.template_label}
-                        </label>
-                        <div className="grid grid-cols-1 gap-2 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
-                            {getTemplatesByCategory().map((tid) => (
-                                <button
-                                    key={tid}
-                                    onClick={() => setTemplate(tid)}
-                                    className={`text-left px-4 py-3 text-sm font-bold rounded-xl border transition-all flex justify-between items-center ${template === tid
-                                        ? 'bg-blue-50 text-blue-700 border-blue-200 shadow-sm scale-[1.02]'
-                                        : 'bg-paper text-ink-light border-transparent hover:bg-white hover:border-ink/20 hover:text-ink'
-                                        }`}
-                                >
-                                    {t.templates[tid]}
-                                    {template === tid && <div className="w-2 h-2 rounded-full bg-blue-600" />}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-
-                    <hr className="border-ink/5" />
-
-                    <div className="space-y-3">
-                        <button
-                            onClick={triggerPrint}
-                            className={`w-full text-white py-4 rounded-xl font-bold tracking-wide transition-all active:scale-[0.98] shadow-lg flex items-center justify-center gap-2 ${isPaid ? 'bg-gradient-to-r from-accent to-indigo-600 hover:shadow-accent/30' : 'bg-accent hover:bg-blue-700 shadow-accent/20'}`}
+                {/* Preview State */}
+                {
+                    state === AppState.PREVIEW && resumeData && (
+                        <motion.div
+                            key="preview"
+                            initial={{ opacity: 0, y: 50 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="flex flex-col lg:flex-row gap-8 px-4 md:px-12 max-w-[1800px] mx-auto w-full"
                         >
-                            {isPaid ? (
-                                <>
-                                    <Lock size={16} className="opacity-80" />
-                                    {t.save_pdf}
-                                    <span className="bg-white/20 px-2 py-0.5 rounded text-[10px] ml-1">
-                                        {t.members_only}
-                                    </span>
-                                </>
-                            ) : (
-                                <>
-                                    <Download size={18} />
-                                    {t.save_pdf}
-                                </>
-                            )}
-                        </button>
+                            {/* Controls Sidebar (Left on Desktop) */}
+                            <div className="lg:w-80 shrink-0 flex flex-col gap-6 order-2 lg:order-1 no-print">
+                                <div className="bg-white border border-ink/10 rounded-3xl p-6 space-y-6 sticky top-24 shadow-xl">
+                                    <div>
+                                        <h3 className="font-display font-bold text-xl mb-1 text-ink">{t.action_center}</h3>
+                                        <p className="text-xs text-ink-light font-medium">{t.review_desc}</p>
+                                    </div>
 
-                        <button
-                            onClick={reset}
-                            className="w-full bg-transparent border border-ink/20 text-ink py-3 rounded-xl font-bold text-xs hover:bg-paper transition-colors"
-                        >
-                            {t.create_new}
-                        </button>
-                    </div>
+                                    {/* Category Toggle - Vertical Layout */}
+                                    <div className="flex flex-col gap-3">
+                                        <label className="text-[10px] font-bold tracking-widest text-ink-light uppercase flex items-center gap-2">
+                                            <Layout size={12} /> CATEGORY
+                                        </label>
+                                        <div className="flex flex-col gap-2 bg-paper p-2 rounded-xl border border-ink/5">
+                                            <button
+                                                onClick={() => { setCategory('classic'); setTemplate('standard'); }}
+                                                className={`w-full px-4 py-3 text-xs font-bold rounded-lg transition-all flex items-center justify-between group ${category === 'classic' ? 'bg-white shadow-sm text-ink border border-ink/5' : 'text-ink-light hover:text-ink hover:bg-white/50'}`}
+                                            >
+                                                <div className="flex items-center gap-2">
+                                                    <Briefcase size={14} className={category === 'classic' ? 'text-accent' : 'text-ink-light'} />
+                                                    <span>{t.cat_classic}</span>
+                                                </div>
+                                                {category === 'classic' && <CheckCircle2 size={14} className="text-accent" />}
+                                            </button>
+                                            <button
+                                                onClick={() => {
+                                                    if (!user) {
+                                                        setShowAuthModal(true);
+                                                        return;
+                                                    }
+                                                    setCategory('bento');
+                                                    setTemplate('rio');
+                                                }}
+                                                className={`w-full px-4 py-3 text-xs font-bold rounded-lg transition-all flex items-center justify-between group ${category === 'bento' ? 'bg-white shadow-sm text-ink border border-ink/5' : 'text-ink-light hover:text-ink hover:bg-white/50'}`}
+                                            >
+                                                <div className="flex items-center gap-2">
+                                                    <Grid size={14} className={category === 'bento' ? 'text-accent' : 'text-ink-light'} />
+                                                    <span>{t.cat_bento}</span>
+                                                </div>
+                                                {category === 'bento' && <CheckCircle2 size={14} className="text-accent" />}
+                                            </button>
+                                            <button
+                                                onClick={() => {
+                                                    if (!user) {
+                                                        setShowAuthModal(true);
+                                                        return;
+                                                    }
+                                                    setCategory('gradient');
+                                                    setTemplate('aurora');
+                                                }}
+                                                className={`w-full px-4 py-3 text-xs font-bold rounded-lg transition-all flex items-center justify-between group ${category === 'gradient' ? 'bg-white shadow-sm text-ink border border-ink/5' : 'text-ink-light hover:text-ink hover:bg-white/50'}`}
+                                            >
+                                                <div className="flex items-center gap-2">
+                                                    <Palette size={14} className={category === 'gradient' ? 'text-accent' : 'text-ink-light'} />
+                                                    <span>{t.cat_gradient}</span>
+                                                </div>
+                                                {category === 'gradient' && <CheckCircle2 size={14} className="text-accent" />}
+                                            </button>
+                                        </div>
+                                    </div>
 
-                    <div className="p-4 bg-blue-50 rounded-xl text-[10px] text-blue-800 leading-relaxed border border-blue-100">
-                        <p className="font-bold mb-1 flex items-center gap-1"><AlertCircle size={10} /> IMPORTANT:</p>
-                        {t.print_instr}
-                    </div>
-                </div>
-            </div>
+                                    {/* Template List */}
+                                    <div className="space-y-3">
+                                        <label className="text-[10px] font-bold tracking-widest text-ink-light uppercase flex items-center gap-2">
+                                            <Layout size={12} /> {t.template_label}
+                                        </label>
+                                        <div className="grid grid-cols-1 gap-2 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+                                            {getTemplatesByCategory().map((tid) => (
+                                                <button
+                                                    key={tid}
+                                                    onClick={() => setTemplate(tid)}
+                                                    className={`text-left px-4 py-3 text-sm font-bold rounded-xl border transition-all flex justify-between items-center ${template === tid
+                                                        ? 'bg-blue-50 text-blue-700 border-blue-200 shadow-sm scale-[1.02]'
+                                                        : 'bg-paper text-ink-light border-transparent hover:bg-white hover:border-ink/20 hover:text-ink'
+                                                        }`}
+                                                >
+                                                    {t.templates[tid]}
+                                                    {template === tid && <div className="w-2 h-2 rounded-full bg-blue-600" />}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
 
-            {/* Resume Canvas (Right on Desktop) */}
-            <div className="flex-1 flex justify-center order-1 lg:order-2 mb-12 lg:mb-0 overflow-visible print:block print:w-full print:h-auto">
-                <div className="transform origin-top scale-[0.5] sm:scale-[0.6] md:scale-[0.7] lg:scale-[0.8] xl:scale-[0.9] 2xl:scale-100 transition-transform duration-500 print:transform-none print:scale-100 print:w-full">
-                    <ResumeDesign
-                        data={resumeData}
-                        template={template}
-                        language={language}
-                    />
-                </div>
-            </div>
-        </motion.div>
-    )
-}
+                                    <hr className="border-ink/5" />
+
+                                    <div className="space-y-3">
+                                        <button
+                                            onClick={triggerPrint}
+                                            className={`w-full text-white py-4 rounded-xl font-bold tracking-wide transition-all active:scale-[0.98] shadow-lg flex items-center justify-center gap-2 ${isPaid ? 'bg-gradient-to-r from-accent to-indigo-600 hover:shadow-accent/30' : 'bg-accent hover:bg-blue-700 shadow-accent/20'}`}
+                                        >
+                                            {isPaid ? (
+                                                <>
+                                                    <Lock size={16} className="opacity-80" />
+                                                    {t.save_pdf}
+                                                    <span className="bg-white/20 px-2 py-0.5 rounded text-[10px] ml-1">
+                                                        {t.members_only}
+                                                    </span>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <Download size={18} />
+                                                    {t.save_pdf}
+                                                </>
+                                            )}
+                                        </button>
+
+                                        <button
+                                            onClick={reset}
+                                            className="w-full bg-transparent border border-ink/20 text-ink py-3 rounded-xl font-bold text-xs hover:bg-paper transition-colors"
+                                        >
+                                            {t.create_new}
+                                        </button>
+                                    </div>
+
+                                    <div className="p-4 bg-blue-50 rounded-xl text-[10px] text-blue-800 leading-relaxed border border-blue-100">
+                                        <p className="font-bold mb-1 flex items-center gap-1"><AlertCircle size={10} /> IMPORTANT:</p>
+                                        {t.print_instr}
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Resume Canvas (Right on Desktop) */}
+                            <div className="flex-1 flex justify-center order-1 lg:order-2 mb-12 lg:mb-0 overflow-visible print:block print:w-full print:h-auto">
+                                <div className="transform origin-top scale-[0.5] sm:scale-[0.6] md:scale-[0.7] lg:scale-[0.8] xl:scale-[0.9] 2xl:scale-100 transition-transform duration-500 print:transform-none print:scale-100 print:w-full">
+                                    <ResumeDesign
+                                        data={resumeData}
+                                        template={template}
+                                        language={language}
+                                    />
+                                </div>
+                            </div>
+                        </motion.div>
+                    )
+                }
             </main >
         </div >
     );
