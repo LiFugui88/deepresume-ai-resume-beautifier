@@ -1,0 +1,98 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --ink: #1a1a1a;
+  --ink-light: #666666;
+  --paper: #f5f5f5;
+  --accent: #2563eb;
+}
+
+body {
+  background-color: #fafafa;
+  color: var(--ink);
+  font-family: 'Inter', sans-serif;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Print Styles */
+@media print {
+  @page {
+    margin: 0;
+    size: auto;
+  }
+
+  body {
+    background: white;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Hide UI elements */
+  nav, 
+  aside, 
+  button, 
+  .no-print,
+  [role="dialog"] {
+    display: none !important;
+  }
+
+  /* Reset layout for print */
+  #root, 
+  main, 
+  .flex, 
+  .h-screen {
+    display: block !important;
+    height: auto !important;
+    overflow: visible !important;
+    position: static !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Ensure resume container takes full width and allows breaks */
+  .resume-preview {
+    transform: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+    width: 100% !important;
+    max-width: none !important;
+    overflow: visible !important;
+  }
+
+  /* Allow page breaks inside the resume content */
+  .resume-content, 
+  .section, 
+  .item {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  
+  /* Specific fix for the resume container if it has a fixed height */
+  .overflow-y-auto {
+    overflow: visible !important;
+    height: auto !important;
+  }
+}

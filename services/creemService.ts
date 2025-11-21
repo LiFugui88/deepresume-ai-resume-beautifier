@@ -14,10 +14,14 @@ export const initiateCheckout = async (email: string) => {
 
         const payload = {
             product_id: productId,
-            customer_email: email,
+            customer_email: email || undefined, // Creem might expect undefined if no email
             success_url: `${window.location.origin}?payment=success`,
             cancel_url: `${window.location.origin}?payment=cancel`,
         };
+
+        if (!email) {
+            console.warn("Initiating checkout without email");
+        }
 
         console.log('Initiating checkout with payload:', payload);
 

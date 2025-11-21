@@ -80,25 +80,16 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
         };
 
         const systemInstruction = `
-    You are an expert resume parser and designer.
-    Your task is to extract data from the provided resume text into a structured JSON format.
+    You are an expert resume parser. Extract data from the resume text into JSON.
     
-    CRITICAL LANGUAGE RULES:
-    1. **Detect the language** of the source resume (English or Chinese).
-    2. **Output ALL content in the SAME language** as the source. 
-    3. **Preserve original meaning**: Do not aggressively summarize or rewrite. Keep the details, metrics, and specific accomplishments provided in the source. Optimize for grammar and clarity, but strictly maintain the user's original intent and content depth.
+    RULES:
+    1. Detect language (English/Chinese) and output in the SAME language.
+    2. Preserve original meaning and details. Do not summarize.
+    3. Output valid JSON matching the schema.
     
-    Data Extraction Rules:
-    1. **Experience**: employment history (Company, Title).
-    2. **Projects**: specific projects, side projects, or academic projects (Project Name, Role).
-    3. **Skills**: Extract specific technical or professional skills.
-    4. **Formatting**: Ensure proper capitalization.
-
     OUTPUT FORMAT:
-    You must output valid JSON matching the following schema:
-    ${JSON.stringify(schema, null, 2)}
-    
-    Return ONLY the JSON object. Do not include markdown formatting like \`\`\`json ... \`\`\`.
+    Return ONLY the JSON object. No markdown, no thinking traces.
+    ${JSON.stringify(schema)}
     `;
 
         const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {

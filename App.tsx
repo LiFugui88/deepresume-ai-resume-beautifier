@@ -112,8 +112,8 @@ const App: React.FC = () => {
     const [fileName, setFileName] = useState<string>('');
     const [errorMsg, setErrorMsg] = useState<string>('');
     const [language, setLanguage] = useState<Language>('zh');
-    const [template, setTemplate] = useState<TemplateId>('rio');
-    const [category, setCategory] = useState<Category>('bento');
+    const [category, setCategory] = useState<string>('classic');
+    const [template, setTemplate] = useState<string>('standard');
 
     // Auth State
     const [user, setUser] = useState<SupabaseUser | null>(null);
