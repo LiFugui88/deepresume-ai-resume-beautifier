@@ -1,17 +1,26 @@
-import { GoogleGenAI, Type } from "@google/genai";
 import { ResumeData } from "../types";
+import * as pdfjsLib from 'pdfjs-dist';
 
-// We use the specific model version as requested for best performance with PDF analysis
-const MODEL_NAME = "gemini-2.5-flash";
+// Set worker source for Vite
+const workerUrl = new URL(
+    'pdfjs-dist/build/pdf.worker.mjs',
+    import.meta.url
+).toString();
 
-export const analyzeResume = async (fileBase64: string, mimeType: string): Promise<ResumeData> => {
+pdfjsLib.GlobalWorkerOptions.workerSrc = workerUrl;
+
+export const analyzeResume = async (file: File): Promise<ResumeData> => {
     try {
+        // 1. Extract text from PDF
+        const text = await extractTextFromPDF(file);
+
+        // 2. Send text to API
         const response = await fetch('/api/analyze', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ fileBase64, mimeType }),
+            body: JSON.stringify({ resumeText: text }),
         });
 
         if (!response.ok) {
@@ -28,16 +37,19 @@ export const analyzeResume = async (fileBase64: string, mimeType: string): Promi
     }
 };
 
-export const fileToBase64 = (file: File): Promise<string> => {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => {
-            const result = reader.result as string;
-            // Remove the Data-URL prefix (e.g. "data:application/pdf;base64,")
-            const base64 = result.split(',')[1];
-            resolve(base64);
-        };
-        reader.onerror = (error) => reject(error);
-    });
+const extractTextFromPDF = async (file: File): Promise<string> => {
+    const arrayBuffer = await file.arrayBuffer();
+    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+    let fullText = '';
+
+    for (let i = 1; i <= pdf.numPages; i++) {
+        const page = await pdf.getPage(i);
+        const textContent = await page.getTextContent();
+        const pageText = textContent.items
+            .map((item: any) => item.str)
+            .join(' ');
+        fullText += pageText + '\n';
+    }
+
+    return fullText;
 };

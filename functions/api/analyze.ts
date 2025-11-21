@@ -1,30 +1,87 @@
-
-import { GoogleGenAI, Type } from "@google/genai";
-
 interface Env {
-    GEMINI_API_KEY: string;
+    OPENROUTER_API_KEY: string;
 }
 
 export const onRequestPost: PagesFunction<Env> = async (context) => {
     const { request, env } = context;
 
     try {
-        const { fileBase64, mimeType } = await request.json() as { fileBase64: string; mimeType: string };
+        const { resumeText } = await request.json() as { resumeText: string };
 
-        if (!fileBase64 || !mimeType) {
-            return new Response(JSON.stringify({ error: "Missing file data" }), { status: 400 });
+        if (!resumeText) {
+            return new Response(JSON.stringify({ error: "Missing resume text" }), { status: 400 });
         }
 
-        if (!env.GEMINI_API_KEY) {
+        if (!env.OPENROUTER_API_KEY) {
             return new Response(JSON.stringify({ error: "Server configuration error: Missing API Key" }), { status: 500 });
         }
 
-        const ai = new GoogleGenAI({ apiKey: env.GEMINI_API_KEY });
-        const MODEL_NAME = "gemini-2.5-flash";
+        const MODEL_NAME = "moonshotai/kimi-k2-thinking";
+
+        const schema = {
+            type: "object",
+            properties: {
+                fullName: { type: "string" },
+                title: { type: "string", description: "Current professional title" },
+                summary: { type: "string", description: "Professional summary" },
+                email: { type: "string" },
+                phone: { type: "string" },
+                location: { type: "string" },
+                website: { type: "string" },
+                linkedin: { type: "string" },
+                skills: {
+                    type: "array",
+                    items: { type: "string" }
+                },
+                experience: {
+                    type: "array",
+                    items: {
+                        type: "object",
+                        properties: {
+                            company: { type: "string" },
+                            role: { type: "string" },
+                            duration: { type: "string" },
+                            description: {
+                                type: "array",
+                                items: { type: "string" }
+                            }
+                        }
+                    }
+                },
+                projects: {
+                    type: "array",
+                    items: {
+                        type: "object",
+                        properties: {
+                            name: { type: "string" },
+                            role: { type: "string" },
+                            duration: { type: "string" },
+                            link: { type: "string" },
+                            description: {
+                                type: "array",
+                                items: { type: "string" }
+                            }
+                        }
+                    }
+                },
+                education: {
+                    type: "array",
+                    items: {
+                        type: "object",
+                        properties: {
+                            institution: { type: "string" },
+                            degree: { type: "string" },
+                            year: { type: "string" }
+                        }
+                    }
+                }
+            },
+            required: ["fullName", "experience"]
+        };
 
         const systemInstruction = `
     You are an expert resume parser and designer.
-    Your task is to extract data from the provided resume file into a structured JSON format.
+    Your task is to extract data from the provided resume text into a structured JSON format.
     
     CRITICAL LANGUAGE RULES:
     1. **Detect the language** of the source resume (English or Chinese).
@@ -36,93 +93,59 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     2. **Projects**: specific projects, side projects, or academic projects (Project Name, Role).
     3. **Skills**: Extract specific technical or professional skills.
     4. **Formatting**: Ensure proper capitalization.
+
+    OUTPUT FORMAT:
+    You must output valid JSON matching the following schema:
+    ${JSON.stringify(schema, null, 2)}
+    
+    Return ONLY the JSON object. Do not include markdown formatting like \`\`\`json ... \`\`\`.
     `;
 
-        const response = await ai.models.generateContent({
-            model: MODEL_NAME,
-            contents: {
-                parts: [
-                    {
-                        inlineData: {
-                            data: fileBase64,
-                            mimeType: mimeType,
-                        },
-                    },
-                    {
-                        text: "Analyze this resume. Extract the data into the specified JSON schema. Strictly maintain the original language (Chinese or English) and preserve project experience."
-                    }
-                ]
+        const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+            method: "POST",
+            headers: {
+                "Authorization": `Bearer ${env.OPENROUTER_API_KEY}`,
+                "Content-Type": "application/json",
+                "HTTP-Referer": "https://deepresume.ai", // Optional, for OpenRouter rankings
+                "X-Title": "DeepResume", // Optional
             },
-            config: {
-                systemInstruction: systemInstruction,
-                responseMimeType: "application/json",
-                responseSchema: {
-                    type: Type.OBJECT,
-                    properties: {
-                        fullName: { type: Type.STRING },
-                        title: { type: Type.STRING, description: "Current professional title" },
-                        summary: { type: Type.STRING, description: "Professional summary" },
-                        email: { type: Type.STRING },
-                        phone: { type: Type.STRING },
-                        location: { type: Type.STRING },
-                        website: { type: Type.STRING },
-                        linkedin: { type: Type.STRING },
-                        skills: {
-                            type: Type.ARRAY,
-                            items: { type: Type.STRING }
-                        },
-                        experience: {
-                            type: Type.ARRAY,
-                            items: {
-                                type: Type.OBJECT,
-                                properties: {
-                                    company: { type: Type.STRING },
-                                    role: { type: Type.STRING },
-                                    duration: { type: Type.STRING },
-                                    description: {
-                                        type: Type.ARRAY,
-                                        items: { type: Type.STRING }
-                                    }
-                                }
-                            }
-                        },
-                        projects: {
-                            type: Type.ARRAY,
-                            items: {
-                                type: Type.OBJECT,
-                                properties: {
-                                    name: { type: Type.STRING },
-                                    role: { type: Type.STRING },
-                                    duration: { type: Type.STRING },
-                                    link: { type: Type.STRING },
-                                    description: {
-                                        type: Type.ARRAY,
-                                        items: { type: Type.STRING }
-                                    }
-                                }
-                            }
-                        },
-                        education: {
-                            type: Type.ARRAY,
-                            items: {
-                                type: Type.OBJECT,
-                                properties: {
-                                    institution: { type: Type.STRING },
-                                    degree: { type: Type.STRING },
-                                    year: { type: Type.STRING }
-                                }
-                            }
-                        }
+            body: JSON.stringify({
+                model: MODEL_NAME,
+                messages: [
+                    {
+                        role: "system",
+                        content: systemInstruction
                     },
-                    required: ["fullName", "experience"]
-                }
-            }
+                    {
+                        role: "user",
+                        content: `Analyze this resume text:\n\n${resumeText}`
+                    }
+                ],
+                temperature: 0.1, // Low temperature for consistent extraction
+            })
         });
 
-        const text = response.text;
-        if (!text) throw new Error("No response from Gemini");
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error("OpenRouter API Error:", errorText);
+            throw new Error(`OpenRouter API Error: ${response.statusText}`);
+        }
 
-        return new Response(text, {
+        const data = await response.json() as any;
+        let content = data.choices[0].message.content;
+
+        // Clean up markdown code blocks if present
+        content = content.replace(/^```json\s*/, "").replace(/\s*```$/, "");
+
+        // Validate JSON
+        try {
+            JSON.parse(content);
+        } catch (e) {
+            console.error("Invalid JSON received:", content);
+            throw new Error("Failed to parse AI response as JSON");
+        }
+
+        return new Response(content, {
             headers: { "Content-Type": "application/json" },
         });
 

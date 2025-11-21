@@ -2,7 +2,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Upload, Download, RefreshCw, AlertCircle, Layout, Globe2, Briefcase, Grid, Palette, CheckCircle2, Lock, LogIn, LogOut, User } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { analyzeResume, fileToBase64 } from './services/geminiService';
+import { analyzeResume } from './services/geminiService';
 import { supabase } from './services/supabase';
 import { AppState, ResumeData } from './types';
 import { ResumeDesign, TemplateId, Language } from './components/ResumeDesign';
@@ -183,8 +183,7 @@ const App: React.FC = () => {
         setState(AppState.ANALYZING);
 
         try {
-            const base64 = await fileToBase64(file);
-            const data = await analyzeResume(base64, file.type);
+            const data = await analyzeResume(file);
             setResumeData(data);
             setState(AppState.PREVIEW);
         } catch (err) {
