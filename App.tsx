@@ -103,11 +103,14 @@ const UI_TEXT = {
 type Category = 'classic' | 'bento' | 'gradient';
 
 import { AdminPanel } from './components/AdminPanel';
+import { ManualEntryForm } from './components/ManualEntryForm';
 
 import { initiateCheckout } from './services/creemService';
+import { trackEvent, AnalyticsEvents } from './services/analytics';
 
 const App: React.FC = () => {
     const [state, setState] = useState<AppState>(AppState.IDLE);
+    const [inputMode, setInputMode] = useState<'upload' | 'manual'>('upload');
     const [resumeData, setResumeData] = useState<ResumeData | null>(null);
     const [fileName, setFileName] = useState<string>('');
     const [errorMsg, setErrorMsg] = useState<string>('');
@@ -182,7 +185,7 @@ const App: React.FC = () => {
             return;
         }
 
-        setFileName(file.name);
+        trackEvent(AnalyticsEvents.UPLOAD_RESUME, { fileName: file.name });
         setErrorMsg('');
         setState(AppState.ANALYZING);
 
@@ -190,10 +193,45 @@ const App: React.FC = () => {
             const data = await analyzeResume(file);
             setResumeData(data);
             setState(AppState.PREVIEW);
+            trackEvent(AnalyticsEvents.ANALYSIS_SUCCESS, { method: 'upload' });
         } catch (err: any) {
             console.error(err);
             setState(AppState.ERROR);
             setErrorMsg(err.message || (language === 'en' ? "Failed to analyze resume." : "简历解析失败。"));
+            trackEvent(AnalyticsEvents.ANALYSIS_FAILURE, { error: err.message });
+        }
+    };
+
+    const handleManualSubmit = async (textData: string) => {
+        trackEvent(AnalyticsEvents.MANUAL_ENTRY_SUBMIT);
+        setState(AppState.ANALYZING);
+        try {
+            // Reuse the analyze endpoint but pass the text directly
+            // We need to modify analyzeResume or call the API directly here
+            // Since analyzeResume expects a File, let's create a temporary one or modify the service
+            // Better: call the API directly here for simplicity or overload the service
+
+            const response = await fetch('/api/analyze', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ resumeText: textData }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Analysis failed');
+            }
+
+            const data = await response.json();
+            setResumeData(data);
+            setState(AppState.PREVIEW);
+            trackEvent(AnalyticsEvents.ANALYSIS_SUCCESS, { method: 'manual' });
+        } catch (err: any) {
+            console.error(err);
+            setState(AppState.ERROR);
+            setErrorMsg(err.message || (language === 'en' ? "Failed to generate resume." : "简历生成失败。"));
+            trackEvent(AnalyticsEvents.ANALYSIS_FAILURE, { error: err.message });
         }
     };
 
@@ -203,9 +241,10 @@ const App: React.FC = () => {
             return;
         }
         try {
-            await initiateCheckout(user.email || '');
-        } catch (error) {
-            alert(language === 'en' ? 'Payment initiation failed.' : '支付启动失败。');
+            trackEvent(AnalyticsEvents.INITIATE_CHECKOUT);
+            await initiateCheckout(user?.email || '');
+        } catch (error: any) {
+            alert(error.message || (language === 'en' ? 'Payment initiation failed.' : '支付启动失败。'));
         }
     };
 
@@ -341,272 +380,241 @@ const App: React.FC = () => {
 
                 {/* Hero / Upload State */}
                 <AnimatePresence mode="wait">
+                    {/* Upload State */}
                     {state === AppState.IDLE && (
                         <motion.div
-                            key="hero"
+                            key="upload"
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -20 }}
-                            className="flex-1 flex flex-col items-center justify-center px-4"
-                        >
-                            <div className="max-w-3xl w-full text-center space-y-8">
-                                <div className="inline-block mb-4">
-                                    <span className="bg-accent/10 text-accent px-4 py-1.5 rounded-full text-xs font-bold tracking-wider uppercase border border-accent/20">
-                                        {t.slogan}
-                                    </span>
-                                </div>
-
-                                <h1 className="font-display text-5xl md:text-7xl lg:text-8xl font-bold leading-[0.9] tracking-tighter text-ink">
-                                    {language === 'en' ? (
-                                        <>
-                                            ELEVATE YOUR <br />
-                                            <span className="text-accent">CAREER</span>
-                                        </>
-                                    ) : (
-                                        <>
-                                            重塑 <br />
-                                            <span className="text-accent">职业形象</span>
-                                        </>
-                                    )}
-                                </h1>
-                                <p className="font-body text-base md:text-lg text-ink-light max-w-xl mx-auto leading-relaxed">
-                                    {t.upload_desc}
-                                </p>
-
-                                <div className="mt-12 relative group">
-                                    <input
-                                        type="file"
-                                        ref={fileInputRef}
-                                        onChange={handleFileUpload}
-                                        accept="application/pdf"
-                                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20"
-                                    />
-                                    <div className="bg-white border-2 border-ink/10 p-12 md:p-16 rounded-3xl shadow-xl transition-all duration-300 group-hover:shadow-2xl group-hover:scale-[1.01] group-hover:border-accent/50 cursor-pointer relative z-10 flex flex-col items-center justify-center gap-4">
-                                        <div className="w-20 h-20 border-2 border-accent/10 rounded-2xl flex items-center justify-center bg-accent/5 group-hover:bg-accent group-hover:border-accent transition-colors duration-300">
-                                            <Upload className="w-8 h-8 text-accent group-hover:text-white transition-colors" />
-                                        </div>
-                                        <span className="font-display font-bold text-xl text-ink">{t.upload_btn}</span>
-                                        <span className="font-mono text-xs text-ink-light bg-paper px-2 py-1 rounded">MAX 5MB • PDF</span>
                                     </div>
-                                </div>
-
-                                {errorMsg && (
-                                    <motion.div
-                                        initial={{ opacity: 0 }}
-                                        animate={{ opacity: 1 }}
-                                        className="text-red-500 font-mono text-xs flex items-center justify-center gap-2 mt-4 bg-red-50 px-4 py-2 rounded-full"
-                                    >
-                                        <AlertCircle size={14} />
-                                        {errorMsg}
-                                    </motion.div>
-                                )}
-                            </div>
-                        </motion.div>
-                    )}
-
-                    {/* Processing State */}
-                    {state === AppState.ANALYZING && (
-                        <motion.div
-                            key="analyzing"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            className="flex-1 flex flex-col items-center justify-center"
-                        >
-                            <div className="flex flex-col items-center gap-8">
-                                <div className="relative w-24 h-24">
-                                    <motion.div
-                                        className="absolute inset-0 border-4 border-ink/10 rounded-2xl"
-                                    />
-                                    <motion.div
-                                        className="absolute inset-0 border-t-4 border-accent rounded-2xl"
-                                        animate={{ rotate: 360 }}
-                                        transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-                                    />
-                                    <div className="absolute inset-0 flex items-center justify-center">
-                                        <Logo size={40} />
-                                    </div>
-                                </div>
-                                <div className="text-center space-y-2">
-                                    <h2 className="font-display text-3xl font-bold text-ink">{t.analyzing}</h2>
-                                    <p className="font-mono text-sm text-ink-light animate-pulse">{t.analyzing_desc}</p>
-                                </div>
-                            </div>
-                        </motion.div>
-                    )}
-
-                    {/* Error State */}
-                    {state === AppState.ERROR && (
-                        <motion.div
-                            key="error"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            className="flex-1 flex flex-col items-center justify-center"
-                        >
-                            <div className="text-center space-y-6 max-w-md px-4">
-                                <div className="mx-auto w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center text-red-600">
-                                    <AlertCircle size={32} />
-                                </div>
-                                <h2 className="font-display text-2xl font-bold text-ink">{t.error}</h2>
-                                <p className="font-mono text-sm text-ink-light">
-                                    {errorMsg || (language === 'en' ? "Could not process file structure." : "无法解析文件结构。")}
-                                </p>
-                                <button
-                                    onClick={reset}
-                                    className="bg-ink text-white px-8 py-3 rounded-xl font-bold text-sm hover:bg-accent transition-colors flex items-center gap-2 mx-auto shadow-lg"
-                                >
-                                    <RefreshCw size={16} />
-                                    {t.try_again}
-                                </button>
-                            </div>
-                        </motion.div>
-                    )}
-                </AnimatePresence>
-
-                {/* Preview State */}
-                {state === AppState.PREVIEW && resumeData && (
-                    <motion.div
-                        key="preview"
-                        initial={{ opacity: 0, y: 50 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="flex flex-col lg:flex-row gap-8 px-4 md:px-12 max-w-[1800px] mx-auto w-full"
-                    >
-                        {/* Controls Sidebar (Left on Desktop) */}
-                        <div className="lg:w-80 shrink-0 flex flex-col gap-6 order-2 lg:order-1 no-print">
-                            <div className="bg-white border border-ink/10 rounded-3xl p-6 space-y-6 sticky top-24 shadow-xl">
-                                <div>
-                                    <h3 className="font-display font-bold text-xl mb-1 text-ink">{t.action_center}</h3>
-                                    <p className="text-xs text-ink-light font-medium">{t.review_desc}</p>
-                                </div>
-
-                                {/* Category Toggle - Vertical Layout */}
-                                <div className="flex flex-col gap-3">
-                                    <label className="text-[10px] font-bold tracking-widest text-ink-light uppercase flex items-center gap-2">
-                                        <Layout size={12} /> CATEGORY
-                                    </label>
-                                    <div className="flex flex-col gap-2 bg-paper p-2 rounded-xl border border-ink/5">
-                                        <button
-                                            onClick={() => { setCategory('classic'); setTemplate('standard'); }}
-                                            className={`w-full px-4 py-3 text-xs font-bold rounded-lg transition-all flex items-center justify-between group ${category === 'classic' ? 'bg-white shadow-sm text-ink border border-ink/5' : 'text-ink-light hover:text-ink hover:bg-white/50'}`}
-                                        >
-                                            <div className="flex items-center gap-2">
-                                                <Briefcase size={14} className={category === 'classic' ? 'text-accent' : 'text-ink-light'} />
-                                                <span>{t.cat_classic}</span>
-                                            </div>
-                                            {category === 'classic' && <CheckCircle2 size={14} className="text-accent" />}
-                                        </button>
-                                        <button
-                                            onClick={() => {
-                                                if (!user) {
-                                                    setShowAuthModal(true);
-                                                    return;
-                                                }
-                                                setCategory('bento');
-                                                setTemplate('rio');
-                                            }}
-                                            className={`w-full px-4 py-3 text-xs font-bold rounded-lg transition-all flex items-center justify-between group ${category === 'bento' ? 'bg-white shadow-sm text-ink border border-ink/5' : 'text-ink-light hover:text-ink hover:bg-white/50'}`}
-                                        >
-                                            <div className="flex items-center gap-2">
-                                                <Grid size={14} className={category === 'bento' ? 'text-accent' : 'text-ink-light'} />
-                                                <span>{t.cat_bento}</span>
-                                            </div>
-                                            {category === 'bento' && <CheckCircle2 size={14} className="text-accent" />}
-                                        </button>
-                                        <button
-                                            onClick={() => {
-                                                if (!user) {
-                                                    setShowAuthModal(true);
-                                                    return;
-                                                }
-                                                setCategory('gradient');
-                                                setTemplate('aurora');
-                                            }}
-                                            className={`w-full px-4 py-3 text-xs font-bold rounded-lg transition-all flex items-center justify-between group ${category === 'gradient' ? 'bg-white shadow-sm text-ink border border-ink/5' : 'text-ink-light hover:text-ink hover:bg-white/50'}`}
-                                        >
-                                            <div className="flex items-center gap-2">
-                                                <Palette size={14} className={category === 'gradient' ? 'text-accent' : 'text-ink-light'} />
-                                                <span>{t.cat_gradient}</span>
-                                            </div>
-                                            {category === 'gradient' && <CheckCircle2 size={14} className="text-accent" />}
-                                        </button>
-                                    </div>
-                                </div>
-
-                                {/* Template List */}
-                                <div className="space-y-3">
-                                    <label className="text-[10px] font-bold tracking-widest text-ink-light uppercase flex items-center gap-2">
-                                        <Layout size={12} /> {t.template_label}
-                                    </label>
-                                    <div className="grid grid-cols-1 gap-2 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
-                                        {getTemplatesByCategory().map((tid) => (
-                                            <button
-                                                key={tid}
-                                                onClick={() => setTemplate(tid)}
-                                                className={`text-left px-4 py-3 text-sm font-bold rounded-xl border transition-all flex justify-between items-center ${template === tid
-                                                    ? 'bg-blue-50 text-blue-700 border-blue-200 shadow-sm scale-[1.02]'
-                                                    : 'bg-paper text-ink-light border-transparent hover:bg-white hover:border-ink/20 hover:text-ink'
-                                                    }`}
-                                            >
-                                                {t.templates[tid]}
-                                                {template === tid && <div className="w-2 h-2 rounded-full bg-blue-600" />}
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
-
-                                <hr className="border-ink/5" />
-
-                                <div className="space-y-3">
-                                    <button
-                                        onClick={triggerPrint}
-                                        className={`w-full text-white py-4 rounded-xl font-bold tracking-wide transition-all active:scale-[0.98] shadow-lg flex items-center justify-center gap-2 ${isPaid ? 'bg-gradient-to-r from-accent to-indigo-600 hover:shadow-accent/30' : 'bg-accent hover:bg-blue-700 shadow-accent/20'}`}
-                                    >
-                                        {isPaid ? (
-                                            <>
-                                                <Lock size={16} className="opacity-80" />
-                                                {t.save_pdf}
-                                                <span className="bg-white/20 px-2 py-0.5 rounded text-[10px] ml-1">
-                                                    {t.members_only}
-                                                </span>
-                                            </>
-                                        ) : (
-                                            <>
-                                                <Download size={18} />
-                                                {t.save_pdf}
-                                            </>
-                                        )}
-                                    </button>
-
-                                    <button
-                                        onClick={reset}
-                                        className="w-full bg-transparent border border-ink/20 text-ink py-3 rounded-xl font-bold text-xs hover:bg-paper transition-colors"
-                                    >
-                                        {t.create_new}
-                                    </button>
-                                </div>
-
-                                <div className="p-4 bg-blue-50 rounded-xl text-[10px] text-blue-800 leading-relaxed border border-blue-100">
-                                    <p className="font-bold mb-1 flex items-center gap-1"><AlertCircle size={10} /> IMPORTANT:</p>
-                                    {t.print_instr}
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Resume Canvas (Right on Desktop) */}
-                        <div className="flex-1 flex justify-center order-1 lg:order-2 mb-12 lg:mb-0 overflow-visible print:block print:w-full print:h-auto">
-                            <div className="transform origin-top scale-[0.5] sm:scale-[0.6] md:scale-[0.7] lg:scale-[0.8] xl:scale-[0.9] 2xl:scale-100 transition-transform duration-500 print:transform-none print:scale-100 print:w-full">
-                                <ResumeDesign
-                                    data={resumeData}
-                                    template={template}
-                                    language={language}
-                                />
-                            </div>
-                        </div>
-                    </motion.div>
-                )}
-            </main>
         </div>
+
+                                {
+        errorMsg && (
+            <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="text-red-500 font-mono text-xs flex items-center justify-center gap-2 mt-4 bg-red-50 px-4 py-2 rounded-full"
+            >
+                <AlertCircle size={14} />
+                {errorMsg}
+            </motion.div>
+        )
+    }
+                            </div >
+                        </motion.div >
+                    )}
+
+{/* Processing State */ }
+{
+    state === AppState.ANALYZING && (
+        <motion.div
+            key="analyzing"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="flex-1 flex flex-col items-center justify-center"
+        >
+            <div className="flex flex-col items-center gap-8">
+                <div className="relative w-24 h-24">
+                    <motion.div
+                        className="absolute inset-0 border-4 border-ink/10 rounded-2xl"
+                    />
+                    <motion.div
+                        className="absolute inset-0 border-t-4 border-accent rounded-2xl"
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                    />
+                    <div className="absolute inset-0 flex items-center justify-center">
+                        <Logo size={40} />
+                    </div>
+                </div>
+                <div className="text-center space-y-2">
+                    <h2 className="font-display text-3xl font-bold text-ink">{t.analyzing}</h2>
+                    <p className="font-mono text-sm text-ink-light animate-pulse">{t.analyzing_desc}</p>
+                </div>
+            </div>
+        </motion.div>
+    )
+}
+
+{/* Error State */ }
+{
+    state === AppState.ERROR && (
+        <motion.div
+            key="error"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="flex-1 flex flex-col items-center justify-center"
+        >
+            <div className="text-center space-y-6 max-w-md px-4">
+                <div className="mx-auto w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center text-red-600">
+                    <AlertCircle size={32} />
+                </div>
+                <h2 className="font-display text-2xl font-bold text-ink">{t.error}</h2>
+                <p className="font-mono text-sm text-ink-light">
+                    {errorMsg || (language === 'en' ? "Could not process file structure." : "无法解析文件结构。")}
+                </p>
+                <button
+                    onClick={reset}
+                    className="bg-ink text-white px-8 py-3 rounded-xl font-bold text-sm hover:bg-accent transition-colors flex items-center gap-2 mx-auto shadow-lg"
+                >
+                    <RefreshCw size={16} />
+                    {t.try_again}
+                </button>
+            </div>
+        </motion.div>
+    )
+}
+                </AnimatePresence >
+
+    {/* Preview State */ }
+{
+    state === AppState.PREVIEW && resumeData && (
+        <motion.div
+            key="preview"
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex flex-col lg:flex-row gap-8 px-4 md:px-12 max-w-[1800px] mx-auto w-full"
+        >
+            {/* Controls Sidebar (Left on Desktop) */}
+            <div className="lg:w-80 shrink-0 flex flex-col gap-6 order-2 lg:order-1 no-print">
+                <div className="bg-white border border-ink/10 rounded-3xl p-6 space-y-6 sticky top-24 shadow-xl">
+                    <div>
+                        <h3 className="font-display font-bold text-xl mb-1 text-ink">{t.action_center}</h3>
+                        <p className="text-xs text-ink-light font-medium">{t.review_desc}</p>
+                    </div>
+
+                    {/* Category Toggle - Vertical Layout */}
+                    <div className="flex flex-col gap-3">
+                        <label className="text-[10px] font-bold tracking-widest text-ink-light uppercase flex items-center gap-2">
+                            <Layout size={12} /> CATEGORY
+                        </label>
+                        <div className="flex flex-col gap-2 bg-paper p-2 rounded-xl border border-ink/5">
+                            <button
+                                onClick={() => { setCategory('classic'); setTemplate('standard'); }}
+                                className={`w-full px-4 py-3 text-xs font-bold rounded-lg transition-all flex items-center justify-between group ${category === 'classic' ? 'bg-white shadow-sm text-ink border border-ink/5' : 'text-ink-light hover:text-ink hover:bg-white/50'}`}
+                            >
+                                <div className="flex items-center gap-2">
+                                    <Briefcase size={14} className={category === 'classic' ? 'text-accent' : 'text-ink-light'} />
+                                    <span>{t.cat_classic}</span>
+                                </div>
+                                {category === 'classic' && <CheckCircle2 size={14} className="text-accent" />}
+                            </button>
+                            <button
+                                onClick={() => {
+                                    if (!user) {
+                                        setShowAuthModal(true);
+                                        return;
+                                    }
+                                    setCategory('bento');
+                                    setTemplate('rio');
+                                }}
+                                className={`w-full px-4 py-3 text-xs font-bold rounded-lg transition-all flex items-center justify-between group ${category === 'bento' ? 'bg-white shadow-sm text-ink border border-ink/5' : 'text-ink-light hover:text-ink hover:bg-white/50'}`}
+                            >
+                                <div className="flex items-center gap-2">
+                                    <Grid size={14} className={category === 'bento' ? 'text-accent' : 'text-ink-light'} />
+                                    <span>{t.cat_bento}</span>
+                                </div>
+                                {category === 'bento' && <CheckCircle2 size={14} className="text-accent" />}
+                            </button>
+                            <button
+                                onClick={() => {
+                                    if (!user) {
+                                        setShowAuthModal(true);
+                                        return;
+                                    }
+                                    setCategory('gradient');
+                                    setTemplate('aurora');
+                                }}
+                                className={`w-full px-4 py-3 text-xs font-bold rounded-lg transition-all flex items-center justify-between group ${category === 'gradient' ? 'bg-white shadow-sm text-ink border border-ink/5' : 'text-ink-light hover:text-ink hover:bg-white/50'}`}
+                            >
+                                <div className="flex items-center gap-2">
+                                    <Palette size={14} className={category === 'gradient' ? 'text-accent' : 'text-ink-light'} />
+                                    <span>{t.cat_gradient}</span>
+                                </div>
+                                {category === 'gradient' && <CheckCircle2 size={14} className="text-accent" />}
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Template List */}
+                    <div className="space-y-3">
+                        <label className="text-[10px] font-bold tracking-widest text-ink-light uppercase flex items-center gap-2">
+                            <Layout size={12} /> {t.template_label}
+                        </label>
+                        <div className="grid grid-cols-1 gap-2 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+                            {getTemplatesByCategory().map((tid) => (
+                                <button
+                                    key={tid}
+                                    onClick={() => setTemplate(tid)}
+                                    className={`text-left px-4 py-3 text-sm font-bold rounded-xl border transition-all flex justify-between items-center ${template === tid
+                                        ? 'bg-blue-50 text-blue-700 border-blue-200 shadow-sm scale-[1.02]'
+                                        : 'bg-paper text-ink-light border-transparent hover:bg-white hover:border-ink/20 hover:text-ink'
+                                        }`}
+                                >
+                                    {t.templates[tid]}
+                                    {template === tid && <div className="w-2 h-2 rounded-full bg-blue-600" />}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    <hr className="border-ink/5" />
+
+                    <div className="space-y-3">
+                        <button
+                            onClick={triggerPrint}
+                            className={`w-full text-white py-4 rounded-xl font-bold tracking-wide transition-all active:scale-[0.98] shadow-lg flex items-center justify-center gap-2 ${isPaid ? 'bg-gradient-to-r from-accent to-indigo-600 hover:shadow-accent/30' : 'bg-accent hover:bg-blue-700 shadow-accent/20'}`}
+                        >
+                            {isPaid ? (
+                                <>
+                                    <Lock size={16} className="opacity-80" />
+                                    {t.save_pdf}
+                                    <span className="bg-white/20 px-2 py-0.5 rounded text-[10px] ml-1">
+                                        {t.members_only}
+                                    </span>
+                                </>
+                            ) : (
+                                <>
+                                    <Download size={18} />
+                                    {t.save_pdf}
+                                </>
+                            )}
+                        </button>
+
+                        <button
+                            onClick={reset}
+                            className="w-full bg-transparent border border-ink/20 text-ink py-3 rounded-xl font-bold text-xs hover:bg-paper transition-colors"
+                        >
+                            {t.create_new}
+                        </button>
+                    </div>
+
+                    <div className="p-4 bg-blue-50 rounded-xl text-[10px] text-blue-800 leading-relaxed border border-blue-100">
+                        <p className="font-bold mb-1 flex items-center gap-1"><AlertCircle size={10} /> IMPORTANT:</p>
+                        {t.print_instr}
+                    </div>
+                </div>
+            </div>
+
+            {/* Resume Canvas (Right on Desktop) */}
+            <div className="flex-1 flex justify-center order-1 lg:order-2 mb-12 lg:mb-0 overflow-visible print:block print:w-full print:h-auto">
+                <div className="transform origin-top scale-[0.5] sm:scale-[0.6] md:scale-[0.7] lg:scale-[0.8] xl:scale-[0.9] 2xl:scale-100 transition-transform duration-500 print:transform-none print:scale-100 print:w-full">
+                    <ResumeDesign
+                        data={resumeData}
+                        template={template}
+                        language={language}
+                    />
+                </div>
+            </div>
+        </motion.div>
+    )
+}
+            </main >
+        </div >
     );
 };
 
