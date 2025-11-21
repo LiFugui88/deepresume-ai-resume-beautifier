@@ -190,10 +190,10 @@ const App: React.FC = () => {
             const data = await analyzeResume(file);
             setResumeData(data);
             setState(AppState.PREVIEW);
-        } catch (err) {
+        } catch (err: any) {
             console.error(err);
             setState(AppState.ERROR);
-            setErrorMsg(language === 'en' ? "Failed to analyze resume." : "简历解析失败。");
+            setErrorMsg(err.message || (language === 'en' ? "Failed to analyze resume." : "简历解析失败。"));
         }
     };
 

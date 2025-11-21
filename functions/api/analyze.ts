@@ -16,7 +16,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
             return new Response(JSON.stringify({ error: "Server configuration error: Missing API Key" }), { status: 500 });
         }
 
-        const MODEL_NAME = "moonshotai/kimi-k2-thinking";
+        const MODEL_NAME = "google/gemini-2.0-flash-001";
 
         const schema = {
             type: "object",
