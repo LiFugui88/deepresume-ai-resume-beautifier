@@ -144,19 +144,24 @@ const ResumeBuilder: React.FC = () => {
 
     useEffect(() => {
         // Check active session
-        supabase.auth.getSession().then(({ data: { session } }) => {
+        const checkSession = async () => {
+            const { data: { session } } = await supabase.auth.getSession();
+            console.log('Initial session check:', session);
             setUser(session?.user ?? null);
-            // In a real app, check subscription status from DB here
+
             if (session?.user?.user_metadata?.subscription_status === 'active') {
                 setIsPro(true);
             }
             if (session?.user) {
                 checkAdminStatus(session.user.id);
             }
-        });
+        };
+
+        checkSession();
 
         // Listen for changes
         const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+            console.log('Auth state change:', _event, session);
             setUser(session?.user ?? null);
             if (session?.user) {
                 checkAdminStatus(session.user.id);
@@ -176,18 +181,14 @@ const ResumeBuilder: React.FC = () => {
             window.history.replaceState({}, '', window.location.pathname);
         } else if (params.get('upgrade') === 'true') {
             // Auto trigger upgrade flow
-            // We need to wait a bit for user state to settle or just trigger it
-            // If user is not logged in, handleUpgrade will show auth modal
-            // We use a small timeout to ensure component is mounted and user state might be ready (though user state is async)
             setTimeout(() => {
                 handleUpgrade();
-                // Clear URL params to prevent loop if we refresh
                 window.history.replaceState({}, '', window.location.pathname);
             }, 1000);
         }
 
         return () => subscription.unsubscribe();
-    }, [language, user]); // Added user to dependency to retry if user loads late
+    }, [language]); // Removed user dependency to prevent loop, logic handles updates via onAuthStateChange
 
     const checkAdminStatus = async (userId: string) => {
         const { data } = await supabase.from('profiles').select('is_admin').eq('id', userId).single();
@@ -376,7 +377,7 @@ const ResumeBuilder: React.FC = () => {
                     ) : (
                         <div className="flex items-center gap-3">
                             <button
-                                onClick={() => setShowAuthModal(true)}
+                                onClick={() => navigate('/pricing')}
                                 className="hidden md:flex items-center gap-2 font-mono text-xs bg-gradient-to-r from-amber-200 to-yellow-400 text-yellow-900 px-4 py-1.5 rounded-full hover:shadow-lg hover:scale-105 transition-all uppercase font-bold"
                             >
                                 <Lock size={12} />
