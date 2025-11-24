@@ -123,3 +123,61 @@ export const TermsOfServiceModal: React.FC<{ isOpen: boolean; onClose: () => voi
         <p>If you have any questions about these Terms, please contact us at support@deepresume.ai.</p>
     </Modal>
 );
+
+export const RefundPolicyModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpen, onClose }) => (
+    <Modal isOpen={isOpen} onClose={onClose} title="Refund Policy">
+        <p><strong>Last Updated: November 2025</strong></p>
+        <p>At DeepResume, we strive to provide the best AI-powered resume beautification service. However, we understand that things may not always go as planned.</p>
+
+        <h3 className="text-lg font-bold text-gray-900 mt-4">1. Refund Eligibility</h3>
+        <p>We offer refunds under the following circumstances:</p>
+        <ul className="list-disc pl-5 space-y-1">
+            <li><strong>Technical Issues:</strong> If you are unable to use the service due to a technical error on our end that we cannot resolve within a reasonable timeframe.</li>
+            <li><strong>Accidental Duplicate Purchase:</strong> If you were charged twice for the same service.</li>
+        </ul>
+
+        <h3 className="text-lg font-bold text-gray-900 mt-4">2. Non-Refundable Circumstances</h3>
+        <p>Refunds are generally not granted for:</p>
+        <ul className="list-disc pl-5 space-y-1">
+            <li><strong>Change of Mind:</strong> If you decide you no longer need the service after purchase.</li>
+            <li><strong>Dissatisfaction with Design:</strong> Since you can preview designs before purchase (or use free versions), we do not refund based on style preference alone.</li>
+        </ul>
+
+        <h3 className="text-lg font-bold text-gray-900 mt-4">3. How to Request a Refund</h3>
+        <p>To request a refund, please contact our support team at support@deepresume.ai with your order details and the reason for your request. We will review your request and respond within 3-5 business days.</p>
+    </Modal>
+);
+
+export const ContactUsModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpen, onClose }) => (
+    <Modal isOpen={isOpen} onClose={onClose} title="Contact Us">
+        <p>We're here to help! If you have any questions, concerns, or feedback, please don't hesitate to reach out.</p>
+
+        <div className="mt-6 space-y-6">
+            <div className="flex items-start gap-4">
+                <div className="p-3 bg-blue-50 rounded-lg text-blue-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="16" x="2" y="4" rx="2" /><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" /></svg>
+                </div>
+                <div>
+                    <h3 className="font-bold text-gray-900">Email Support</h3>
+                    <p className="text-sm text-gray-600 mb-1">For general inquiries and support:</p>
+                    <a href="mailto:support@deepresume.ai" className="text-blue-600 hover:underline font-medium">support@deepresume.ai</a>
+                </div>
+            </div>
+
+            <div className="flex items-start gap-4">
+                <div className="p-3 bg-blue-50 rounded-lg text-blue-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" /><circle cx="12" cy="10" r="3" /></svg>
+                </div>
+                <div>
+                    <h3 className="font-bold text-gray-900">Mailing Address</h3>
+                    <p className="text-sm text-gray-600">
+                        DeepResume Inc.<br />
+                        123 AI Boulevard, Tech District<br />
+                        San Francisco, CA 94105<br />
+                        United States
+                    </p>
+                </div>
+            </div>
+        </div>
+    </Modal>
+);

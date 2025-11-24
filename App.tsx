@@ -104,7 +104,7 @@ type Category = 'classic' | 'bento' | 'gradient';
 
 import { AdminPanel } from './components/AdminPanel';
 import { ManualEntryForm } from './components/ManualEntryForm';
-import { PrivacyPolicyModal, TermsOfServiceModal } from './components/LegalModals';
+import { PrivacyPolicyModal, TermsOfServiceModal, RefundPolicyModal, ContactUsModal } from './components/LegalModals';
 
 import { initiateCheckout } from './services/creemService';
 import { trackEvent, AnalyticsEvents } from './services/analytics';
@@ -129,6 +129,8 @@ const App: React.FC = () => {
     // Legal Modals State
     const [showPrivacy, setShowPrivacy] = useState(false);
     const [showTerms, setShowTerms] = useState(false);
+    const [showRefund, setShowRefund] = useState(false);
+    const [showContact, setShowContact] = useState(false);
 
     const [showAdmin, setShowAdmin] = useState(false);
     const [isAdmin, setIsAdmin] = useState(false);
@@ -695,9 +697,11 @@ const App: React.FC = () => {
                 }
                 {/* Footer */}
                 <footer className="py-8 text-center text-ink-light/40 text-[10px] font-mono uppercase tracking-widest print:hidden">
-                    <div className="flex justify-center gap-6 mb-2">
+                    <div className="flex flex-wrap justify-center gap-6 mb-4 px-4">
                         <button onClick={() => setShowPrivacy(true)} className="hover:text-ink-light transition-colors">Privacy Policy</button>
                         <button onClick={() => setShowTerms(true)} className="hover:text-ink-light transition-colors">Terms of Service</button>
+                        <button onClick={() => setShowRefund(true)} className="hover:text-ink-light transition-colors">Refund Policy</button>
+                        <button onClick={() => setShowContact(true)} className="hover:text-ink-light transition-colors">Contact Us</button>
                     </div>
                     <p>© 2025 DeepResume AI. All rights reserved.</p>
                 </footer>
@@ -718,6 +722,16 @@ const App: React.FC = () => {
             <TermsOfServiceModal
                 isOpen={showTerms}
                 onClose={() => setShowTerms(false)}
+            />
+
+            <RefundPolicyModal
+                isOpen={showRefund}
+                onClose={() => setShowRefund(false)}
+            />
+
+            <ContactUsModal
+                isOpen={showContact}
+                onClose={() => setShowContact(false)}
             />
         </div >
     );
