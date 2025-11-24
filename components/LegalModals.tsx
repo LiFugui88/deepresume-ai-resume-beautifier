@@ -89,7 +89,7 @@ export const PrivacyPolicyModal: React.FC<{ isOpen: boolean; onClose: () => void
         <p>Depending on your location, you may have the right to access, correct, delete, or restrict the use of your personal information. Contact us to exercise these rights.</p>
 
         <h3 className="text-lg font-bold text-gray-900 mt-4">6. Contact Us</h3>
-        <p>If you have any questions about this Privacy Policy, please contact us at support@deepresume.ai.</p>
+        <p>If you have any questions about this Privacy Policy, please contact us at deepresume@deep-resume.xyz.</p>
     </Modal>
 );
 
@@ -120,7 +120,7 @@ export const TermsOfServiceModal: React.FC<{ isOpen: boolean; onClose: () => voi
         <p>We reserve the right to modify these Terms at any time. We will notify you of any changes by posting the new Terms on this page.</p>
 
         <h3 className="text-lg font-bold text-gray-900 mt-4">8. Contact Us</h3>
-        <p>If you have any questions about these Terms, please contact us at support@deepresume.ai.</p>
+        <p>If you have any questions about these Terms, please contact us at deepresume@deep-resume.xyz.</p>
     </Modal>
 );
 
@@ -144,7 +144,7 @@ export const RefundPolicyModal: React.FC<{ isOpen: boolean; onClose: () => void 
         </ul>
 
         <h3 className="text-lg font-bold text-gray-900 mt-4">3. How to Request a Refund</h3>
-        <p>To request a refund, please contact our support team at support@deepresume.ai with your order details and the reason for your request. We will review your request and respond within 3-5 business days.</p>
+        <p>To request a refund, please contact our support team at deepresume@deep-resume.xyz with your order details and the reason for your request. We will review your request and respond within 3-5 business days.</p>
     </Modal>
 );
 
@@ -160,7 +160,7 @@ export const ContactUsModal: React.FC<{ isOpen: boolean; onClose: () => void }> 
                 <div>
                     <h3 className="font-bold text-gray-900">Email Support</h3>
                     <p className="text-sm text-gray-600 mb-1">For general inquiries and support:</p>
-                    <a href="mailto:support@deepresume.ai" className="text-blue-600 hover:underline font-medium">support@deepresume.ai</a>
+                    <a href="mailto:deepresume@deep-resume.xyz" className="text-blue-600 hover:underline font-medium">deepresume@deep-resume.xyz</a>
                 </div>
             </div>
 
@@ -172,9 +172,9 @@ export const ContactUsModal: React.FC<{ isOpen: boolean; onClose: () => void }> 
                     <h3 className="font-bold text-gray-900">Mailing Address</h3>
                     <p className="text-sm text-gray-600">
                         DeepResume Inc.<br />
-                        123 AI Boulevard, Tech District<br />
-                        San Francisco, CA 94105<br />
-                        United States
+                        Room 1101, Unit 4, Building 6, Shanyu Fengming Mansion<br />
+                        Yuhang Sub-district, Yuhang District, Hangzhou City<br />
+                        Zhejiang Province, P.R. China
                     </p>
                 </div>
             </div>
