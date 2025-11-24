@@ -2,6 +2,7 @@ import React from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import ResumeBuilder from './components/ResumeBuilder';
 import { Pricing } from './components/Pricing';
+import { PrivacyPage, TermsPage, RefundPage } from './components/LegalPages';
 import { useEffect } from 'react';
 
 const App: React.FC = () => {
@@ -16,6 +17,9 @@ const App: React.FC = () => {
         <Routes>
             <Route path="/" element={<ResumeBuilder />} />
             <Route path="/pricing" element={<Pricing />} />
+            <Route path="/privacy" element={<PrivacyPage />} />
+            <Route path="/terms" element={<TermsPage />} />
+            <Route path="/refund" element={<RefundPage />} />
         </Routes>
     );
 };

@@ -708,9 +708,9 @@ const ResumeBuilder: React.FC = () => {
                 {/* Footer */}
                 <footer className="py-8 text-center text-ink-light/40 text-[10px] font-mono uppercase tracking-widest print:hidden">
                     <div className="flex flex-wrap justify-center gap-6 mb-4 px-4">
-                        <button onClick={() => setShowPrivacy(true)} className="hover:text-ink-light transition-colors">Privacy Policy</button>
-                        <button onClick={() => setShowTerms(true)} className="hover:text-ink-light transition-colors">Terms of Service</button>
-                        <button onClick={() => setShowRefund(true)} className="hover:text-ink-light transition-colors">Refund Policy</button>
+                        <a href="/privacy" className="hover:text-ink-light transition-colors">Privacy Policy</a>
+                        <a href="/terms" className="hover:text-ink-light transition-colors">Terms of Service</a>
+                        <a href="/refund" className="hover:text-ink-light transition-colors">Refund Policy</a>
                         <button onClick={() => setShowContact(true)} className="hover:text-ink-light transition-colors">Contact Us</button>
                     </div>
                     <p>© 2025 DeepResume AI. All rights reserved.</p>
