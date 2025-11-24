@@ -113,13 +113,13 @@ export const Pricing: React.FC = () => {
                                     </div>
                                 </div>
 
-                                <Link
-                                    to="/?upgrade=true"
-                                    className="w-full bg-gradient-to-r from-accent to-purple-600 text-white py-4 rounded-xl font-bold text-lg shadow-lg shadow-accent/20 hover:shadow-accent/40 hover:scale-[1.02] transition-all flex items-center justify-center gap-2"
+                                <button
+                                    onClick={() => alert("Payment system is currently undergoing scheduled maintenance/upgrades. Please check back later.")}
+                                    className="w-full bg-gray-400 text-white py-4 rounded-xl font-bold text-lg cursor-not-allowed flex items-center justify-center gap-2"
                                 >
                                     <Zap size={20} />
-                                    Get Lifetime Access
-                                </Link>
+                                    Upgrading Payment System...
+                                </button>
 
                                 <p className="text-xs text-ink-light/60">
                                     Secure payment via Stripe/Creem. 30-day money-back guarantee.

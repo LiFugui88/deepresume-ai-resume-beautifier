@@ -257,6 +257,9 @@ const ResumeBuilder: React.FC = () => {
     };
 
     const handleUpgrade = async () => {
+        alert(language === 'en' ? "Payment system is currently undergoing scheduled maintenance. Please check back later." : "支付系统正在进行维护升级，请稍后再试。");
+        return;
+        /*
         if (!user) {
             setShowAuthModal(true);
             return;
@@ -267,6 +270,7 @@ const ResumeBuilder: React.FC = () => {
         } catch (error: any) {
             alert(error.message || (language === 'en' ? 'Payment initiation failed.' : '支付启动失败。'));
         }
+        */
     };
 
     const triggerPrint = () => {
