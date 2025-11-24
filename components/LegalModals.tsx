@@ -96,7 +96,7 @@ export const PrivacyPolicyModal: React.FC<{ isOpen: boolean; onClose: () => void
 export const TermsOfServiceModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpen, onClose }) => (
     <Modal isOpen={isOpen} onClose={onClose} title="Terms of Service">
         <p><strong>Last Updated: November 2025</strong></p>
-        <p>Please read these Terms of Service ("Terms") carefully before using DeepResume.</p>
+        <p>Please read these Terms of Service ("Terms") carefully before using DeepResume, operated by <strong>DeepResume Inc.</strong> ("us", "we", or "our").</p>
 
         <h3 className="text-lg font-bold text-gray-900 mt-4">1. Acceptance of Terms</h3>
         <p>By accessing or using our services, you agree to be bound by these Terms. If you do not agree to these Terms, you may not use our services.</p>
@@ -127,24 +127,15 @@ export const TermsOfServiceModal: React.FC<{ isOpen: boolean; onClose: () => voi
 export const RefundPolicyModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpen, onClose }) => (
     <Modal isOpen={isOpen} onClose={onClose} title="Refund Policy">
         <p><strong>Last Updated: November 2025</strong></p>
-        <p>At DeepResume, we strive to provide the best AI-powered resume beautification service. However, we understand that things may not always go as planned.</p>
+        <p>At DeepResume Inc., we are committed to ensuring your satisfaction with our AI-powered resume beautification service.</p>
 
-        <h3 className="text-lg font-bold text-gray-900 mt-4">1. Refund Eligibility</h3>
-        <p>We offer refunds under the following circumstances:</p>
-        <ul className="list-disc pl-5 space-y-1">
-            <li><strong>Technical Issues:</strong> If you are unable to use the service due to a technical error on our end that we cannot resolve within a reasonable timeframe.</li>
-            <li><strong>Accidental Duplicate Purchase:</strong> If you were charged twice for the same service.</li>
-        </ul>
+        <h3 className="text-lg font-bold text-gray-900 mt-4">30-Day Money-Back Guarantee</h3>
+        <p>We offer a full, no-questions-asked refund within <strong>30 days</strong> of your purchase.</p>
+        <p className="mt-2">If you are not completely satisfied with our service for any reason, simply contact us within 30 days of your order to request a full refund.</p>
 
-        <h3 className="text-lg font-bold text-gray-900 mt-4">2. Non-Refundable Circumstances</h3>
-        <p>Refunds are generally not granted for:</p>
-        <ul className="list-disc pl-5 space-y-1">
-            <li><strong>Change of Mind:</strong> If you decide you no longer need the service after purchase.</li>
-            <li><strong>Dissatisfaction with Design:</strong> Since you can preview designs before purchase (or use free versions), we do not refund based on style preference alone.</li>
-        </ul>
-
-        <h3 className="text-lg font-bold text-gray-900 mt-4">3. How to Request a Refund</h3>
-        <p>To request a refund, please contact our support team at deepresume@deep-resume.xyz with your order details and the reason for your request. We will review your request and respond within 3-5 business days.</p>
+        <h3 className="text-lg font-bold text-gray-900 mt-4">How to Request a Refund</h3>
+        <p>To initiate a refund, please contact our support team at <a href="mailto:deepresume@deep-resume.xyz" className="text-blue-600 hover:underline">deepresume@deep-resume.xyz</a> with your order details.</p>
+        <p className="mt-2">We will process your refund request within 3-5 business days. The refund will be issued to the original payment method used during the purchase.</p>
     </Modal>
 );
 
