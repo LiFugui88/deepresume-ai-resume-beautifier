@@ -113,6 +113,7 @@ const App: React.FC = () => {
     const [state, setState] = useState<AppState>(AppState.IDLE);
     const [inputMode, setInputMode] = useState<'upload' | 'manual'>('upload');
     const [resumeData, setResumeData] = useState<ResumeData | null>(null);
+    const [fileName, setFileName] = useState<string>('');
     const [errorMsg, setErrorMsg] = useState<string>('');
     const [template, setTemplate] = useState<TemplateId>('standard');
     const [category, setCategory] = useState<'classic' | 'bento' | 'gradient'>('classic');
@@ -120,6 +121,10 @@ const App: React.FC = () => {
     const [showAuthModal, setShowAuthModal] = useState(false);
     const [user, setUser] = useState<SupabaseUser | null>(null);
     const [isPaid, setIsPaid] = useState(false);
+    // Alias isPaid to isPro for compatibility if needed, or just use isPaid. 
+    // The previous code used isPro, let's keep it consistent or update usages.
+    // Since I see isPro used in useEffect, I will add it back.
+    const [isPro, setIsPro] = useState(false);
 
     // Legal Modals State
     const [showPrivacy, setShowPrivacy] = useState(false);
@@ -129,6 +134,7 @@ const App: React.FC = () => {
     const [isAdmin, setIsAdmin] = useState(false);
 
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const resumeRef = useRef<HTMLDivElement>(null);
     const t = UI_TEXT[language];
 
     useEffect(() => {
