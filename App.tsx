@@ -104,6 +104,7 @@ type Category = 'classic' | 'bento' | 'gradient';
 
 import { AdminPanel } from './components/AdminPanel';
 import { ManualEntryForm } from './components/ManualEntryForm';
+import { PrivacyPolicyModal, TermsOfServiceModal } from './components/LegalModals';
 
 import { initiateCheckout } from './services/creemService';
 import { trackEvent, AnalyticsEvents } from './services/analytics';
@@ -112,16 +113,18 @@ const App: React.FC = () => {
     const [state, setState] = useState<AppState>(AppState.IDLE);
     const [inputMode, setInputMode] = useState<'upload' | 'manual'>('upload');
     const [resumeData, setResumeData] = useState<ResumeData | null>(null);
-    const [fileName, setFileName] = useState<string>('');
     const [errorMsg, setErrorMsg] = useState<string>('');
-    const [language, setLanguage] = useState<Language>('zh');
-    const [category, setCategory] = useState<string>('classic');
-    const [template, setTemplate] = useState<string>('standard');
-
-    // Auth State
-    const [user, setUser] = useState<SupabaseUser | null>(null);
-    const [isPro, setIsPro] = useState(false);
+    const [template, setTemplate] = useState<TemplateId>('standard');
+    const [category, setCategory] = useState<'classic' | 'bento' | 'gradient'>('classic');
+    const [language, setLanguage] = useState<Language>('en');
     const [showAuthModal, setShowAuthModal] = useState(false);
+    const [user, setUser] = useState<SupabaseUser | null>(null);
+    const [isPaid, setIsPaid] = useState(false);
+
+    // Legal Modals State
+    const [showPrivacy, setShowPrivacy] = useState(false);
+    const [showTerms, setShowTerms] = useState(false);
+
     const [showAdmin, setShowAdmin] = useState(false);
     const [isAdmin, setIsAdmin] = useState(false);
 
@@ -677,13 +680,41 @@ const App: React.FC = () => {
                                         data={resumeData}
                                         template={template}
                                         language={language}
+                                        ref={resumeRef}
                                     />
                                 </div>
                             </div>
                         </motion.div>
                     )
                 }
-            </main >
+            </AnimatePresence >
+
+            {/* Footer */}
+            <footer className="py-8 text-center text-ink-light/40 text-[10px] font-mono uppercase tracking-widest print:hidden">
+                <div className="flex justify-center gap-6 mb-2">
+                    <button onClick={() => setShowPrivacy(true)} className="hover:text-ink-light transition-colors">Privacy Policy</button>
+                    <button onClick={() => setShowTerms(true)} className="hover:text-ink-light transition-colors">Terms of Service</button>
+                </div>
+                <p>© 2025 DeepResume AI. All rights reserved.</p>
+            </footer>
+
+            </main>
+
+            <AuthModal
+                isOpen={showAuthModal}
+                onClose={() => setShowAuthModal(false)}
+                language={language}
+            />
+
+            <PrivacyPolicyModal
+                isOpen={showPrivacy}
+                onClose={() => setShowPrivacy(false)}
+            />
+
+            <TermsOfServiceModal
+                isOpen={showTerms}
+                onClose={() => setShowTerms(false)}
+            />
         </div >
     );
 };
