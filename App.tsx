@@ -693,16 +693,14 @@ const App: React.FC = () => {
                         </motion.div>
                     )
                 }
-            </AnimatePresence >
-
-            {/* Footer */}
-            <footer className="py-8 text-center text-ink-light/40 text-[10px] font-mono uppercase tracking-widest print:hidden">
-                <div className="flex justify-center gap-6 mb-2">
-                    <button onClick={() => setShowPrivacy(true)} className="hover:text-ink-light transition-colors">Privacy Policy</button>
-                    <button onClick={() => setShowTerms(true)} className="hover:text-ink-light transition-colors">Terms of Service</button>
-                </div>
-                <p>© 2025 DeepResume AI. All rights reserved.</p>
-            </footer>
+                {/* Footer */}
+                <footer className="py-8 text-center text-ink-light/40 text-[10px] font-mono uppercase tracking-widest print:hidden">
+                    <div className="flex justify-center gap-6 mb-2">
+                        <button onClick={() => setShowPrivacy(true)} className="hover:text-ink-light transition-colors">Privacy Policy</button>
+                        <button onClick={() => setShowTerms(true)} className="hover:text-ink-light transition-colors">Terms of Service</button>
+                    </div>
+                    <p>© 2025 DeepResume AI. All rights reserved.</p>
+                </footer>
 
             </main>
 
