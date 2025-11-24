@@ -120,7 +120,7 @@ const App: React.FC = () => {
     const [language, setLanguage] = useState<Language>('en');
     const [showAuthModal, setShowAuthModal] = useState(false);
     const [user, setUser] = useState<SupabaseUser | null>(null);
-    const [isPaid, setIsPaid] = useState(false);
+
     // Alias isPaid to isPro for compatibility if needed, or just use isPaid. 
     // The previous code used isPro, let's keep it consistent or update usages.
     // Since I see isPro used in useEffect, I will add it back.
