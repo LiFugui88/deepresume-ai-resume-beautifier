@@ -109,7 +109,10 @@ import { PrivacyPolicyModal, TermsOfServiceModal, RefundPolicyModal, ContactUsMo
 import { initiateCheckout } from '../services/creemService';
 import { trackEvent, AnalyticsEvents } from '../services/analytics';
 
+import { useNavigate } from 'react-router-dom';
+
 const ResumeBuilder: React.FC = () => {
+    const navigate = useNavigate();
     const [state, setState] = useState<AppState>(AppState.IDLE);
     const [inputMode, setInputMode] = useState<'upload' | 'manual'>('upload');
     const [resumeData, setResumeData] = useState<ResumeData | null>(null);
@@ -256,21 +259,11 @@ const ResumeBuilder: React.FC = () => {
         }
     };
 
-    const handleUpgrade = async () => {
-        alert(language === 'en' ? "Payment system is currently undergoing scheduled maintenance. Please check back later." : "支付系统正在进行维护升级，请稍后再试。");
-        return;
-        /*
-        if (!user) {
-            setShowAuthModal(true);
-            return;
-        }
-        try {
-            trackEvent(AnalyticsEvents.INITIATE_CHECKOUT);
-            await initiateCheckout(user?.email || '');
-        } catch (error: any) {
-            alert(error.message || (language === 'en' ? 'Payment initiation failed.' : '支付启动失败。'));
-        }
-        */
+    const handleUpgrade = () => {
+        // Navigate to the standalone pricing page instead of triggering checkout directly
+        // This allows users to see the benefits before purchasing
+        // The pricing page will handle the actual checkout trigger (or maintenance alert)
+        navigate('/pricing');
     };
 
     const triggerPrint = () => {
