@@ -23,8 +23,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
             body: JSON.stringify({
                 product_id: productId,
                 customer_email: email || undefined,
-                success_url: "https://deepresume.ai", // Ideally this should be dynamic or configured
-                cancel_url: "https://deepresume.ai"
+                success_url: "https://deep-resume.xyz?payment=success",
+                cancel_url: "https://deep-resume.xyz?payment=cancelled"
             })
         });
 
