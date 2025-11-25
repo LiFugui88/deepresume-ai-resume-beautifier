@@ -26,7 +26,7 @@ const UI_TEXT = {
         action_center: "DESIGN STUDIO",
         review_desc: "Select a style to match your personal brand.",
         template_label: "STYLE COLLECTION",
-        save_pdf: "DOWNLOAD PDF",
+        save_pdf: "DOWNLOAD",
         create_new: "START OVER",
         print_instr: "PRINT SETTINGS: Save as PDF • Background Graphics: ON • Margins: None",
         cat_classic: "Classic Series (Free)",
@@ -663,16 +663,16 @@ const ResumeBuilder: React.FC = () => {
                                     <div className="space-y-3">
                                         <button
                                             onClick={triggerPrint}
-                                            className={`w-full text-white py-4 rounded-xl font-bold tracking-wide transition-all active:scale-[0.98] shadow-lg flex items-center justify-center gap-2 ${isPaid ? 'bg-gradient-to-r from-yellow-400 via-orange-500 to-blue-600 hover:shadow-orange-500/40' : 'bg-accent hover:bg-blue-700 shadow-accent/20'}`}
+                                            className={`w-full text-white py-4 rounded-xl font-bold transition-all active:scale-[0.98] shadow-lg flex items-center justify-center gap-2 ${isPaid ? 'bg-gradient-to-r from-yellow-400 via-orange-500 to-blue-600 hover:shadow-orange-500/40 text-sm' : 'bg-accent hover:bg-blue-700 shadow-accent/20'}`}
                                         >
                                             {isPaid ? (
-                                                <>
-                                                    <Lock size={16} className="opacity-80" />
-                                                    {t.save_pdf}
-                                                    <span className="bg-white/20 px-2 py-0.5 rounded text-[10px] ml-1">
+                                                <div className="flex items-center justify-center gap-1.5">
+                                                    <Lock size={14} className="opacity-80 shrink-0" />
+                                                    <span className="whitespace-nowrap">{t.save_pdf}</span>
+                                                    <span className="bg-white/20 px-1.5 py-0.5 rounded text-[9px] shrink-0">
                                                         {t.members_only}
                                                     </span>
-                                                </>
+                                                </div>
                                             ) : (
                                                 <>
                                                     <Download size={18} />
