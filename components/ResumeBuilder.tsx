@@ -280,18 +280,31 @@ const ResumeBuilder: React.FC = () => {
         if (!resumeRef.current) return;
 
         try {
-            // Show loading state
-            const originalContent = resumeRef.current;
+            const element = resumeRef.current;
 
-            // Set a fixed width for better quality (A4 ratio: 210mm x 297mm)
-            const canvas = await html2canvas(originalContent, {
-                scale: 2, // Higher quality
+            // Get the parent container with transform scale
+            const parent = element.parentElement;
+            if (!parent) return;
+
+            // Temporarily remove the scale transform to get true size
+            const originalTransform = parent.style.transform;
+            parent.style.transform = 'none';
+
+            // Wait for layout to settle
+            await new Promise(resolve => setTimeout(resolve, 100));
+
+            // Capture with html2canvas at actual size
+            const canvas = await html2canvas(element, {
+                scale: 2, // High quality (2x resolution)
                 useCORS: true,
                 logging: false,
                 backgroundColor: '#ffffff',
-                windowWidth: 794, // A4 width in pixels at 96 DPI
-                windowHeight: 1123, // A4 height in pixels at 96 DPI
+                windowWidth: element.scrollWidth,
+                windowHeight: element.scrollHeight,
             });
+
+            // Restore original transform
+            parent.style.transform = originalTransform;
 
             const imgData = canvas.toDataURL('image/png');
 
@@ -299,13 +312,13 @@ const ResumeBuilder: React.FC = () => {
             const pdfWidth = 210;
             const pdfHeight = 297;
 
-            // Calculate the image dimensions to fit in PDF
+            // Calculate scaling to fit A4 width
             const imgWidth = pdfWidth;
             const imgHeight = (canvas.height * pdfWidth) / canvas.width;
 
             // Create PDF
             const pdf = new jsPDF({
-                orientation: imgHeight > pdfHeight ? 'portrait' : 'portrait',
+                orientation: 'portrait',
                 unit: 'mm',
                 format: 'a4',
             });
@@ -325,8 +338,9 @@ const ResumeBuilder: React.FC = () => {
                 heightLeft -= pdfHeight;
             }
 
-            // Download the PDF
-            const fileName = `resume-${new Date().getTime()}.pdf`;
+            // Download the PDF with timestamp
+            const timestamp = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+            const fileName = `DeepResume-${timestamp}.pdf`;
             pdf.save(fileName);
         } catch (error) {
             console.error('Error generating PDF:', error);
