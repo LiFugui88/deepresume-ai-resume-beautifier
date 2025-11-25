@@ -144,7 +144,6 @@ const ResumeBuilder: React.FC = () => {
 
     const fileInputRef = useRef<HTMLInputElement>(null);
     const resumeRef = useRef<HTMLDivElement>(null);
-    const pdfRef = useRef<HTMLDivElement>(null);
     const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
     const t = UI_TEXT[language];
 
@@ -279,7 +278,7 @@ const ResumeBuilder: React.FC = () => {
             return;
         }
 
-        if (!pdfRef.current) return;
+        if (!resumeRef.current) return;
 
         setIsGeneratingPDF(true);
 
@@ -287,38 +286,24 @@ const ResumeBuilder: React.FC = () => {
             // Wait for all fonts to load
             await document.fonts.ready;
 
-            // Get the PDF container
-            const pdfContainer = pdfRef.current.parentElement as HTMLElement;
-
-            // Create a unique ID for the print target
+            // Give the resume a unique ID for print targeting
             const printId = 'resume-print-target';
-            pdfRef.current.id = printId;
-
-            // Store original container styles
-            const originalPosition = pdfContainer.style.position;
-            const originalLeft = pdfContainer.style.left;
-            const originalTop = pdfContainer.style.top;
-            const originalZIndex = pdfContainer.style.zIndex;
-
-            // Move container to print position
-            pdfContainer.style.position = 'fixed';
-            pdfContainer.style.left = '0';
-            pdfContainer.style.top = '0';
-            pdfContainer.style.zIndex = '99999';
+            resumeRef.current.id = printId;
 
             // Create print-only stylesheet
             const printStyle = document.createElement('style');
             printStyle.id = 'resume-print-style';
             printStyle.textContent = `
                 @media print {
-                    /* Hide everything */
+                    /* Hide everything first */
                     body * {
                         visibility: hidden !important;
                     }
-                    /* Show only the resume */
+                    /* Show only the resume and its children */
                     #${printId}, #${printId} * {
                         visibility: visible !important;
                     }
+                    /* Position the resume for printing */
                     #${printId} {
                         position: fixed !important;
                         left: 0 !important;
@@ -327,8 +312,10 @@ const ResumeBuilder: React.FC = () => {
                         min-height: 297mm !important;
                         margin: 0 !important;
                         padding: 0 !important;
+                        transform: none !important;
                         background: white !important;
                     }
+                    /* A4 page setup */
                     @page {
                         size: A4;
                         margin: 0;
@@ -349,16 +336,9 @@ const ResumeBuilder: React.FC = () => {
             // Trigger print
             window.print();
 
-            // Cleanup after print dialog (use setTimeout as print is blocking)
+            // Cleanup after print dialog
             setTimeout(() => {
-                // Restore container styles
-                pdfContainer.style.position = originalPosition;
-                pdfContainer.style.left = originalLeft;
-                pdfContainer.style.top = originalTop;
-                pdfContainer.style.zIndex = originalZIndex;
-
-                // Remove print styles and ID
-                pdfRef.current?.removeAttribute('id');
+                resumeRef.current?.removeAttribute('id');
                 document.getElementById('resume-print-style')?.remove();
             }, 100);
 
@@ -820,29 +800,6 @@ const ResumeBuilder: React.FC = () => {
                 </footer>
 
             </main>
-
-            {/* Hidden PDF Container - Full A4 Size */}
-            {state === AppState.PREVIEW && resumeData && (
-                <div
-                    style={{
-                        position: 'absolute',
-                        left: '-9999px',
-                        top: 0,
-                        width: '210mm',
-                        minHeight: '297mm',
-                        opacity: 1,
-                        pointerEvents: 'none',
-                        zIndex: -1,
-                    }}
-                >
-                    <ResumeDesign
-                        data={resumeData}
-                        template={template}
-                        language={language}
-                        ref={pdfRef}
-                    />
-                </div>
-            )}
 
             <AuthModal
                 isOpen={showAuthModal}
