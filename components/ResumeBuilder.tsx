@@ -282,12 +282,24 @@ const ResumeBuilder: React.FC = () => {
         if (!pdfRef.current) return;
 
         setIsGeneratingPDF(true);
+        const container = pdfRef.current.parentElement as HTMLElement;
+
         try {
             // Wait for all fonts to load
             await document.fonts.ready;
             await new Promise(resolve => setTimeout(resolve, 300));
 
-            // Capture the hidden PDF container directly (no cloning needed)
+            // Temporarily move container to visible area for accurate rendering
+            container.style.position = 'fixed';
+            container.style.left = '0';
+            container.style.top = '0';
+            container.style.zIndex = '9999';
+            container.style.opacity = '0';  // Invisible but rendered
+
+            // Small delay to ensure layout is calculated
+            await new Promise(resolve => setTimeout(resolve, 100));
+
+            // Capture the PDF container
             const canvas = await html2canvas(pdfRef.current, {
                 scale: 2,  // 2x for high quality
                 useCORS: true,
@@ -295,6 +307,13 @@ const ResumeBuilder: React.FC = () => {
                 backgroundColor: '#ffffff',
                 logging: false,
             });
+
+            // Move container back offscreen
+            container.style.position = 'absolute';
+            container.style.left = '-9999px';
+            container.style.top = '0';
+            container.style.zIndex = '-1';
+            container.style.opacity = '1';
 
             // Convert to image
             const imgData = canvas.toDataURL('image/png', 1.0);
@@ -329,6 +348,12 @@ const ResumeBuilder: React.FC = () => {
 
         } catch (error) {
             console.error('Error generating PDF:', error);
+            // Restore container position on error
+            container.style.position = 'absolute';
+            container.style.left = '-9999px';
+            container.style.top = '0';
+            container.style.zIndex = '-1';
+            container.style.opacity = '1';
             alert(language === 'en' ? 'Failed to generate PDF. Please try again.' : '生成PDF失败，请重试。');
         } finally {
             setIsGeneratingPDF(false);
