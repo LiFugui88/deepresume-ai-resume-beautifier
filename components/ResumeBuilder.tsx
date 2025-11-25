@@ -286,116 +286,73 @@ const ResumeBuilder: React.FC = () => {
         try {
             // Wait for all fonts to load
             await document.fonts.ready;
-            await new Promise(resolve => setTimeout(resolve, 300));
+            await new Promise(resolve => setTimeout(resolve, 100));
 
-            // Create a hidden iframe for printing
-            const iframe = document.createElement('iframe');
-            iframe.style.position = 'fixed';
-            iframe.style.right = '0';
-            iframe.style.bottom = '0';
-            iframe.style.width = '0';
-            iframe.style.height = '0';
-            iframe.style.border = 'none';
-            document.body.appendChild(iframe);
+            // Get the PDF container's parent
+            const pdfContainer = pdfRef.current.parentElement as HTMLElement;
 
-            const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
-            if (!iframeDoc) {
-                throw new Error('Cannot access iframe document');
-            }
+            // Store original styles
+            const originalStyles = {
+                position: pdfContainer.style.position,
+                left: pdfContainer.style.left,
+                top: pdfContainer.style.top,
+                zIndex: pdfContainer.style.zIndex,
+                opacity: pdfContainer.style.opacity,
+            };
 
-            // Copy all stylesheets to iframe
-            const styleSheets = Array.from(document.styleSheets);
-            let styles = '';
+            // Move PDF container to visible print position
+            pdfContainer.style.position = 'fixed';
+            pdfContainer.style.left = '0';
+            pdfContainer.style.top = '0';
+            pdfContainer.style.zIndex = '99999';
+            pdfContainer.style.opacity = '1';
 
-            // Get all linked stylesheets (including fonts)
-            const linkTags = document.querySelectorAll('link[rel="stylesheet"], link[rel="preconnect"]');
-            let linkHTML = '';
-            linkTags.forEach(link => {
-                linkHTML += link.outerHTML;
-            });
-
-            // Get all script tags for Tailwind
-            const scriptTags = document.querySelectorAll('script[src*="tailwindcss"]');
-            let scriptHTML = '';
-            scriptTags.forEach(script => {
-                scriptHTML += script.outerHTML;
-            });
-
-            // Get Tailwind config script
-            const configScripts = document.querySelectorAll('script:not([src])');
-            let configHTML = '';
-            configScripts.forEach(script => {
-                if (script.textContent?.includes('tailwind.config')) {
-                    configHTML += script.outerHTML;
-                }
-            });
-
-            // Get inline styles from stylesheets
-            styleSheets.forEach(sheet => {
-                try {
-                    if (sheet.cssRules) {
-                        Array.from(sheet.cssRules).forEach(rule => {
-                            styles += rule.cssText + '\n';
-                        });
+            // Add a temporary class to hide everything except PDF container during print
+            const styleEl = document.createElement('style');
+            styleEl.id = 'print-styles-temp';
+            styleEl.textContent = `
+                @media print {
+                    body > *:not([data-pdf-container]) {
+                        display: none !important;
                     }
-                } catch (e) {
-                    // Cross-origin stylesheets will throw, ignore them
+                    [data-pdf-container] {
+                        display: block !important;
+                        position: static !important;
+                        left: auto !important;
+                        top: auto !important;
+                    }
+                    @page {
+                        size: A4;
+                        margin: 0;
+                    }
                 }
-            });
+            `;
+            document.head.appendChild(styleEl);
 
-            // Get the resume HTML
-            const resumeHTML = pdfRef.current.outerHTML;
+            // Mark the PDF container
+            pdfContainer.setAttribute('data-pdf-container', 'true');
 
-            // Write to iframe with Tailwind CDN
-            iframeDoc.open();
-            iframeDoc.write(`
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <meta charset="UTF-8">
-                    <title>Resume</title>
-                    ${linkHTML}
-                    <script src="https://cdn.tailwindcss.com"><\/script>
-                    ${configHTML}
-                    <style>
-                        ${styles}
-                        @page {
-                            size: A4;
-                            margin: 0;
-                        }
-                        @media print {
-                            html, body {
-                                width: 210mm;
-                                min-height: 297mm;
-                                margin: 0;
-                                padding: 0;
-                            }
-                        }
-                        body {
-                            margin: 0;
-                            padding: 0;
-                            background: white;
-                        }
-                    </style>
-                </head>
-                <body>
-                    ${resumeHTML}
-                </body>
-                </html>
-            `);
-            iframeDoc.close();
-
-            // Wait for iframe content and Tailwind to load
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            // Small delay to ensure styles are applied
+            await new Promise(resolve => setTimeout(resolve, 50));
 
             // Trigger print
-            iframe.contentWindow?.focus();
-            iframe.contentWindow?.print();
+            window.print();
 
-            // Remove iframe after a delay
+            // Restore original styles after print dialog closes
             setTimeout(() => {
-                document.body.removeChild(iframe);
-            }, 1000);
+                pdfContainer.style.position = originalStyles.position;
+                pdfContainer.style.left = originalStyles.left;
+                pdfContainer.style.top = originalStyles.top;
+                pdfContainer.style.zIndex = originalStyles.zIndex;
+                pdfContainer.style.opacity = originalStyles.opacity;
+                pdfContainer.removeAttribute('data-pdf-container');
+
+                // Remove temporary print styles
+                const tempStyle = document.getElementById('print-styles-temp');
+                if (tempStyle) {
+                    tempStyle.remove();
+                }
+            }, 100);
 
         } catch (error) {
             console.error('Error generating PDF:', error);
