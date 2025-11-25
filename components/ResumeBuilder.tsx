@@ -286,72 +286,80 @@ const ResumeBuilder: React.FC = () => {
         try {
             // Wait for all fonts to load
             await document.fonts.ready;
-            await new Promise(resolve => setTimeout(resolve, 100));
 
-            // Get the PDF container's parent
+            // Get the PDF container
             const pdfContainer = pdfRef.current.parentElement as HTMLElement;
 
-            // Store original styles
-            const originalStyles = {
-                position: pdfContainer.style.position,
-                left: pdfContainer.style.left,
-                top: pdfContainer.style.top,
-                zIndex: pdfContainer.style.zIndex,
-                opacity: pdfContainer.style.opacity,
-            };
+            // Create a unique ID for the print target
+            const printId = 'resume-print-target';
+            pdfRef.current.id = printId;
 
-            // Move PDF container to visible print position
+            // Store original container styles
+            const originalPosition = pdfContainer.style.position;
+            const originalLeft = pdfContainer.style.left;
+            const originalTop = pdfContainer.style.top;
+            const originalZIndex = pdfContainer.style.zIndex;
+
+            // Move container to print position
             pdfContainer.style.position = 'fixed';
             pdfContainer.style.left = '0';
             pdfContainer.style.top = '0';
             pdfContainer.style.zIndex = '99999';
-            pdfContainer.style.opacity = '1';
 
-            // Add a temporary class to hide everything except PDF container during print
-            const styleEl = document.createElement('style');
-            styleEl.id = 'print-styles-temp';
-            styleEl.textContent = `
+            // Create print-only stylesheet
+            const printStyle = document.createElement('style');
+            printStyle.id = 'resume-print-style';
+            printStyle.textContent = `
                 @media print {
-                    body > *:not([data-pdf-container]) {
-                        display: none !important;
+                    /* Hide everything */
+                    body * {
+                        visibility: hidden !important;
                     }
-                    [data-pdf-container] {
-                        display: block !important;
-                        position: static !important;
-                        left: auto !important;
-                        top: auto !important;
+                    /* Show only the resume */
+                    #${printId}, #${printId} * {
+                        visibility: visible !important;
+                    }
+                    #${printId} {
+                        position: fixed !important;
+                        left: 0 !important;
+                        top: 0 !important;
+                        width: 210mm !important;
+                        min-height: 297mm !important;
+                        margin: 0 !important;
+                        padding: 0 !important;
+                        background: white !important;
                     }
                     @page {
                         size: A4;
                         margin: 0;
                     }
+                    html, body {
+                        width: 210mm !important;
+                        height: 297mm !important;
+                        margin: 0 !important;
+                        padding: 0 !important;
+                    }
                 }
             `;
-            document.head.appendChild(styleEl);
+            document.head.appendChild(printStyle);
 
-            // Mark the PDF container
-            pdfContainer.setAttribute('data-pdf-container', 'true');
-
-            // Small delay to ensure styles are applied
+            // Short delay for styles to apply
             await new Promise(resolve => setTimeout(resolve, 50));
 
             // Trigger print
             window.print();
 
-            // Restore original styles after print dialog closes
+            // Cleanup after print dialog (use setTimeout as print is blocking)
             setTimeout(() => {
-                pdfContainer.style.position = originalStyles.position;
-                pdfContainer.style.left = originalStyles.left;
-                pdfContainer.style.top = originalStyles.top;
-                pdfContainer.style.zIndex = originalStyles.zIndex;
-                pdfContainer.style.opacity = originalStyles.opacity;
-                pdfContainer.removeAttribute('data-pdf-container');
+                // Restore container styles
+                pdfContainer.style.position = originalPosition;
+                pdfContainer.style.left = originalLeft;
+                pdfContainer.style.top = originalTop;
+                pdfContainer.style.zIndex = originalZIndex;
 
-                // Remove temporary print styles
-                const tempStyle = document.getElementById('print-styles-temp');
-                if (tempStyle) {
-                    tempStyle.remove();
-                }
+                // Remove print styles and ID
+                pdfRef.current?.removeAttribute('id');
+                document.getElementById('resume-print-style')?.remove();
             }, 100);
 
         } catch (error) {
