@@ -307,14 +307,30 @@ const ResumeBuilder: React.FC = () => {
             const styleSheets = Array.from(document.styleSheets);
             let styles = '';
 
-            // Get all linked stylesheets
-            const linkTags = document.querySelectorAll('link[rel="stylesheet"]');
+            // Get all linked stylesheets (including fonts)
+            const linkTags = document.querySelectorAll('link[rel="stylesheet"], link[rel="preconnect"]');
             let linkHTML = '';
             linkTags.forEach(link => {
                 linkHTML += link.outerHTML;
             });
 
-            // Get inline styles
+            // Get all script tags for Tailwind
+            const scriptTags = document.querySelectorAll('script[src*="tailwindcss"]');
+            let scriptHTML = '';
+            scriptTags.forEach(script => {
+                scriptHTML += script.outerHTML;
+            });
+
+            // Get Tailwind config script
+            const configScripts = document.querySelectorAll('script:not([src])');
+            let configHTML = '';
+            configScripts.forEach(script => {
+                if (script.textContent?.includes('tailwind.config')) {
+                    configHTML += script.outerHTML;
+                }
+            });
+
+            // Get inline styles from stylesheets
             styleSheets.forEach(sheet => {
                 try {
                     if (sheet.cssRules) {
@@ -330,7 +346,7 @@ const ResumeBuilder: React.FC = () => {
             // Get the resume HTML
             const resumeHTML = pdfRef.current.outerHTML;
 
-            // Write to iframe
+            // Write to iframe with Tailwind CDN
             iframeDoc.open();
             iframeDoc.write(`
                 <!DOCTYPE html>
@@ -339,6 +355,8 @@ const ResumeBuilder: React.FC = () => {
                     <meta charset="UTF-8">
                     <title>Resume</title>
                     ${linkHTML}
+                    <script src="https://cdn.tailwindcss.com"><\/script>
+                    ${configHTML}
                     <style>
                         ${styles}
                         @page {
@@ -348,7 +366,7 @@ const ResumeBuilder: React.FC = () => {
                         @media print {
                             html, body {
                                 width: 210mm;
-                                height: 297mm;
+                                min-height: 297mm;
                                 margin: 0;
                                 padding: 0;
                             }
@@ -367,8 +385,8 @@ const ResumeBuilder: React.FC = () => {
             `);
             iframeDoc.close();
 
-            // Wait for iframe content to load
-            await new Promise(resolve => setTimeout(resolve, 500));
+            // Wait for iframe content and Tailwind to load
+            await new Promise(resolve => setTimeout(resolve, 1000));
 
             // Trigger print
             iframe.contentWindow?.focus();
