@@ -10,6 +10,7 @@ import { Logo } from './Logo';
 import { AuthModal } from './AuthModal';
 import { User as SupabaseUser } from '@supabase/supabase-js';
 import { StyleShowcase } from './StyleShowcase';
+import { SEOContent } from './SEOContent';
 
 // UI Translations
 const UI_TEXT = {
@@ -497,6 +498,7 @@ const ResumeBuilder: React.FC = () => {
                             </div>
 
                             <StyleShowcase language={language} />
+                            <SEOContent language={language} />
                         </motion.div>
                     )}
 
