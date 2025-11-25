@@ -11,6 +11,8 @@ import { AuthModal } from './AuthModal';
 import { User as SupabaseUser } from '@supabase/supabase-js';
 import { StyleShowcase } from './StyleShowcase';
 import { SEOContent } from './SEOContent';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 
 // UI Translations
 const UI_TEXT = {
@@ -26,9 +28,9 @@ const UI_TEXT = {
         action_center: "DESIGN STUDIO",
         review_desc: "Select a style to match your personal brand.",
         template_label: "STYLE COLLECTION",
-        save_pdf: "SAVE AS PDF",
+        save_pdf: "DOWNLOAD",
         create_new: "START OVER",
-        download_tip: "Click the button, then select 'Save as PDF' in the print dialog.",
+        download_tip: "Click the button to download your resume as a PDF file.",
         cat_classic: "Classic Series (Free)",
         cat_bento: "Bento Style (Free Generation)",
         cat_gradient: "Gradient Style (Free Generation)",
@@ -69,9 +71,9 @@ const UI_TEXT = {
         action_center: "设计工坊",
         review_desc: "选择最适合您个人品牌的风格。",
         template_label: "风格选择",
-        save_pdf: "保存 PDF",
+        save_pdf: "下载 PDF",
         create_new: "重新制作",
-        download_tip: "点击按钮，在打印对话框中选择「另存为PDF」。",
+        download_tip: "点击按钮即可下载简历 PDF 文件。",
         cat_classic: "经典系列 (免费)",
         cat_bento: "便当风格 (免费生成)",
         cat_gradient: "弥散渐变 (免费生成)",
@@ -283,81 +285,36 @@ const ResumeBuilder: React.FC = () => {
         try {
             // Wait for all fonts to load
             await document.fonts.ready;
+            await new Promise(resolve => setTimeout(resolve, 300));
 
-            // Clone the resume element
-            const resumeClone = resumeRef.current.cloneNode(true) as HTMLElement;
-            resumeClone.id = 'resume-print-clone';
+            // Directly screenshot the current visible resume (what you see is what you get)
+            const canvas = await html2canvas(resumeRef.current, {
+                scale: 2,  // 2x for better quality
+                useCORS: true,
+                allowTaint: false,
+                backgroundColor: '#ffffff',
+                logging: false,
+            });
 
-            // Style the clone for printing - positioned offscreen but in DOM
-            resumeClone.style.cssText = `
-                position: fixed;
-                left: 0;
-                top: 0;
-                width: 210mm;
-                min-height: 297mm;
-                margin: 0;
-                padding: 0;
-                background: white;
-                z-index: 99999;
-                transform: none;
-                visibility: visible;
-            `;
+            // Get image dimensions
+            const imgWidth = canvas.width;
+            const imgHeight = canvas.height;
 
-            // Add clone to body
-            document.body.appendChild(resumeClone);
+            // Create PDF with the same size as the image
+            const pdf = new jsPDF({
+                orientation: imgWidth > imgHeight ? 'landscape' : 'portrait',
+                unit: 'px',
+                format: [imgWidth, imgHeight],
+                compress: true,
+            });
 
-            // Create print-only stylesheet
-            const printStyle = document.createElement('style');
-            printStyle.id = 'resume-print-style';
-            printStyle.textContent = `
-                @media print {
-                    /* Hide everything except the clone */
-                    body > *:not(#resume-print-clone) {
-                        display: none !important;
-                    }
-                    #resume-print-clone {
-                        position: static !important;
-                        width: 210mm !important;
-                        min-height: 297mm !important;
-                        margin: 0 !important;
-                        padding: 0 !important;
-                        display: block !important;
-                        visibility: visible !important;
-                    }
-                    #resume-print-clone * {
-                        visibility: visible !important;
-                    }
-                    @page {
-                        size: A4;
-                        margin: 0;
-                    }
-                    html, body {
-                        width: 210mm !important;
-                        margin: 0 !important;
-                        padding: 0 !important;
-                    }
-                }
-                /* Hide clone on screen */
-                @media screen {
-                    #resume-print-clone {
-                        visibility: hidden !important;
-                        pointer-events: none !important;
-                    }
-                }
-            `;
-            document.head.appendChild(printStyle);
+            // Add the image to PDF
+            const imgData = canvas.toDataURL('image/png', 1.0);
+            pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight, undefined, 'FAST');
 
-            // Short delay for styles to apply
-            await new Promise(resolve => setTimeout(resolve, 100));
-
-            // Trigger print
-            window.print();
-
-            // Cleanup after print dialog
-            setTimeout(() => {
-                document.getElementById('resume-print-clone')?.remove();
-                document.getElementById('resume-print-style')?.remove();
-            }, 500);
+            // Download
+            const timestamp = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+            pdf.save(`DeepResume-${timestamp}.pdf`);
 
         } catch (error) {
             console.error('Error generating PDF:', error);
