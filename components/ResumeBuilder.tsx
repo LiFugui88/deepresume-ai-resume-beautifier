@@ -1,6 +1,6 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Upload, UploadCloud, Download, RefreshCw, AlertCircle, Layout, Globe2, Briefcase, Grid, Palette, CheckCircle2, Lock, LogIn, LogOut, User } from 'lucide-react';
+import { UploadCloud, Download, RefreshCw, AlertCircle, Layout, Globe2, Briefcase, Grid, Palette, CheckCircle2, Lock, LogIn, LogOut, User } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { analyzeResume } from '../services/geminiService';
 import { supabase } from '../services/supabase';
@@ -11,8 +11,6 @@ import { AuthModal } from './AuthModal';
 import { User as SupabaseUser } from '@supabase/supabase-js';
 import { StyleShowcase } from './StyleShowcase';
 import { SEOContent } from './SEOContent';
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
 
 // UI Translations
 const UI_TEXT = {
@@ -775,8 +773,8 @@ const ResumeBuilder: React.FC = () => {
                             </div>
 
                             {/* Resume Canvas (Right on Desktop) */}
-                            <div className="flex-1 flex justify-center order-1 lg:order-2 mb-12 lg:mb-0 overflow-visible print:block print:w-full print:h-auto">
-                                <div className="transform origin-top scale-[0.5] sm:scale-[0.6] md:scale-[0.7] lg:scale-[0.8] xl:scale-[0.9] 2xl:scale-100 transition-transform duration-500 print:transform-none print:scale-100 print:w-full">
+                            <div className="flex-1 flex justify-center order-1 lg:order-2 mb-12 lg:mb-0 overflow-visible">
+                                <div className="transform origin-top scale-[0.5] sm:scale-[0.6] md:scale-[0.7] lg:scale-[0.8] xl:scale-[0.9] 2xl:scale-100 transition-transform duration-500">
                                     <ResumeDesign
                                         data={resumeData}
                                         template={template}
