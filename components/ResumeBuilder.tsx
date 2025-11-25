@@ -11,7 +11,7 @@ import { AuthModal } from './AuthModal';
 import { User as SupabaseUser } from '@supabase/supabase-js';
 import { StyleShowcase } from './StyleShowcase';
 import { SEOContent } from './SEOContent';
-import html2canvas from 'html2canvas';
+import { toPng } from 'html-to-image';
 import jsPDF from 'jspdf';
 
 // UI Translations
@@ -287,18 +287,20 @@ const ResumeBuilder: React.FC = () => {
             await document.fonts.ready;
             await new Promise(resolve => setTimeout(resolve, 300));
 
-            // Directly screenshot the current visible resume (what you see is what you get)
-            const canvas = await html2canvas(resumeRef.current, {
-                scale: 2,  // 2x for better quality
-                useCORS: true,
-                allowTaint: false,
+            // Use html-to-image for better CSS support (SVG foreignObject based)
+            const dataUrl = await toPng(resumeRef.current, {
+                quality: 1.0,
+                pixelRatio: 2,  // 2x for better quality
                 backgroundColor: '#ffffff',
-                logging: false,
             });
 
-            // Get image dimensions
-            const imgWidth = canvas.width;
-            const imgHeight = canvas.height;
+            // Create an image to get dimensions
+            const img = new Image();
+            img.src = dataUrl;
+            await new Promise((resolve) => { img.onload = resolve; });
+
+            const imgWidth = img.width;
+            const imgHeight = img.height;
 
             // Create PDF with the same size as the image
             const pdf = new jsPDF({
@@ -309,8 +311,7 @@ const ResumeBuilder: React.FC = () => {
             });
 
             // Add the image to PDF
-            const imgData = canvas.toDataURL('image/png', 1.0);
-            pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight, undefined, 'FAST');
+            pdf.addImage(dataUrl, 'PNG', 0, 0, imgWidth, imgHeight, undefined, 'FAST');
 
             // Download
             const timestamp = new Date().toISOString().slice(0, 10).replace(/-/g, '');
