@@ -1502,8 +1502,9 @@ export const ResumeDesign = React.forwardRef<HTMLDivElement, ResumeDesignProps>(
     };
 
     return (
-        <div 
+        <div
             ref={ref}
+            data-resume-design="true"
             className="w-[210mm] min-h-[297mm] bg-white shadow-2xl mx-auto print:shadow-none print:mx-0 print:w-full overflow-hidden print:overflow-visible transition-all duration-500"
             style={{ pageBreakAfter: 'always' }}
         >

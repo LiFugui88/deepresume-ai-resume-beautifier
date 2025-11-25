@@ -11,7 +11,8 @@ import { AuthModal } from './AuthModal';
 import { User as SupabaseUser } from '@supabase/supabase-js';
 import { StyleShowcase } from './StyleShowcase';
 import { SEOContent } from './SEOContent';
-import html2pdf from 'html2pdf.js';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 
 // UI Translations
 const UI_TEXT = {
@@ -292,31 +293,58 @@ const ResumeBuilder: React.FC = () => {
             // Wait for layout to settle
             await new Promise(resolve => setTimeout(resolve, 100));
 
-            // Configure html2pdf options
-            const opt = {
-                margin: 0,
-                filename: `DeepResume-${new Date().toISOString().slice(0, 10).replace(/-/g, '')}.pdf`,
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: {
-                    scale: 2,
-                    useCORS: true,
-                    letterRendering: true,
-                    logging: false,
-                },
-                jsPDF: {
-                    unit: 'mm',
-                    format: 'a4',
-                    orientation: 'portrait',
-                    compress: true,
-                },
-                pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
-            };
-
-            // Generate PDF
-            await html2pdf().set(opt).from(element).save();
+            // Step 1: Render to high-quality image using html2canvas
+            const canvas = await html2canvas(element, {
+                scale: 3, // Very high quality (3x resolution for crisp output)
+                useCORS: true,
+                allowTaint: false,
+                backgroundColor: '#ffffff',
+                logging: false,
+                windowWidth: element.scrollWidth,
+                windowHeight: element.scrollHeight,
+                onclone: (clonedDoc) => {
+                    // Ensure all styles are properly cloned
+                    const clonedElement = clonedDoc.querySelector('[data-resume-design]');
+                    if (clonedElement) {
+                        (clonedElement as HTMLElement).style.transform = 'none';
+                    }
+                }
+            });
 
             // Restore original transform
             parent.style.transform = originalTransform;
+
+            // Step 2: Convert canvas to image data
+            const imgData = canvas.toDataURL('image/png', 1.0); // PNG with max quality
+
+            // Step 3: Calculate PDF dimensions
+            const imgWidth = canvas.width;
+            const imgHeight = canvas.height;
+
+            // A4 dimensions in pixels at 96 DPI
+            const a4Width = 794; // 210mm
+            const a4Height = 1123; // 297mm
+
+            // Calculate scaling to fit A4 width
+            const ratio = a4Width / imgWidth;
+            const scaledWidth = a4Width;
+            const scaledHeight = imgHeight * ratio;
+
+            // Step 4: Create PDF with image
+            const pdf = new jsPDF({
+                orientation: scaledHeight > a4Height ? 'portrait' : 'portrait',
+                unit: 'px',
+                format: [a4Width, Math.max(a4Height, scaledHeight)],
+                compress: true,
+            });
+
+            // Add image to PDF
+            pdf.addImage(imgData, 'PNG', 0, 0, scaledWidth, scaledHeight, undefined, 'FAST');
+
+            // Step 5: Download
+            const timestamp = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+            pdf.save(`DeepResume-${timestamp}.pdf`);
+
         } catch (error) {
             console.error('Error generating PDF:', error);
             alert(language === 'en' ? 'Failed to generate PDF. Please try again.' : '生成PDF失败，请重试。');
