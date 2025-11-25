@@ -28,9 +28,9 @@ const UI_TEXT = {
         action_center: "DESIGN STUDIO",
         review_desc: "Select a style to match your personal brand.",
         template_label: "STYLE COLLECTION",
-        save_pdf: "DOWNLOAD",
+        save_pdf: "SAVE AS PDF",
         create_new: "START OVER",
-        download_tip: "Click the button above to download your resume as a PDF file.",
+        download_tip: "Click the button, then select 'Save as PDF' in the print dialog.",
         cat_classic: "Classic Series (Free)",
         cat_bento: "Bento Style (Free Generation)",
         cat_gradient: "Gradient Style (Free Generation)",
@@ -71,9 +71,9 @@ const UI_TEXT = {
         action_center: "设计工坊",
         review_desc: "选择最适合您个人品牌的风格。",
         template_label: "风格选择",
-        save_pdf: "下载 PDF",
+        save_pdf: "保存 PDF",
         create_new: "重新制作",
-        download_tip: "点击上方按钮即可下载简历 PDF 文件。",
+        download_tip: "点击按钮，在打印对话框中选择「另存为PDF」。",
         cat_classic: "经典系列 (免费)",
         cat_bento: "便当风格 (免费生成)",
         cat_gradient: "弥散渐变 (免费生成)",
@@ -282,78 +282,105 @@ const ResumeBuilder: React.FC = () => {
         if (!pdfRef.current) return;
 
         setIsGeneratingPDF(true);
-        const container = pdfRef.current.parentElement as HTMLElement;
 
         try {
             // Wait for all fonts to load
             await document.fonts.ready;
             await new Promise(resolve => setTimeout(resolve, 300));
 
-            // Temporarily move container to visible area for accurate rendering
-            container.style.position = 'fixed';
-            container.style.left = '0';
-            container.style.top = '0';
-            container.style.zIndex = '9999';
-            container.style.opacity = '0';  // Invisible but rendered
+            // Create a hidden iframe for printing
+            const iframe = document.createElement('iframe');
+            iframe.style.position = 'fixed';
+            iframe.style.right = '0';
+            iframe.style.bottom = '0';
+            iframe.style.width = '0';
+            iframe.style.height = '0';
+            iframe.style.border = 'none';
+            document.body.appendChild(iframe);
 
-            // Small delay to ensure layout is calculated
-            await new Promise(resolve => setTimeout(resolve, 100));
+            const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
+            if (!iframeDoc) {
+                throw new Error('Cannot access iframe document');
+            }
 
-            // Capture the PDF container
-            const canvas = await html2canvas(pdfRef.current, {
-                scale: 2,  // 2x for high quality
-                useCORS: true,
-                allowTaint: false,
-                backgroundColor: '#ffffff',
-                logging: false,
+            // Copy all stylesheets to iframe
+            const styleSheets = Array.from(document.styleSheets);
+            let styles = '';
+
+            // Get all linked stylesheets
+            const linkTags = document.querySelectorAll('link[rel="stylesheet"]');
+            let linkHTML = '';
+            linkTags.forEach(link => {
+                linkHTML += link.outerHTML;
             });
 
-            // Move container back offscreen
-            container.style.position = 'absolute';
-            container.style.left = '-9999px';
-            container.style.top = '0';
-            container.style.zIndex = '-1';
-            container.style.opacity = '1';
-
-            // Convert to image
-            const imgData = canvas.toDataURL('image/png', 1.0);
-
-            // Calculate PDF dimensions
-            const imgWidth = canvas.width;
-            const imgHeight = canvas.height;
-
-            // A4 in pixels at 96 DPI
-            const a4WidthPx = 794;
-            const a4HeightPx = 1123;
-
-            // Scale to fit A4 width
-            const ratio = a4WidthPx / imgWidth;
-            const scaledWidth = a4WidthPx;
-            const scaledHeight = imgHeight * ratio;
-
-            // Create PDF
-            const pdf = new jsPDF({
-                orientation: 'portrait',
-                unit: 'px',
-                format: [a4WidthPx, Math.max(a4HeightPx, scaledHeight)],
-                compress: true,
+            // Get inline styles
+            styleSheets.forEach(sheet => {
+                try {
+                    if (sheet.cssRules) {
+                        Array.from(sheet.cssRules).forEach(rule => {
+                            styles += rule.cssText + '\n';
+                        });
+                    }
+                } catch (e) {
+                    // Cross-origin stylesheets will throw, ignore them
+                }
             });
 
-            // Add image
-            pdf.addImage(imgData, 'PNG', 0, 0, scaledWidth, scaledHeight, undefined, 'FAST');
+            // Get the resume HTML
+            const resumeHTML = pdfRef.current.outerHTML;
 
-            // Download
-            const timestamp = new Date().toISOString().slice(0, 10).replace(/-/g, '');
-            pdf.save(`DeepResume-${timestamp}.pdf`);
+            // Write to iframe
+            iframeDoc.open();
+            iframeDoc.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="UTF-8">
+                    <title>Resume</title>
+                    ${linkHTML}
+                    <style>
+                        ${styles}
+                        @page {
+                            size: A4;
+                            margin: 0;
+                        }
+                        @media print {
+                            html, body {
+                                width: 210mm;
+                                height: 297mm;
+                                margin: 0;
+                                padding: 0;
+                            }
+                        }
+                        body {
+                            margin: 0;
+                            padding: 0;
+                            background: white;
+                        }
+                    </style>
+                </head>
+                <body>
+                    ${resumeHTML}
+                </body>
+                </html>
+            `);
+            iframeDoc.close();
+
+            // Wait for iframe content to load
+            await new Promise(resolve => setTimeout(resolve, 500));
+
+            // Trigger print
+            iframe.contentWindow?.focus();
+            iframe.contentWindow?.print();
+
+            // Remove iframe after a delay
+            setTimeout(() => {
+                document.body.removeChild(iframe);
+            }, 1000);
 
         } catch (error) {
             console.error('Error generating PDF:', error);
-            // Restore container position on error
-            container.style.position = 'absolute';
-            container.style.left = '-9999px';
-            container.style.top = '0';
-            container.style.zIndex = '-1';
-            container.style.opacity = '1';
             alert(language === 'en' ? 'Failed to generate PDF. Please try again.' : '生成PDF失败，请重试。');
         } finally {
             setIsGeneratingPDF(false);
