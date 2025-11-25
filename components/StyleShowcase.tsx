@@ -94,7 +94,7 @@ export const StyleShowcase: React.FC<{ language: 'en' | 'zh' }> = ({ language })
 
                     {/* After State - Bento Representation */}
                     <div className="relative group">
-                        <div className="absolute -inset-4 bg-gradient-to-r from-blue-100 to-purple-100 rounded-3xl transform rotate-2 opacity-50 group-hover:rotate-0 transition-transform duration-500" />
+                        <div className="absolute -inset-4 bg-gradient-to-r from-yellow-100 via-orange-100 to-blue-100 rounded-3xl transform rotate-2 opacity-50 group-hover:rotate-0 transition-transform duration-500" />
                         <div className="relative bg-white border border-blue-100 shadow-xl shadow-blue-900/5 rounded-2xl p-6 h-[550px] flex flex-col gap-4 transform scale-105 z-10 overflow-hidden font-sans">
                             <div className="absolute top-4 right-4 bg-white/20 backdrop-blur-md text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider z-20 border border-white/10 shadow-sm">
                                 {t.after}

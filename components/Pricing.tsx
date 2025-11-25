@@ -66,7 +66,7 @@ export const Pricing: React.FC = () => {
                             className="font-display text-5xl md:text-6xl font-bold text-ink"
                         >
                             One Payment.<br />
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent to-purple-600">Lifetime Access.</span>
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-orange-500 to-blue-600">Lifetime Access.</span>
                         </motion.h1>
                         <motion.p
                             initial={{ opacity: 0, y: 20 }}
@@ -84,7 +84,7 @@ export const Pricing: React.FC = () => {
                         transition={{ delay: 0.3 }}
                         className="bg-white rounded-3xl shadow-xl border border-ink/5 overflow-hidden relative"
                     >
-                        <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-accent to-purple-600" />
+                        <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-yellow-400 via-orange-500 to-blue-600" />
 
                         <div className="grid md:grid-cols-2 gap-8 p-8 md:p-12">
                             <div className="space-y-8">

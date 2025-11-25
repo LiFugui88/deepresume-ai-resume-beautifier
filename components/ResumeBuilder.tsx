@@ -352,7 +352,7 @@ const ResumeBuilder: React.FC = () => {
                         <div className="flex items-center gap-3">
                             <button
                                 onClick={handleUpgrade}
-                                className="hidden md:flex items-center gap-2 font-mono text-xs bg-gradient-to-r from-amber-200 to-yellow-400 text-yellow-900 px-4 py-1.5 rounded-full hover:shadow-lg hover:scale-105 transition-all uppercase font-bold"
+                                className="hidden md:flex items-center gap-2 font-mono text-xs bg-gradient-to-r from-yellow-300 to-orange-400 text-white px-4 py-1.5 rounded-full hover:shadow-lg hover:scale-105 transition-all uppercase font-bold shadow-lg shadow-orange-500/30"
                             >
                                 <Lock size={12} />
                                 {t.lifetime}
@@ -380,7 +380,7 @@ const ResumeBuilder: React.FC = () => {
                         <div className="flex items-center gap-3">
                             <button
                                 onClick={() => navigate('/pricing')}
-                                className="hidden md:flex items-center gap-2 font-mono text-xs bg-gradient-to-r from-amber-200 to-yellow-400 text-yellow-900 px-4 py-1.5 rounded-full hover:shadow-lg hover:scale-105 transition-all uppercase font-bold"
+                                className="hidden md:flex items-center gap-2 font-mono text-xs bg-gradient-to-r from-yellow-300 to-orange-400 text-white px-4 py-1.5 rounded-full hover:shadow-lg hover:scale-105 transition-all uppercase font-bold shadow-lg shadow-orange-500/30"
                             >
                                 <Lock size={12} />
                                 {t.lifetime}
@@ -422,12 +422,12 @@ const ResumeBuilder: React.FC = () => {
                                             {language === 'en' ? (
                                                 <>
                                                     ELEVATE YOUR <br />
-                                                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent to-purple-600">CAREER</span>
+                                                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-orange-500 to-blue-600">CAREER</span>
                                                 </>
                                             ) : (
                                                 <>
                                                     重塑 <br />
-                                                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent to-purple-600">职业形象</span>
+                                                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-orange-500 to-blue-600">职业形象</span>
                                                 </>
                                             )}
                                         </h1>
@@ -454,7 +454,7 @@ const ResumeBuilder: React.FC = () => {
 
                                     {inputMode === 'upload' ? (
                                         <div className="relative group w-full">
-                                            <div className="absolute -inset-1 bg-gradient-to-r from-accent to-purple-600 rounded-3xl blur opacity-20 group-hover:opacity-40 transition duration-1000 group-hover:duration-200" />
+                                            <div className="absolute -inset-1 bg-gradient-to-r from-yellow-400 via-orange-500 to-blue-600 rounded-3xl blur opacity-20 group-hover:opacity-40 transition duration-1000 group-hover:duration-200" />
                                             <label className="relative flex flex-col items-center justify-center w-full h-64 border-2 border-dashed border-ink/10 rounded-2xl bg-white/50 hover:bg-white hover:border-accent/50 transition-all cursor-pointer overflow-hidden backdrop-blur-sm">
                                                 <div className="flex flex-col items-center justify-center pt-5 pb-6">
                                                     <div className="w-16 h-16 mb-4 rounded-2xl bg-blue-50 text-accent flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
@@ -663,7 +663,7 @@ const ResumeBuilder: React.FC = () => {
                                     <div className="space-y-3">
                                         <button
                                             onClick={triggerPrint}
-                                            className={`w-full text-white py-4 rounded-xl font-bold tracking-wide transition-all active:scale-[0.98] shadow-lg flex items-center justify-center gap-2 ${isPaid ? 'bg-gradient-to-r from-accent to-indigo-600 hover:shadow-accent/30' : 'bg-accent hover:bg-blue-700 shadow-accent/20'}`}
+                                            className={`w-full text-white py-4 rounded-xl font-bold tracking-wide transition-all active:scale-[0.98] shadow-lg flex items-center justify-center gap-2 ${isPaid ? 'bg-gradient-to-r from-yellow-400 via-orange-500 to-blue-600 hover:shadow-orange-500/40' : 'bg-accent hover:bg-blue-700 shadow-accent/20'}`}
                                         >
                                             {isPaid ? (
                                                 <>
