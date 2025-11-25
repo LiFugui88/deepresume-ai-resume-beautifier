@@ -11,8 +11,7 @@ import { AuthModal } from './AuthModal';
 import { User as SupabaseUser } from '@supabase/supabase-js';
 import { StyleShowcase } from './StyleShowcase';
 import { SEOContent } from './SEOContent';
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
+import html2pdf from 'html2pdf.js';
 
 // UI Translations
 const UI_TEXT = {
@@ -293,55 +292,31 @@ const ResumeBuilder: React.FC = () => {
             // Wait for layout to settle
             await new Promise(resolve => setTimeout(resolve, 100));
 
-            // Capture with html2canvas at actual size
-            const canvas = await html2canvas(element, {
-                scale: 2, // High quality (2x resolution)
-                useCORS: true,
-                logging: false,
-                backgroundColor: '#ffffff',
-                windowWidth: element.scrollWidth,
-                windowHeight: element.scrollHeight,
-            });
+            // Configure html2pdf options
+            const opt = {
+                margin: 0,
+                filename: `DeepResume-${new Date().toISOString().slice(0, 10).replace(/-/g, '')}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: {
+                    scale: 2,
+                    useCORS: true,
+                    letterRendering: true,
+                    logging: false,
+                },
+                jsPDF: {
+                    unit: 'mm',
+                    format: 'a4',
+                    orientation: 'portrait',
+                    compress: true,
+                },
+                pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+            };
+
+            // Generate PDF
+            await html2pdf().set(opt).from(element).save();
 
             // Restore original transform
             parent.style.transform = originalTransform;
-
-            const imgData = canvas.toDataURL('image/png');
-
-            // A4 dimensions in mm
-            const pdfWidth = 210;
-            const pdfHeight = 297;
-
-            // Calculate scaling to fit A4 width
-            const imgWidth = pdfWidth;
-            const imgHeight = (canvas.height * pdfWidth) / canvas.width;
-
-            // Create PDF
-            const pdf = new jsPDF({
-                orientation: 'portrait',
-                unit: 'mm',
-                format: 'a4',
-            });
-
-            let heightLeft = imgHeight;
-            let position = 0;
-
-            // Add first page
-            pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-            heightLeft -= pdfHeight;
-
-            // Add additional pages if content is longer than one page
-            while (heightLeft > 0) {
-                position = heightLeft - imgHeight;
-                pdf.addPage();
-                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-                heightLeft -= pdfHeight;
-            }
-
-            // Download the PDF with timestamp
-            const timestamp = new Date().toISOString().slice(0, 10).replace(/-/g, '');
-            const fileName = `DeepResume-${timestamp}.pdf`;
-            pdf.save(fileName);
         } catch (error) {
             console.error('Error generating PDF:', error);
             alert(language === 'en' ? 'Failed to generate PDF. Please try again.' : '生成PDF失败，请重试。');
