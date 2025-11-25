@@ -144,6 +144,8 @@ const ResumeBuilder: React.FC = () => {
 
     const fileInputRef = useRef<HTMLInputElement>(null);
     const resumeRef = useRef<HTMLDivElement>(null);
+    const pdfRef = useRef<HTMLDivElement>(null);
+    const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
     const t = UI_TEXT[language];
 
     useEffect(() => {
@@ -277,42 +279,22 @@ const ResumeBuilder: React.FC = () => {
             return;
         }
 
-        if (!resumeRef.current) return;
+        if (!pdfRef.current) return;
 
+        setIsGeneratingPDF(true);
         try {
-            const element = resumeRef.current;
-
-            // Create an offscreen clone at full size
-            const clone = element.cloneNode(true) as HTMLElement;
-
-            // Style the clone to be offscreen but fully rendered
-            clone.style.position = 'fixed';
-            clone.style.left = '-9999px';
-            clone.style.top = '0';
-            clone.style.width = '210mm';  // A4 width
-            clone.style.minHeight = '297mm';  // A4 height
-            clone.style.transform = 'none';  // No scaling
-            clone.style.zIndex = '-1';
-
-            // Append to body
-            document.body.appendChild(clone);
-
-            // Wait for fonts and images to load
+            // Wait for all fonts to load
+            await document.fonts.ready;
             await new Promise(resolve => setTimeout(resolve, 300));
 
-            // Render the clone to canvas at high resolution
-            const canvas = await html2canvas(clone, {
+            // Capture the hidden PDF container directly (no cloning needed)
+            const canvas = await html2canvas(pdfRef.current, {
                 scale: 2,  // 2x for high quality
                 useCORS: true,
                 allowTaint: false,
                 backgroundColor: '#ffffff',
                 logging: false,
-                width: clone.scrollWidth,
-                height: clone.scrollHeight,
             });
-
-            // Remove the clone
-            document.body.removeChild(clone);
 
             // Convert to image
             const imgData = canvas.toDataURL('image/png', 1.0);
@@ -348,6 +330,8 @@ const ResumeBuilder: React.FC = () => {
         } catch (error) {
             console.error('Error generating PDF:', error);
             alert(language === 'en' ? 'Failed to generate PDF. Please try again.' : '生成PDF失败，请重试。');
+        } finally {
+            setIsGeneratingPDF(false);
         }
     };
 
@@ -737,9 +721,15 @@ const ResumeBuilder: React.FC = () => {
                                     <div className="space-y-3">
                                         <button
                                             onClick={downloadPDF}
-                                            className={`w-full text-white py-4 rounded-xl font-bold transition-all active:scale-[0.98] shadow-lg flex items-center justify-center gap-2 ${isPaid ? 'bg-gradient-to-r from-yellow-400 via-orange-500 to-blue-600 hover:shadow-orange-500/40 text-sm' : 'bg-accent hover:bg-blue-700 shadow-accent/20'}`}
+                                            disabled={isGeneratingPDF}
+                                            className={`w-full text-white py-4 rounded-xl font-bold transition-all active:scale-[0.98] shadow-lg flex items-center justify-center gap-2 ${isGeneratingPDF ? 'opacity-50 cursor-not-allowed' : ''} ${isPaid ? 'bg-gradient-to-r from-yellow-400 via-orange-500 to-blue-600 hover:shadow-orange-500/40 text-sm' : 'bg-accent hover:bg-blue-700 shadow-accent/20'}`}
                                         >
-                                            {isPaid ? (
+                                            {isGeneratingPDF ? (
+                                                <div className="flex items-center gap-2">
+                                                    <RefreshCw size={14} className="animate-spin" />
+                                                    <span>{language === 'en' ? 'Generating...' : '生成中...'}</span>
+                                                </div>
+                                            ) : isPaid ? (
                                                 <div className="flex items-center justify-center gap-1.5">
                                                     <Lock size={14} className="opacity-80 shrink-0" />
                                                     <span className="whitespace-nowrap">{t.save_pdf}</span>
@@ -795,6 +785,29 @@ const ResumeBuilder: React.FC = () => {
                 </footer>
 
             </main>
+
+            {/* Hidden PDF Container - Full A4 Size */}
+            {state === AppState.PREVIEW && resumeData && (
+                <div
+                    style={{
+                        position: 'fixed',
+                        left: 0,
+                        top: 0,
+                        width: '210mm',
+                        minHeight: '297mm',
+                        visibility: 'hidden',
+                        pointerEvents: 'none',
+                        zIndex: -9999,
+                    }}
+                >
+                    <ResumeDesign
+                        data={resumeData}
+                        template={template}
+                        language={language}
+                        ref={pdfRef}
+                    />
+                </div>
+            )}
 
             <AuthModal
                 isOpen={showAuthModal}
