@@ -77,28 +77,28 @@ export const StyleShowcase: React.FC<{ language: 'en' | 'zh' }> = ({ language })
                     {/* After State - Bento Representation */}
                     <div className="relative group">
                         <div className="absolute -inset-4 bg-gradient-to-r from-blue-100 to-purple-100 rounded-3xl transform rotate-2 opacity-50 group-hover:rotate-0 transition-transform duration-500" />
-                        <div className="relative bg-white border border-blue-100 shadow-xl shadow-blue-900/5 rounded-2xl p-6 h-[550px] flex flex-col gap-4 transform scale-105 z-10">
+                        <div className="relative bg-white border border-blue-100 shadow-xl shadow-blue-900/5 rounded-2xl p-6 h-[550px] flex flex-col gap-4 transform scale-105 z-10 overflow-hidden">
                             <div className="absolute top-4 right-4 bg-accent/10 text-accent px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
                                 {t.after}
                             </div>
 
                             {/* Header Block */}
-                            <div className="bg-slate-900 rounded-xl p-6 text-white mb-2">
+                            <div className="bg-slate-900 rounded-xl p-6 text-white mb-2 shrink-0">
                                 <div className="w-1/2 h-8 bg-white/20 rounded mb-2" />
                                 <div className="w-1/3 h-4 bg-white/10 rounded" />
                             </div>
 
-                            <div className="grid grid-cols-2 gap-4 flex-1">
+                            <div className="grid grid-cols-2 gap-4 flex-1 min-h-0">
                                 {/* Left Col */}
-                                <div className="space-y-4">
-                                    <div className="bg-blue-50 p-4 rounded-xl h-32 border border-blue-100">
+                                <div className="flex flex-col gap-4 h-full">
+                                    <div className="bg-blue-50 p-4 rounded-xl h-32 border border-blue-100 shrink-0">
                                         <div className="w-1/2 h-4 bg-blue-200 rounded mb-2" />
                                         <div className="space-y-2">
                                             <div className="w-full h-2 bg-blue-100 rounded" />
                                             <div className="w-full h-2 bg-blue-100 rounded" />
                                         </div>
                                     </div>
-                                    <div className="bg-purple-50 p-4 rounded-xl h-full border border-purple-100">
+                                    <div className="bg-purple-50 p-4 rounded-xl flex-1 border border-purple-100 min-h-0">
                                         <div className="w-1/2 h-4 bg-purple-200 rounded mb-2" />
                                         <div className="space-y-2">
                                             <div className="w-full h-2 bg-purple-100 rounded" />
@@ -108,8 +108,8 @@ export const StyleShowcase: React.FC<{ language: 'en' | 'zh' }> = ({ language })
                                     </div>
                                 </div>
                                 {/* Right Col */}
-                                <div className="space-y-4">
-                                    <div className="bg-gray-50 p-4 rounded-xl h-full border border-gray-100">
+                                <div className="flex flex-col gap-4 h-full">
+                                    <div className="bg-gray-50 p-4 rounded-xl flex-1 border border-gray-100 min-h-0">
                                         <div className="w-1/2 h-4 bg-gray-200 rounded mb-2" />
                                         <div className="space-y-2">
                                             <div className="w-full h-2 bg-gray-100 rounded" />
@@ -118,7 +118,7 @@ export const StyleShowcase: React.FC<{ language: 'en' | 'zh' }> = ({ language })
                                             <div className="w-5/6 h-2 bg-gray-100 rounded" />
                                         </div>
                                     </div>
-                                    <div className="bg-amber-50 p-4 rounded-xl h-24 border border-amber-100 flex items-center justify-center">
+                                    <div className="bg-amber-50 p-4 rounded-xl h-24 border border-amber-100 flex items-center justify-center shrink-0">
                                         <div className="w-12 h-12 rounded-full bg-amber-200" />
                                     </div>
                                 </div>
