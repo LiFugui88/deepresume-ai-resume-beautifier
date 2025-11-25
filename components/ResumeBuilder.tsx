@@ -282,66 +282,66 @@ const ResumeBuilder: React.FC = () => {
         try {
             const element = resumeRef.current;
 
-            // Get the parent container with transform scale
-            const parent = element.parentElement;
-            if (!parent) return;
+            // Create an offscreen clone at full size
+            const clone = element.cloneNode(true) as HTMLElement;
 
-            // Temporarily remove the scale transform to get true size
-            const originalTransform = parent.style.transform;
-            parent.style.transform = 'none';
+            // Style the clone to be offscreen but fully rendered
+            clone.style.position = 'fixed';
+            clone.style.left = '-9999px';
+            clone.style.top = '0';
+            clone.style.width = '210mm';  // A4 width
+            clone.style.minHeight = '297mm';  // A4 height
+            clone.style.transform = 'none';  // No scaling
+            clone.style.zIndex = '-1';
 
-            // Wait for layout to settle
-            await new Promise(resolve => setTimeout(resolve, 100));
+            // Append to body
+            document.body.appendChild(clone);
 
-            // Step 1: Render to high-quality image using html2canvas
-            const canvas = await html2canvas(element, {
-                scale: 3, // Very high quality (3x resolution for crisp output)
+            // Wait for fonts and images to load
+            await new Promise(resolve => setTimeout(resolve, 300));
+
+            // Render the clone to canvas at high resolution
+            const canvas = await html2canvas(clone, {
+                scale: 2,  // 2x for high quality
                 useCORS: true,
                 allowTaint: false,
                 backgroundColor: '#ffffff',
                 logging: false,
-                windowWidth: element.scrollWidth,
-                windowHeight: element.scrollHeight,
-                onclone: (clonedDoc) => {
-                    // Ensure all styles are properly cloned
-                    const clonedElement = clonedDoc.querySelector('[data-resume-design]');
-                    if (clonedElement) {
-                        (clonedElement as HTMLElement).style.transform = 'none';
-                    }
-                }
+                width: clone.scrollWidth,
+                height: clone.scrollHeight,
             });
 
-            // Restore original transform
-            parent.style.transform = originalTransform;
+            // Remove the clone
+            document.body.removeChild(clone);
 
-            // Step 2: Convert canvas to image data
-            const imgData = canvas.toDataURL('image/png', 1.0); // PNG with max quality
+            // Convert to image
+            const imgData = canvas.toDataURL('image/png', 1.0);
 
-            // Step 3: Calculate PDF dimensions
+            // Calculate PDF dimensions
             const imgWidth = canvas.width;
             const imgHeight = canvas.height;
 
-            // A4 dimensions in pixels at 96 DPI
-            const a4Width = 794; // 210mm
-            const a4Height = 1123; // 297mm
+            // A4 in pixels at 96 DPI
+            const a4WidthPx = 794;
+            const a4HeightPx = 1123;
 
-            // Calculate scaling to fit A4 width
-            const ratio = a4Width / imgWidth;
-            const scaledWidth = a4Width;
+            // Scale to fit A4 width
+            const ratio = a4WidthPx / imgWidth;
+            const scaledWidth = a4WidthPx;
             const scaledHeight = imgHeight * ratio;
 
-            // Step 4: Create PDF with image
+            // Create PDF
             const pdf = new jsPDF({
-                orientation: scaledHeight > a4Height ? 'portrait' : 'portrait',
+                orientation: 'portrait',
                 unit: 'px',
-                format: [a4Width, Math.max(a4Height, scaledHeight)],
+                format: [a4WidthPx, Math.max(a4HeightPx, scaledHeight)],
                 compress: true,
             });
 
-            // Add image to PDF
+            // Add image
             pdf.addImage(imgData, 'PNG', 0, 0, scaledWidth, scaledHeight, undefined, 'FAST');
 
-            // Step 5: Download
+            // Download
             const timestamp = new Date().toISOString().slice(0, 10).replace(/-/g, '');
             pdf.save(`DeepResume-${timestamp}.pdf`);
 
