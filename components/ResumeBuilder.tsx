@@ -11,6 +11,8 @@ import { AuthModal } from './AuthModal';
 import { User as SupabaseUser } from '@supabase/supabase-js';
 import { StyleShowcase } from './StyleShowcase';
 import { SEOContent } from './SEOContent';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 
 // UI Translations
 const UI_TEXT = {
@@ -28,7 +30,7 @@ const UI_TEXT = {
         template_label: "STYLE COLLECTION",
         save_pdf: "DOWNLOAD",
         create_new: "START OVER",
-        print_instr: "PRINT SETTINGS: Save as PDF • Background Graphics: ON • Margins: None",
+        download_tip: "Click the button above to download your resume as a PDF file.",
         cat_classic: "Classic Series (Free)",
         cat_bento: "Bento Style (Free Generation)",
         cat_gradient: "Gradient Style (Free Generation)",
@@ -71,7 +73,7 @@ const UI_TEXT = {
         template_label: "风格选择",
         save_pdf: "下载 PDF",
         create_new: "重新制作",
-        print_instr: "打印设置：另存为 PDF • 勾选背景图形 • 边距：无",
+        download_tip: "点击上方按钮即可下载简历 PDF 文件。",
         cat_classic: "经典系列 (免费)",
         cat_bento: "便当风格 (免费生成)",
         cat_gradient: "弥散渐变 (免费生成)",
@@ -269,12 +271,67 @@ const ResumeBuilder: React.FC = () => {
         navigate('/pricing');
     };
 
-    const triggerPrint = () => {
+    const downloadPDF = async () => {
         if (isPaid && !isPro) {
             handleUpgrade();
             return;
         }
-        window.print();
+
+        if (!resumeRef.current) return;
+
+        try {
+            // Show loading state
+            const originalContent = resumeRef.current;
+
+            // Set a fixed width for better quality (A4 ratio: 210mm x 297mm)
+            const canvas = await html2canvas(originalContent, {
+                scale: 2, // Higher quality
+                useCORS: true,
+                logging: false,
+                backgroundColor: '#ffffff',
+                windowWidth: 794, // A4 width in pixels at 96 DPI
+                windowHeight: 1123, // A4 height in pixels at 96 DPI
+            });
+
+            const imgData = canvas.toDataURL('image/png');
+
+            // A4 dimensions in mm
+            const pdfWidth = 210;
+            const pdfHeight = 297;
+
+            // Calculate the image dimensions to fit in PDF
+            const imgWidth = pdfWidth;
+            const imgHeight = (canvas.height * pdfWidth) / canvas.width;
+
+            // Create PDF
+            const pdf = new jsPDF({
+                orientation: imgHeight > pdfHeight ? 'portrait' : 'portrait',
+                unit: 'mm',
+                format: 'a4',
+            });
+
+            let heightLeft = imgHeight;
+            let position = 0;
+
+            // Add first page
+            pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+            heightLeft -= pdfHeight;
+
+            // Add additional pages if content is longer than one page
+            while (heightLeft > 0) {
+                position = heightLeft - imgHeight;
+                pdf.addPage();
+                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                heightLeft -= pdfHeight;
+            }
+
+            // Download the PDF
+            const fileName = `resume-${new Date().getTime()}.pdf`;
+            pdf.save(fileName);
+        } catch (error) {
+            console.error('Error generating PDF:', error);
+            alert(language === 'en' ? 'Failed to generate PDF. Please try again.' : '生成PDF失败，请重试。');
+        }
     };
 
     const reset = () => {
@@ -662,7 +719,7 @@ const ResumeBuilder: React.FC = () => {
 
                                     <div className="space-y-3">
                                         <button
-                                            onClick={triggerPrint}
+                                            onClick={downloadPDF}
                                             className={`w-full text-white py-4 rounded-xl font-bold transition-all active:scale-[0.98] shadow-lg flex items-center justify-center gap-2 ${isPaid ? 'bg-gradient-to-r from-yellow-400 via-orange-500 to-blue-600 hover:shadow-orange-500/40 text-sm' : 'bg-accent hover:bg-blue-700 shadow-accent/20'}`}
                                         >
                                             {isPaid ? (
@@ -689,9 +746,8 @@ const ResumeBuilder: React.FC = () => {
                                         </button>
                                     </div>
 
-                                    <div className="p-4 bg-blue-50 rounded-xl text-[10px] text-blue-800 leading-relaxed border border-blue-100">
-                                        <p className="font-bold mb-1 flex items-center gap-1"><AlertCircle size={10} /> IMPORTANT:</p>
-                                        {t.print_instr}
+                                    <div className="p-4 bg-blue-50 rounded-xl text-xs text-blue-800 leading-relaxed border border-blue-100">
+                                        <p className="font-medium flex items-center gap-1.5"><Download size={12} /> {t.download_tip}</p>
                                     </div>
                                 </div>
                             </div>
