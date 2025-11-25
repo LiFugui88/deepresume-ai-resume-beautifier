@@ -9,6 +9,7 @@ import { ResumeDesign, TemplateId, Language } from './ResumeDesign';
 import { Logo } from './Logo';
 import { AuthModal } from './AuthModal';
 import { User as SupabaseUser } from '@supabase/supabase-js';
+import { StyleShowcase } from './StyleShowcase';
 
 // UI Translations
 const UI_TEXT = {
@@ -406,92 +407,96 @@ const ResumeBuilder: React.FC = () => {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -20 }}
-                            className="flex-1 flex flex-col items-center justify-center max-w-xl w-full mx-auto px-4"
+                            className="flex-1 flex flex-col w-full"
                         >
-                            <div className="text-center space-y-8 w-full">
-                                <div className="space-y-4">
-                                    <div className="inline-block mb-2">
-                                        <span className="bg-accent/5 text-accent px-4 py-1.5 rounded-full text-xs font-bold tracking-wider uppercase border border-accent/10">
-                                            {t.slogan}
-                                        </span>
+                            <div className="flex-1 flex flex-col items-center justify-center max-w-xl w-full mx-auto px-4 min-h-[80vh]">
+                                <div className="text-center space-y-8 w-full">
+                                    <div className="space-y-4">
+                                        <div className="inline-block mb-2">
+                                            <span className="bg-accent/5 text-accent px-4 py-1.5 rounded-full text-xs font-bold tracking-wider uppercase border border-accent/10">
+                                                {t.slogan}
+                                            </span>
+                                        </div>
+                                        <h1 className="font-display text-5xl md:text-6xl lg:text-7xl font-bold tracking-tighter leading-tight text-ink">
+                                            {language === 'en' ? (
+                                                <>
+                                                    ELEVATE YOUR <br />
+                                                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent to-purple-600">CAREER</span>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    重塑 <br />
+                                                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent to-purple-600">职业形象</span>
+                                                </>
+                                            )}
+                                        </h1>
+                                        <p className="font-sans text-lg text-ink-light max-w-md mx-auto leading-relaxed">
+                                            {t.upload_desc}
+                                        </p>
                                     </div>
-                                    <h1 className="font-display text-5xl md:text-6xl lg:text-7xl font-bold tracking-tighter leading-tight text-ink">
-                                        {language === 'en' ? (
-                                            <>
-                                                ELEVATE YOUR <br />
-                                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent to-purple-600">CAREER</span>
-                                            </>
-                                        ) : (
-                                            <>
-                                                重塑 <br />
-                                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent to-purple-600">职业形象</span>
-                                            </>
-                                        )}
-                                    </h1>
-                                    <p className="font-sans text-lg text-ink-light max-w-md mx-auto leading-relaxed">
-                                        {t.upload_desc}
-                                    </p>
-                                </div>
 
-                                {/* Mode Toggle */}
-                                <div className="flex justify-center gap-4 mb-8">
-                                    <button
-                                        onClick={() => setInputMode('upload')}
-                                        className={`px-6 py-2 rounded-full font-bold text-sm transition-all ${inputMode === 'upload' ? 'bg-ink text-white shadow-lg shadow-ink/20' : 'bg-white text-ink-light hover:bg-paper border border-ink/5'}`}
-                                    >
-                                        {language === 'en' ? 'Upload PDF' : '上传简历'}
-                                    </button>
-                                    <button
-                                        onClick={() => setInputMode('manual')}
-                                        className={`px-6 py-2 rounded-full font-bold text-sm transition-all ${inputMode === 'manual' ? 'bg-ink text-white shadow-lg shadow-ink/20' : 'bg-white text-ink-light hover:bg-paper border border-ink/5'}`}
-                                    >
-                                        {language === 'en' ? 'Create from Scratch' : '手动录入'}
-                                    </button>
-                                </div>
+                                    {/* Mode Toggle */}
+                                    <div className="flex justify-center gap-4 mb-8">
+                                        <button
+                                            onClick={() => setInputMode('upload')}
+                                            className={`px-6 py-2 rounded-full font-bold text-sm transition-all ${inputMode === 'upload' ? 'bg-ink text-white shadow-lg shadow-ink/20' : 'bg-white text-ink-light hover:bg-paper border border-ink/5'}`}
+                                        >
+                                            {language === 'en' ? 'Upload PDF' : '上传简历'}
+                                        </button>
+                                        <button
+                                            onClick={() => setInputMode('manual')}
+                                            className={`px-6 py-2 rounded-full font-bold text-sm transition-all ${inputMode === 'manual' ? 'bg-ink text-white shadow-lg shadow-ink/20' : 'bg-white text-ink-light hover:bg-paper border border-ink/5'}`}
+                                        >
+                                            {language === 'en' ? 'Create from Scratch' : '手动录入'}
+                                        </button>
+                                    </div>
 
-                                {inputMode === 'upload' ? (
-                                    <div className="relative group w-full">
-                                        <div className="absolute -inset-1 bg-gradient-to-r from-accent to-purple-600 rounded-3xl blur opacity-20 group-hover:opacity-40 transition duration-1000 group-hover:duration-200" />
-                                        <label className="relative flex flex-col items-center justify-center w-full h-64 border-2 border-dashed border-ink/10 rounded-2xl bg-white/50 hover:bg-white hover:border-accent/50 transition-all cursor-pointer overflow-hidden backdrop-blur-sm">
-                                            <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                                                <div className="w-16 h-16 mb-4 rounded-2xl bg-blue-50 text-accent flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                                                    <UploadCloud size={32} />
+                                    {inputMode === 'upload' ? (
+                                        <div className="relative group w-full">
+                                            <div className="absolute -inset-1 bg-gradient-to-r from-accent to-purple-600 rounded-3xl blur opacity-20 group-hover:opacity-40 transition duration-1000 group-hover:duration-200" />
+                                            <label className="relative flex flex-col items-center justify-center w-full h-64 border-2 border-dashed border-ink/10 rounded-2xl bg-white/50 hover:bg-white hover:border-accent/50 transition-all cursor-pointer overflow-hidden backdrop-blur-sm">
+                                                <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                                    <div className="w-16 h-16 mb-4 rounded-2xl bg-blue-50 text-accent flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                                                        <UploadCloud size={32} />
+                                                    </div>
+                                                    <p className="mb-2 text-lg font-bold text-ink">
+                                                        {t.upload_btn}
+                                                    </p>
+                                                    <p className="text-xs text-ink-light font-medium">
+                                                        {language === 'en' ? "Supports PDF files up to 10MB" : "支持 10MB 以内的 PDF 文件"}
+                                                    </p>
                                                 </div>
-                                                <p className="mb-2 text-lg font-bold text-ink">
-                                                    {t.upload_btn}
-                                                </p>
-                                                <p className="text-xs text-ink-light font-medium">
-                                                    {t.upload_hint}
-                                                </p>
-                                            </div>
-                                            <input
-                                                type="file"
-                                                className="hidden"
-                                                accept=".pdf"
-                                                onChange={handleFileUpload}
-                                            />
-                                        </label>
-                                    </div>
-                                ) : (
-                                    <ManualEntryForm
-                                        onSubmit={handleManualSubmit}
-                                        onCancel={() => setInputMode('upload')}
-                                        isAnalyzing={state === AppState.ANALYZING}
-                                        language={language}
-                                    />
-                                )}
+                                                <input
+                                                    type="file"
+                                                    className="hidden"
+                                                    accept=".pdf"
+                                                    onChange={handleFileUpload}
+                                                />
+                                            </label>
+                                        </div>
+                                    ) : (
+                                        <ManualEntryForm
+                                            onSubmit={handleManualSubmit}
+                                            onCancel={() => setInputMode('upload')}
+                                            isAnalyzing={state === AppState.ANALYZING}
+                                            language={language}
+                                        />
+                                    )}
 
-                                {errorMsg && (
-                                    <motion.div
-                                        initial={{ opacity: 0 }}
-                                        animate={{ opacity: 1 }}
-                                        className="text-red-500 font-mono text-xs flex items-center justify-center gap-2 mt-4 bg-red-50 px-4 py-2 rounded-full"
-                                    >
-                                        <AlertCircle size={14} />
-                                        {errorMsg}
-                                    </motion.div>
-                                )}
+                                    {errorMsg && (
+                                        <motion.div
+                                            initial={{ opacity: 0 }}
+                                            animate={{ opacity: 1 }}
+                                            className="text-red-500 font-mono text-xs flex items-center justify-center gap-2 mt-4 bg-red-50 px-4 py-2 rounded-full"
+                                        >
+                                            <AlertCircle size={14} />
+                                            {errorMsg}
+                                        </motion.div>
+                                    )}
+                                </div>
                             </div>
+
+                            <StyleShowcase language={language} />
                         </motion.div>
                     )}
 
