@@ -790,14 +790,14 @@ const ResumeBuilder: React.FC = () => {
             {state === AppState.PREVIEW && resumeData && (
                 <div
                     style={{
-                        position: 'fixed',
-                        left: 0,
+                        position: 'absolute',
+                        left: '-9999px',
                         top: 0,
                         width: '210mm',
                         minHeight: '297mm',
-                        visibility: 'hidden',
+                        opacity: 1,
                         pointerEvents: 'none',
-                        zIndex: -9999,
+                        zIndex: -1,
                     }}
                 >
                     <ResumeDesign
