@@ -284,61 +284,80 @@ const ResumeBuilder: React.FC = () => {
             // Wait for all fonts to load
             await document.fonts.ready;
 
-            // Give the resume a unique ID for print targeting
-            const printId = 'resume-print-target';
-            resumeRef.current.id = printId;
+            // Clone the resume element
+            const resumeClone = resumeRef.current.cloneNode(true) as HTMLElement;
+            resumeClone.id = 'resume-print-clone';
+
+            // Style the clone for printing - positioned offscreen but in DOM
+            resumeClone.style.cssText = `
+                position: fixed;
+                left: 0;
+                top: 0;
+                width: 210mm;
+                min-height: 297mm;
+                margin: 0;
+                padding: 0;
+                background: white;
+                z-index: 99999;
+                transform: none;
+                visibility: visible;
+            `;
+
+            // Add clone to body
+            document.body.appendChild(resumeClone);
 
             // Create print-only stylesheet
             const printStyle = document.createElement('style');
             printStyle.id = 'resume-print-style';
             printStyle.textContent = `
                 @media print {
-                    /* Hide everything first */
-                    body * {
-                        visibility: hidden !important;
+                    /* Hide everything except the clone */
+                    body > *:not(#resume-print-clone) {
+                        display: none !important;
                     }
-                    /* Show only the resume and its children */
-                    #${printId}, #${printId} * {
-                        visibility: visible !important;
-                    }
-                    /* Position the resume for printing */
-                    #${printId} {
-                        position: fixed !important;
-                        left: 0 !important;
-                        top: 0 !important;
+                    #resume-print-clone {
+                        position: static !important;
                         width: 210mm !important;
                         min-height: 297mm !important;
                         margin: 0 !important;
                         padding: 0 !important;
-                        transform: none !important;
-                        background: white !important;
+                        display: block !important;
+                        visibility: visible !important;
                     }
-                    /* A4 page setup */
+                    #resume-print-clone * {
+                        visibility: visible !important;
+                    }
                     @page {
                         size: A4;
                         margin: 0;
                     }
                     html, body {
                         width: 210mm !important;
-                        height: 297mm !important;
                         margin: 0 !important;
                         padding: 0 !important;
+                    }
+                }
+                /* Hide clone on screen */
+                @media screen {
+                    #resume-print-clone {
+                        visibility: hidden !important;
+                        pointer-events: none !important;
                     }
                 }
             `;
             document.head.appendChild(printStyle);
 
             // Short delay for styles to apply
-            await new Promise(resolve => setTimeout(resolve, 50));
+            await new Promise(resolve => setTimeout(resolve, 100));
 
             // Trigger print
             window.print();
 
             // Cleanup after print dialog
             setTimeout(() => {
-                resumeRef.current?.removeAttribute('id');
+                document.getElementById('resume-print-clone')?.remove();
                 document.getElementById('resume-print-style')?.remove();
-            }, 100);
+            }, 500);
 
         } catch (error) {
             console.error('Error generating PDF:', error);
