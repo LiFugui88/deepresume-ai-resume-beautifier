@@ -1,225 +1,589 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronLeft, ChevronRight, Sparkles } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Sparkles, Mail, Phone, MapPin } from 'lucide-react';
+
+// Sample resume data for preview (English only)
+const SAMPLE_DATA = {
+    fullName: "Alex Morgan",
+    title: "Senior Product Designer",
+    email: "alex@example.com",
+    phone: "(555) 123-4567",
+    location: "San Francisco, CA",
+    summary: "Creative and detail-oriented Product Designer with 5+ years of experience in building user-centric digital products. Expert in UI/UX design, prototyping, and design systems.",
+    experience: [
+        {
+            company: "TechFlow Inc.",
+            role: "Senior Designer",
+            duration: "2021 - Present",
+            description: [
+                "Led redesign of core mobile app, increasing user engagement by 40%",
+                "Managed and mentored a team of 3 junior designers",
+                "Established design system used across all products"
+            ]
+        },
+        {
+            company: "StartupXYZ",
+            role: "UI/UX Designer",
+            duration: "2019 - 2021",
+            description: [
+                "Designed and shipped 5+ major product features",
+                "Collaborated with engineering to improve design handoff"
+            ]
+        }
+    ],
+    education: [
+        {
+            institution: "Parsons School of Design",
+            degree: "BFA Interaction Design",
+            year: "2017 - 2019"
+        }
+    ],
+    skills: ["Figma", "React", "UI/UX", "Prototyping", "Design Systems", "User Research", "TypeScript", "Tailwind CSS"]
+};
 
 interface StyleTemplate {
     id: string;
     name: string;
     nameEn: string;
-    color: string;
-    gradient: string;
-    preview: JSX.Element;
+    category: string;
+    categoryEn: string;
 }
+
+const templates: StyleTemplate[] = [
+    // Bento Series
+    { id: 'rio', name: 'RIO', nameEn: 'RIO', category: 'Bento 风格', categoryEn: 'Bento Style' },
+    { id: 'tokyo', name: 'TOKYO', nameEn: 'TOKYO', category: 'Bento 风格', categoryEn: 'Bento Style' },
+    { id: 'oslo', name: 'OSLO', nameEn: 'OSLO', category: 'Bento 风格', categoryEn: 'Bento Style' },
+    { id: 'milan', name: 'MILAN', nameEn: 'MILAN', category: 'Bento 风格', categoryEn: 'Bento Style' },
+    { id: 'nyc', name: 'NYC', nameEn: 'NYC', category: 'Bento 风格', categoryEn: 'Bento Style' },
+    // Gradient Series
+    { id: 'aurora', name: 'Aurora', nameEn: 'Aurora', category: '渐变风格', categoryEn: 'Gradient Style' },
+    { id: 'midnight', name: 'Midnight', nameEn: 'Midnight', category: '渐变风格', categoryEn: 'Gradient Style' },
+    { id: 'sunrise', name: 'Sunrise', nameEn: 'Sunrise', category: '渐变风格', categoryEn: 'Gradient Style' },
+];
+
+// Mini template previews that match the actual templates
+const RioPreview = () => (
+    <div className="w-full h-full bg-white text-slate-800 p-4 font-sans text-[6px] leading-tight">
+        <div className="grid grid-cols-12 gap-2 h-full content-start">
+            <div className="col-span-8 bg-slate-50 rounded-lg p-3 flex flex-col justify-center">
+                <h1 className="text-lg font-bold tracking-tight text-slate-900 mb-0.5">{SAMPLE_DATA.fullName}</h1>
+                <p className="text-[8px] text-blue-600 font-medium">{SAMPLE_DATA.title}</p>
+            </div>
+            <div className="col-span-4 bg-slate-900 text-white rounded-lg p-2 flex flex-col justify-center gap-1">
+                <div className="flex items-center gap-1"><Mail size={6} className="text-blue-400"/> <span className="truncate">{SAMPLE_DATA.email}</span></div>
+                <div className="flex items-center gap-1"><Phone size={6} className="text-blue-400"/> <span>{SAMPLE_DATA.phone}</span></div>
+                <div className="flex items-center gap-1"><MapPin size={6} className="text-blue-400"/> <span>{SAMPLE_DATA.location}</span></div>
+            </div>
+            <div className="col-span-12 bg-blue-50 rounded-lg p-2 border border-blue-100">
+                <p className="text-slate-700 leading-relaxed line-clamp-2">{SAMPLE_DATA.summary}</p>
+            </div>
+            <div className="col-span-8 bg-slate-50 rounded-lg p-3 border border-slate-100">
+                <h3 className="text-[8px] font-bold mb-2 flex items-center gap-1">
+                    <span className="w-1 h-3 bg-blue-600 rounded-full"></span>
+                    Experience
+                </h3>
+                {SAMPLE_DATA.experience.slice(0, 1).map((job, idx) => (
+                    <div key={idx} className="mb-2">
+                        <div className="flex justify-between items-baseline mb-0.5">
+                            <h4 className="font-bold text-[7px] text-slate-900">{job.company}</h4>
+                            <span className="text-[5px] text-slate-500">{job.duration}</span>
+                        </div>
+                        <p className="text-blue-600 font-medium mb-1">{job.role}</p>
+                        <ul className="space-y-0.5">
+                            {job.description.slice(0, 2).map((desc, i) => (
+                                <li key={i} className="text-slate-600">• {desc}</li>
+                            ))}
+                        </ul>
+                    </div>
+                ))}
+            </div>
+            <div className="col-span-4 flex flex-col gap-2">
+                <div className="bg-white border border-slate-100 rounded-lg p-2">
+                    <h3 className="font-bold text-[7px] mb-1">Skills</h3>
+                    <div className="flex flex-wrap gap-0.5">
+                        {SAMPLE_DATA.skills.slice(0, 6).map((skill, idx) => (
+                            <span key={idx} className="bg-slate-100 text-slate-700 px-1 py-0.5 rounded text-[5px] font-semibold">{skill}</span>
+                        ))}
+                    </div>
+                </div>
+                <div className="bg-slate-50 rounded-lg p-2 flex-1">
+                    <h3 className="font-bold text-[7px] mb-1">Education</h3>
+                    {SAMPLE_DATA.education.map((edu, idx) => (
+                        <div key={idx} className="bg-white p-1.5 rounded shadow-sm border border-slate-100">
+                            <p className="font-bold text-[6px] text-slate-900">{edu.institution}</p>
+                            <p className="text-[5px] text-slate-600">{edu.degree}</p>
+                            <p className="text-[5px] text-blue-500 font-mono">{edu.year}</p>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </div>
+    </div>
+);
+
+const TokyoPreview = () => (
+    <div className="w-full h-full bg-[#0F0F0F] text-gray-300 p-4 font-sans text-[6px]">
+        <div className="grid grid-cols-3 gap-2 h-full">
+            <div className="col-span-3 bg-[#1A1A1A] p-3 border-l-2 border-[#00FF94] flex justify-between items-center">
+                <div>
+                    <h1 className="text-lg font-bold text-white tracking-tighter mb-0.5">{SAMPLE_DATA.fullName}</h1>
+                    <p className="text-[#00FF94] text-[8px] tracking-widest uppercase font-mono">{SAMPLE_DATA.title}</p>
+                </div>
+            </div>
+            <div className="col-span-1 space-y-2">
+                <div className="bg-[#1A1A1A] p-2 border border-gray-800">
+                    <h3 className="text-white font-bold uppercase tracking-wider text-[5px] mb-2 border-b border-gray-800 pb-1">Contact</h3>
+                    <div className="space-y-1.5">
+                        <div><p className="text-[4px] text-gray-500">EMAIL</p><p className="text-white truncate">{SAMPLE_DATA.email}</p></div>
+                        <div><p className="text-[4px] text-gray-500">PHONE</p><p className="text-white">{SAMPLE_DATA.phone}</p></div>
+                    </div>
+                </div>
+                <div className="bg-[#1A1A1A] p-2 border border-gray-800 flex-1">
+                    <h3 className="text-white font-bold uppercase tracking-wider text-[5px] mb-2 border-b border-gray-800 pb-1">Skills</h3>
+                    <div className="flex flex-wrap gap-1">
+                        {SAMPLE_DATA.skills.slice(0, 5).map((skill, idx) => (
+                            <span key={idx} className="text-[5px] border border-gray-700 px-1 py-0.5 text-gray-400">{skill}</span>
+                        ))}
+                    </div>
+                </div>
+            </div>
+            <div className="col-span-2 space-y-2">
+                <div className="bg-[#1A1A1A] p-2 border border-gray-800">
+                    <p className="text-[7px] leading-relaxed text-gray-300 border-l border-gray-700 pl-2 italic line-clamp-2">{SAMPLE_DATA.summary}</p>
+                </div>
+                <div className="bg-[#1A1A1A] p-3 border border-gray-800 flex-1">
+                    <h3 className="text-white font-bold uppercase tracking-wider text-[5px] mb-3 flex items-center gap-2">
+                        Experience
+                        <div className="h-px bg-gray-800 flex-1"></div>
+                    </h3>
+                    {SAMPLE_DATA.experience.slice(0, 1).map((job, idx) => (
+                        <div key={idx}>
+                            <div className="flex justify-between items-end mb-1 border-b border-gray-800 pb-1">
+                                <h4 className="text-[8px] font-bold text-white">{job.company}</h4>
+                                <span className="font-mono text-[5px] text-[#00FF94]">{job.duration}</span>
+                            </div>
+                            <p className="text-[6px] text-gray-400 mb-2 uppercase tracking-wide">{job.role}</p>
+                            <ul className="space-y-0.5">
+                                {job.description.slice(0, 2).map((desc, i) => (
+                                    <li key={i} className="pl-2 relative before:content-['>'] before:absolute before:left-0 before:text-gray-600 before:text-[4px]">{desc}</li>
+                                ))}
+                            </ul>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </div>
+    </div>
+);
+
+const OsloPreview = () => (
+    <div className="w-full h-full bg-white text-black p-3 font-mono text-[6px]">
+        <div className="border-2 border-black h-full flex flex-col">
+            <div className="grid grid-cols-12 border-b-2 border-black">
+                <div className="col-span-8 p-3 flex flex-col justify-center border-r-2 border-black">
+                    <h1 className="text-xl font-bold uppercase leading-[0.8] tracking-tighter mb-1">{SAMPLE_DATA.fullName}</h1>
+                    <p className="text-[8px] bg-black text-white inline-block px-1 py-0.5 self-start">{SAMPLE_DATA.title}</p>
+                </div>
+                <div className="col-span-4 p-2 flex flex-col justify-between bg-[#f0f0f0]">
+                    <div className="text-[5px] font-bold uppercase underline">Contact</div>
+                    <div className="flex flex-col gap-0.5 text-[5px] font-bold">
+                        <p>{SAMPLE_DATA.email}</p>
+                        <p>{SAMPLE_DATA.phone}</p>
+                    </div>
+                </div>
+            </div>
+            <div className="flex-1 grid grid-cols-12">
+                <div className="col-span-4 border-r-2 border-black flex flex-col">
+                    <div className="p-2 border-b-2 border-black">
+                        <div className="bg-black text-white px-1 py-0.5 inline-block text-[5px] font-bold mb-2 uppercase">Education</div>
+                        {SAMPLE_DATA.education.map((edu, idx) => (
+                            <div key={idx}>
+                                <p className="font-bold leading-tight">{edu.institution}</p>
+                                <p className="text-[5px]">{edu.degree}</p>
+                            </div>
+                        ))}
+                    </div>
+                    <div className="p-2 flex-1 bg-gray-50">
+                        <div className="bg-black text-white px-1 py-0.5 inline-block text-[5px] font-bold mb-2 uppercase">Skills</div>
+                        <div className="flex flex-col gap-1">
+                            {SAMPLE_DATA.skills.slice(0, 4).map((skill, idx) => (
+                                <div key={idx} className="flex items-center gap-1">
+                                    <div className="w-1 h-1 bg-black"></div>
+                                    <span className="text-[5px] font-bold uppercase">{skill}</span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+                <div className="col-span-8 flex flex-col">
+                    <div className="p-2 border-b-2 border-black bg-[#ffff00]">
+                        <p className="text-[5px] font-bold leading-5 uppercase line-clamp-2">{SAMPLE_DATA.summary}</p>
+                    </div>
+                    <div className="p-3 flex-1">
+                        <div className="mb-2 border-b border-black pb-1 flex justify-between items-end">
+                            <h3 className="text-[10px] font-bold uppercase">Experience</h3>
+                        </div>
+                        {SAMPLE_DATA.experience.slice(0, 1).map((job, idx) => (
+                            <div key={idx}>
+                                <div className="flex justify-between items-start mb-1">
+                                    <h4 className="text-[8px] font-bold bg-black text-white px-1 py-0.5 inline-block">{job.company}</h4>
+                                    <span className="text-[5px] font-bold border border-black px-1 py-0.5">{job.duration}</span>
+                                </div>
+                                <p className="text-[6px] font-bold uppercase mb-1 underline">{job.role}</p>
+                                <ul className="space-y-0.5">
+                                    {job.description.slice(0, 2).map((desc, i) => (
+                                        <li key={i} className="text-[5px] font-medium pl-2 relative before:content-['■'] before:absolute before:left-0 before:text-[4px]">{desc}</li>
+                                    ))}
+                                </ul>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+);
+
+const MilanPreview = () => (
+    <div className="w-full h-full bg-[#FDFBF7] text-[#2C2C2C] p-4 font-serif text-[6px]">
+        <div className="grid grid-cols-2 gap-4 h-full content-start">
+            <div className="col-span-2 border-b border-[#D4D4D4] pb-3">
+                <h1 className="text-xl font-normal italic mb-1">{SAMPLE_DATA.fullName}</h1>
+                <div className="flex justify-between items-end">
+                    <p className="text-[6px] uppercase tracking-widest font-sans text-[#666]">{SAMPLE_DATA.title}</p>
+                    <div className="flex gap-3 text-[5px] font-sans text-[#666]">
+                        <span>{SAMPLE_DATA.email}</span>
+                        <span>{SAMPLE_DATA.location}</span>
+                    </div>
+                </div>
+            </div>
+            <div className="col-span-2 bg-white p-3 shadow-sm">
+                <p className="text-[7px] leading-5 font-light text-[#444] line-clamp-2">{SAMPLE_DATA.summary}</p>
+            </div>
+            <div className="col-span-1 space-y-3">
+                <h3 className="text-[5px] font-sans font-bold uppercase tracking-[0.2em] text-[#999] mb-2">Experience</h3>
+                {SAMPLE_DATA.experience.slice(0, 1).map((job, idx) => (
+                    <div key={idx}>
+                        <h4 className="text-[8px] font-medium mb-0.5">{job.company}</h4>
+                        <div className="flex justify-between text-[5px] font-sans text-[#666] mb-1 border-b border-dotted border-[#ccc] pb-1">
+                            <span>{job.role}</span>
+                            <span>{job.duration}</span>
+                        </div>
+                        <ul className="space-y-0.5">
+                            {job.description.slice(0, 2).map((desc, i) => (
+                                <li key={i} className="text-[5px] leading-4 text-[#444] list-none">– {desc}</li>
+                            ))}
+                        </ul>
+                    </div>
+                ))}
+            </div>
+            <div className="col-span-1 space-y-3 border-l border-[#E5E5E5] pl-4">
+                <div>
+                    <h3 className="text-[5px] font-sans font-bold uppercase tracking-[0.2em] text-[#999] mb-2">Education</h3>
+                    {SAMPLE_DATA.education.map((edu, idx) => (
+                        <div key={idx}>
+                            <p className="font-medium text-[7px]">{edu.institution}</p>
+                            <p className="text-[5px] font-sans text-[#666] uppercase">{edu.degree}</p>
+                        </div>
+                    ))}
+                </div>
+                <div>
+                    <h3 className="text-[5px] font-sans font-bold uppercase tracking-[0.2em] text-[#999] mb-2">Skills</h3>
+                    <div className="flex flex-wrap gap-1">
+                        {SAMPLE_DATA.skills.slice(0, 5).map((skill, idx) => (
+                            <span key={idx} className="text-[5px] italic text-[#444] border-b border-[#E5E5E5]">{skill}</span>
+                        ))}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+);
+
+const NYCPreview = () => (
+    <div className="w-full h-full bg-white text-black p-3 font-sans overflow-hidden text-[6px]">
+        <div className="grid grid-cols-12 grid-rows-[auto_auto_1fr] gap-2 h-full">
+            <div className="col-span-8 bg-black text-white p-3 flex flex-col justify-between">
+                <p className="text-[4px] font-mono tracking-widest opacity-50">PORTFOLIO // 2024</p>
+                <h1 className="text-xl font-black tracking-tighter uppercase leading-[0.9]">{SAMPLE_DATA.fullName}</h1>
+            </div>
+            <div className="col-span-4 bg-[#FF3B30] p-3 flex flex-col justify-center items-center text-center">
+                <p className="text-[9px] font-bold text-white leading-tight uppercase">{SAMPLE_DATA.title}</p>
+            </div>
+            <div className="col-span-12 bg-gray-100 p-2 flex justify-between items-center font-mono text-[5px] border-y border-black">
+                <div className="flex gap-3">
+                    <span>{SAMPLE_DATA.email}</span>
+                    <span>{SAMPLE_DATA.phone}</span>
+                </div>
+                <span>{SAMPLE_DATA.location}</span>
+            </div>
+            <div className="col-span-12 grid grid-cols-12 gap-2 h-full">
+                <div className="col-span-8 flex flex-col gap-2">
+                    <div className="bg-white border border-black p-2 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                        <p className="font-bold text-[6px] leading-snug line-clamp-2">{SAMPLE_DATA.summary}</p>
+                    </div>
+                    <div className="bg-white border border-black p-3 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] flex-1">
+                        <h3 className="text-[10px] font-black uppercase mb-3 decoration-2 underline decoration-[#FF3B30]">Experience</h3>
+                        {SAMPLE_DATA.experience.slice(0, 1).map((job, idx) => (
+                            <div key={idx}>
+                                <div className="flex items-center gap-1 mb-0.5">
+                                    <h4 className="text-[8px] font-black">{job.company}</h4>
+                                    <span className="bg-black text-white text-[4px] px-1 py-0.5 font-mono">{job.duration}</span>
+                                </div>
+                                <p className="text-[5px] font-bold text-[#FF3B30] mb-1 uppercase">{job.role}</p>
+                                <ul className="space-y-0.5">
+                                    {job.description.slice(0, 2).map((desc, i) => (
+                                        <li key={i} className="text-[5px] font-medium">• {desc}</li>
+                                    ))}
+                                </ul>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+                <div className="col-span-4 flex flex-col gap-2">
+                    <div className="bg-black text-white p-2 shadow-[2px_2px_0px_0px_rgba(200,200,200,1)]">
+                        <h3 className="font-mono text-[4px] text-[#FF3B30] mb-1 uppercase">Skills</h3>
+                        <div className="flex flex-wrap gap-x-1 gap-y-0.5">
+                            {SAMPLE_DATA.skills.slice(0, 5).map((skill, idx) => (
+                                <span key={idx} className="text-[5px] font-bold">{skill}</span>
+                            ))}
+                        </div>
+                    </div>
+                    <div className="bg-gray-100 border border-black p-2 flex-1 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                        <h3 className="font-black text-[7px] mb-2 uppercase">Education</h3>
+                        {SAMPLE_DATA.education.map((edu, idx) => (
+                            <div key={idx}>
+                                <p className="font-bold text-[5px]">{edu.institution}</p>
+                                <p className="text-[4px]">{edu.degree}</p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+);
+
+const AuroraPreview = () => (
+    <div className="w-full h-full bg-slate-50 relative overflow-hidden p-3 font-sans text-[6px]">
+        <div className="absolute top-0 left-0 w-32 h-32 bg-purple-300 rounded-full mix-blend-multiply filter blur-2xl opacity-30"></div>
+        <div className="absolute top-0 right-0 w-32 h-32 bg-yellow-200 rounded-full mix-blend-multiply filter blur-2xl opacity-30"></div>
+        <div className="absolute -bottom-10 left-5 w-32 h-32 bg-pink-300 rounded-full mix-blend-multiply filter blur-2xl opacity-30"></div>
+
+        <div className="relative z-10 h-full grid grid-cols-12 gap-2">
+            <div className="col-span-12 bg-white/60 backdrop-blur-xl border border-white/40 rounded-xl p-3 shadow-sm flex justify-between items-center">
+                <div>
+                    <h1 className="text-lg font-bold text-slate-800 mb-0.5">{SAMPLE_DATA.fullName}</h1>
+                    <p className="text-[7px] font-medium bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">{SAMPLE_DATA.title}</p>
+                </div>
+                <div className="text-right text-[5px] text-slate-600 font-medium space-y-0.5">
+                    <p>{SAMPLE_DATA.email}</p>
+                    <p>{SAMPLE_DATA.phone}</p>
+                </div>
+            </div>
+
+            <div className="col-span-8 space-y-2">
+                <div className="bg-white/60 backdrop-blur-xl border border-white/40 rounded-xl p-2 shadow-sm">
+                    <p className="text-slate-700 leading-relaxed line-clamp-2">{SAMPLE_DATA.summary}</p>
+                </div>
+                <div className="bg-white/60 backdrop-blur-xl border border-white/40 rounded-xl p-3 shadow-sm">
+                    <h3 className="font-bold text-slate-800 uppercase tracking-wider text-[5px] mb-2">Experience</h3>
+                    {SAMPLE_DATA.experience.slice(0, 1).map((job, idx) => (
+                        <div key={idx} className="pl-2 border-l border-purple-200">
+                            <h4 className="text-[7px] font-bold text-slate-800">{job.company}</h4>
+                            <div className="flex gap-1 text-[5px] mb-1">
+                                <span className="font-bold text-purple-600">{job.role}</span>
+                                <span className="text-slate-400">•</span>
+                                <span className="text-slate-500">{job.duration}</span>
+                            </div>
+                            <ul className="space-y-0.5">
+                                {job.description.slice(0, 2).map((desc, i) => (
+                                    <li key={i} className="text-[5px] text-slate-600 leading-relaxed">{desc}</li>
+                                ))}
+                            </ul>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            <div className="col-span-4 flex flex-col gap-2">
+                <div className="bg-white/60 backdrop-blur-xl border border-white/40 rounded-xl p-2 shadow-sm">
+                    <h3 className="font-bold text-slate-800 uppercase tracking-wider text-[5px] mb-1">Skills</h3>
+                    <div className="flex flex-wrap gap-1">
+                        {SAMPLE_DATA.skills.slice(0, 5).map((skill, idx) => (
+                            <span key={idx} className="bg-white/80 text-purple-900 px-1 py-0.5 rounded text-[4px] font-semibold shadow-sm border border-purple-50">{skill}</span>
+                        ))}
+                    </div>
+                </div>
+                <div className="bg-white/60 backdrop-blur-xl border border-white/40 rounded-xl p-2 shadow-sm flex-1">
+                    <h3 className="font-bold text-slate-800 uppercase tracking-wider text-[5px] mb-1">Education</h3>
+                    {SAMPLE_DATA.education.map((edu, idx) => (
+                        <div key={idx}>
+                            <p className="font-bold text-[5px] text-slate-800">{edu.institution}</p>
+                            <p className="text-[4px] text-purple-600 font-medium">{edu.degree}</p>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </div>
+    </div>
+);
+
+const MidnightPreview = () => (
+    <div className="w-full h-full bg-[#050511] text-white relative overflow-hidden p-3 font-sans text-[6px]">
+        <div className="absolute top-[-20%] left-[-10%] w-40 h-40 bg-blue-900/40 rounded-full filter blur-3xl"></div>
+        <div className="absolute bottom-[-20%] right-[-10%] w-40 h-40 bg-indigo-900/30 rounded-full filter blur-3xl"></div>
+
+        <div className="relative z-10">
+            <div className="text-center mb-4">
+                <div className="inline-block mb-1 px-2 py-0.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-md">
+                    <span className="text-[4px] font-medium tracking-[0.2em] text-blue-200 uppercase">{SAMPLE_DATA.title}</span>
+                </div>
+                <h1 className="text-lg font-light tracking-tight mb-1">{SAMPLE_DATA.fullName}</h1>
+                <div className="flex justify-center gap-3 text-[4px] text-blue-300/60 font-mono">
+                    <span>{SAMPLE_DATA.email}</span>
+                    <span>{SAMPLE_DATA.phone}</span>
+                </div>
+            </div>
+
+            <div className="grid grid-cols-12 gap-3">
+                <div className="col-span-4 space-y-2">
+                    <div className="bg-white/5 border border-white/5 rounded-lg p-2 backdrop-blur-sm">
+                        <h3 className="text-[4px] font-bold text-blue-400 mb-1 uppercase tracking-widest">Skills</h3>
+                        <div className="flex flex-wrap gap-1">
+                            {SAMPLE_DATA.skills.slice(0, 4).map((skill, idx) => (
+                                <span key={idx} className="text-[4px] text-gray-300 border border-white/10 px-1 py-0.5 rounded bg-black/20">{skill}</span>
+                            ))}
+                        </div>
+                    </div>
+                    <div className="bg-white/5 border border-white/5 rounded-lg p-2 backdrop-blur-sm">
+                        <h3 className="text-[4px] font-bold text-blue-400 mb-1 uppercase tracking-widest">Education</h3>
+                        {SAMPLE_DATA.education.map((edu, idx) => (
+                            <div key={idx}>
+                                <p className="font-bold text-[5px]">{edu.institution}</p>
+                                <p className="text-[4px] text-gray-400">{edu.degree}</p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                <div className="col-span-8 space-y-2">
+                    <p className="text-[6px] font-light leading-relaxed text-gray-300 border-l border-blue-500/50 pl-2 line-clamp-2">{SAMPLE_DATA.summary}</p>
+
+                    <div>
+                        <h3 className="text-[7px] font-light mb-2 flex items-center gap-2 text-blue-100">
+                            <span className="w-3 h-[1px] bg-blue-500"></span>
+                            Experience
+                        </h3>
+                        {SAMPLE_DATA.experience.slice(0, 1).map((job, idx) => (
+                            <div key={idx} className="pl-3">
+                                <div className="absolute left-0 top-1 w-1 h-1 rounded-full bg-blue-500 shadow-[0_0_5px_rgba(59,130,246,0.8)]"></div>
+                                <h4 className="text-[7px] font-medium text-white mb-0.5">{job.company}</h4>
+                                <div className="flex justify-between items-center mb-1">
+                                    <span className="text-[5px] text-blue-300">{job.role}</span>
+                                    <span className="text-[4px] font-mono text-white/30">{job.duration}</span>
+                                </div>
+                                <ul className="space-y-0.5">
+                                    {job.description.slice(0, 2).map((desc, i) => (
+                                        <li key={i} className="text-[5px] text-gray-400 font-light leading-relaxed">{desc}</li>
+                                    ))}
+                                </ul>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+);
+
+const SunrisePreview = () => (
+    <div className="w-full h-full bg-white flex font-sans text-[6px]">
+        <div className="w-[35%] bg-gradient-to-b from-[#FF9A9E] via-[#FECFEF] to-[#F6F9FC] p-3 relative">
+            <div className="relative z-10">
+                <h1 className="text-lg font-bold text-slate-900 leading-tight mb-0.5 font-serif">{SAMPLE_DATA.fullName}</h1>
+                <p className="text-slate-800 font-medium mb-3 opacity-70 text-[6px]">{SAMPLE_DATA.title}</p>
+
+                <div className="space-y-1 mb-4">
+                    <p className="text-[5px] text-slate-700 font-medium flex items-center gap-1"><Mail size={6} /> {SAMPLE_DATA.email}</p>
+                    <p className="text-[5px] text-slate-700 font-medium flex items-center gap-1"><Phone size={6} /> {SAMPLE_DATA.phone}</p>
+                </div>
+
+                <div className="space-y-3">
+                    <div>
+                        <h3 className="font-bold text-slate-900 uppercase tracking-wider text-[4px] mb-1 opacity-50">Skills</h3>
+                        <div className="flex flex-wrap gap-1">
+                            {SAMPLE_DATA.skills.slice(0, 4).map((skill, idx) => (
+                                <span key={idx} className="bg-white/40 px-1 py-0.5 rounded text-[4px] font-bold text-slate-800">{skill}</span>
+                            ))}
+                        </div>
+                    </div>
+                    <div>
+                        <h3 className="font-bold text-slate-900 uppercase tracking-wider text-[4px] mb-1 opacity-50">Education</h3>
+                        {SAMPLE_DATA.education.map((edu, idx) => (
+                            <div key={idx}>
+                                <p className="font-bold text-[5px] text-slate-900">{edu.institution}</p>
+                                <p className="text-[4px] text-slate-700">{edu.degree}</p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div className="flex-1 p-4 bg-white">
+            <div className="mb-3">
+                <h3 className="text-[8px] font-serif font-bold text-slate-900 mb-1">Summary</h3>
+                <p className="text-slate-600 leading-4 line-clamp-2">{SAMPLE_DATA.summary}</p>
+            </div>
+
+            <div>
+                <h3 className="text-[8px] font-serif font-bold text-slate-900 mb-2">Experience</h3>
+                {SAMPLE_DATA.experience.slice(0, 1).map((job, idx) => (
+                    <div key={idx}>
+                        <div className="flex justify-between items-baseline mb-0.5">
+                            <h4 className="text-[7px] font-bold text-slate-800">{job.company}</h4>
+                            <span className="text-[4px] font-bold text-slate-400 uppercase tracking-wider">{job.duration}</span>
+                        </div>
+                        <p className="text-[5px] font-medium text-[#FF9A9E] mb-1 uppercase tracking-wide">{job.role}</p>
+                        <ul className="space-y-0.5">
+                            {job.description.slice(0, 2).map((desc, i) => (
+                                <li key={i} className="text-[5px] text-slate-600 pl-2 border-l border-orange-100">{desc}</li>
+                            ))}
+                        </ul>
+                    </div>
+                ))}
+            </div>
+        </div>
+    </div>
+);
+
+// Map template IDs to preview components
+const previewComponents: Record<string, React.FC> = {
+    rio: RioPreview,
+    tokyo: TokyoPreview,
+    oslo: OsloPreview,
+    milan: MilanPreview,
+    nyc: NYCPreview,
+    aurora: AuroraPreview,
+    midnight: MidnightPreview,
+    sunrise: SunrisePreview,
+};
 
 export const StyleCarousel: React.FC<{ language: 'en' | 'zh' }> = ({ language }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
-    const [isDragging, setIsDragging] = useState(false);
-    const carouselRef = useRef<HTMLDivElement>(null);
 
     const t = {
         en: {
             title: "Premium Resume Styles",
-            subtitle: "Swipe to explore our professionally designed templates",
-            viewAll: "View All Styles"
+            subtitle: "Swipe to explore professionally designed templates that make you stand out"
         },
         zh: {
             title: "高级简历风格展示",
-            subtitle: "滑动查看我们的专业设计模板",
-            viewAll: "查看所有风格"
+            subtitle: "滑动查看专业设计的模板，让您脱颖而出"
         }
     }[language];
-
-    const templates: StyleTemplate[] = [
-        {
-            id: 'bento',
-            name: 'Bento 网格风格',
-            nameEn: 'Bento Grid',
-            color: 'from-blue-500 to-purple-600',
-            gradient: 'bg-gradient-to-br from-blue-50 to-purple-50',
-            preview: (
-                <div className="w-full h-full bg-white rounded-xl p-6 shadow-2xl font-sans overflow-hidden">
-                    <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg p-5 text-white mb-4">
-                        <h3 className="font-bold text-xl mb-1">Alex Morgan</h3>
-                        <p className="text-sm text-blue-100">产品设计师</p>
-                    </div>
-                    <div className="grid grid-cols-2 gap-3 h-[calc(100%-100px)]">
-                        <div className="bg-blue-50 rounded-lg p-4 border border-blue-100">
-                            <h4 className="text-xs font-bold text-blue-900 mb-2">关于我</h4>
-                            <div className="space-y-1">
-                                <div className="h-2 bg-blue-200 rounded w-full"></div>
-                                <div className="h-2 bg-blue-200 rounded w-4/5"></div>
-                            </div>
-                        </div>
-                        <div className="bg-purple-50 rounded-lg p-4 border border-purple-100">
-                            <h4 className="text-xs font-bold text-purple-900 mb-2">技能</h4>
-                            <div className="flex flex-wrap gap-1">
-                                {['Figma', 'React', 'UI/UX'].map(s => (
-                                    <span key={s} className="bg-white text-[8px] px-2 py-0.5 rounded border border-purple-200">{s}</span>
-                                ))}
-                            </div>
-                        </div>
-                        <div className="bg-green-50 rounded-lg p-4 border border-green-100 col-span-2">
-                            <h4 className="text-xs font-bold text-green-900 mb-2">工作经历</h4>
-                            <div className="space-y-1">
-                                <div className="flex justify-between text-[10px]">
-                                    <span className="font-semibold">高级设计师</span>
-                                    <span className="text-green-600">2021-至今</span>
-                                </div>
-                                <div className="h-1.5 bg-green-200 rounded w-full"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )
-        },
-        {
-            id: 'minimal',
-            name: '极简风格',
-            nameEn: 'Minimal',
-            color: 'from-gray-700 to-gray-900',
-            gradient: 'bg-gradient-to-br from-gray-50 to-slate-50',
-            preview: (
-                <div className="w-full h-full bg-white rounded-xl p-8 shadow-2xl font-sans overflow-hidden">
-                    <div className="border-b-2 border-gray-900 pb-4 mb-6">
-                        <h3 className="font-bold text-2xl text-gray-900 mb-1">Alex Morgan</h3>
-                        <p className="text-sm text-gray-600">产品设计师 / UI/UX 专家</p>
-                    </div>
-                    <div className="space-y-5">
-                        <div>
-                            <h4 className="text-xs font-bold text-gray-900 mb-3 uppercase tracking-wider">工作经历</h4>
-                            <div className="space-y-2">
-                                <div className="flex justify-between">
-                                    <span className="font-semibold text-sm">高级设计师</span>
-                                    <span className="text-xs text-gray-500">2021-至今</span>
-                                </div>
-                                <p className="text-xs text-gray-600">TechFlow Inc.</p>
-                                <div className="h-px bg-gray-200 my-2"></div>
-                            </div>
-                        </div>
-                        <div>
-                            <h4 className="text-xs font-bold text-gray-900 mb-3 uppercase tracking-wider">技能</h4>
-                            <div className="space-y-1">
-                                <div className="h-1.5 bg-gray-900 rounded w-full"></div>
-                                <div className="h-1.5 bg-gray-900 rounded w-4/5"></div>
-                                <div className="h-1.5 bg-gray-900 rounded w-3/5"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )
-        },
-        {
-            id: 'creative',
-            name: '创意配色',
-            nameEn: 'Creative',
-            color: 'from-orange-400 to-pink-600',
-            gradient: 'bg-gradient-to-br from-orange-50 to-pink-50',
-            preview: (
-                <div className="w-full h-full bg-gradient-to-br from-orange-100 to-pink-100 rounded-xl p-6 shadow-2xl font-sans overflow-hidden">
-                    <div className="bg-white rounded-xl p-5 mb-4 shadow-md">
-                        <div className="flex items-center gap-3">
-                            <div className="w-14 h-14 rounded-full bg-gradient-to-br from-orange-400 to-pink-500"></div>
-                            <div>
-                                <h3 className="font-bold text-lg">Alex Morgan</h3>
-                                <p className="text-xs text-gray-600">创意设计师</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="space-y-3">
-                        <div className="bg-white rounded-lg p-4 shadow-sm">
-                            <h4 className="text-xs font-bold text-orange-600 mb-2">关于我</h4>
-                            <div className="space-y-1">
-                                <div className="h-2 bg-gradient-to-r from-orange-200 to-pink-200 rounded w-full"></div>
-                                <div className="h-2 bg-gradient-to-r from-orange-200 to-pink-200 rounded w-3/4"></div>
-                            </div>
-                        </div>
-                        <div className="bg-white rounded-lg p-4 shadow-sm">
-                            <h4 className="text-xs font-bold text-pink-600 mb-2">技能标签</h4>
-                            <div className="flex flex-wrap gap-1.5">
-                                {['创意', '设计', '艺术'].map(s => (
-                                    <span key={s} className="bg-gradient-to-r from-orange-400 to-pink-500 text-white text-[9px] px-2.5 py-1 rounded-full">{s}</span>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )
-        },
-        {
-            id: 'professional',
-            name: '商务专业',
-            nameEn: 'Professional',
-            color: 'from-blue-600 to-indigo-700',
-            gradient: 'bg-gradient-to-br from-blue-50 to-indigo-50',
-            preview: (
-                <div className="w-full h-full bg-white rounded-xl shadow-2xl font-sans overflow-hidden">
-                    <div className="bg-gradient-to-r from-blue-600 to-indigo-700 p-6 text-white">
-                        <h3 className="font-bold text-xl mb-1">Alex Morgan</h3>
-                        <p className="text-sm text-blue-100">商务分析师</p>
-                        <p className="text-xs text-blue-200 mt-2">alex@example.com</p>
-                    </div>
-                    <div className="p-6 space-y-4">
-                        <div className="border-l-4 border-blue-600 pl-4">
-                            <h4 className="text-xs font-bold text-gray-900 mb-2">专业摘要</h4>
-                            <div className="space-y-1">
-                                <div className="h-1.5 bg-gray-200 rounded w-full"></div>
-                                <div className="h-1.5 bg-gray-200 rounded w-5/6"></div>
-                            </div>
-                        </div>
-                        <div className="border-l-4 border-indigo-600 pl-4">
-                            <h4 className="text-xs font-bold text-gray-900 mb-2">工作经历</h4>
-                            <div className="flex justify-between text-[10px] mb-1">
-                                <span className="font-semibold">高级分析师</span>
-                                <span className="text-gray-500">2020-至今</span>
-                            </div>
-                            <div className="h-1.5 bg-gray-200 rounded w-full"></div>
-                        </div>
-                    </div>
-                </div>
-            )
-        },
-        {
-            id: 'modern',
-            name: '现代简约',
-            nameEn: 'Modern',
-            color: 'from-teal-500 to-cyan-600',
-            gradient: 'bg-gradient-to-br from-teal-50 to-cyan-50',
-            preview: (
-                <div className="w-full h-full bg-white rounded-xl p-6 shadow-2xl font-sans overflow-hidden">
-                    <div className="flex items-start justify-between mb-5">
-                        <div>
-                            <h3 className="font-bold text-2xl text-gray-900">Alex Morgan</h3>
-                            <p className="text-sm text-teal-600 font-medium">前端开发工程师</p>
-                        </div>
-                        <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-teal-400 to-cyan-500"></div>
-                    </div>
-                    <div className="space-y-4">
-                        <div className="bg-gradient-to-r from-teal-50 to-cyan-50 rounded-lg p-4">
-                            <h4 className="text-xs font-bold text-teal-700 mb-2 flex items-center gap-1">
-                                <Sparkles size={12} />
-                                核心技能
-                            </h4>
-                            <div className="grid grid-cols-3 gap-1.5">
-                                {['React', 'Vue', 'Next.js', 'TypeScript', 'Tailwind', 'Node.js'].map(s => (
-                                    <div key={s} className="bg-white text-[8px] px-2 py-1 rounded text-center shadow-sm border border-teal-100">{s}</div>
-                                ))}
-                            </div>
-                        </div>
-                        <div className="space-y-2">
-                            <h4 className="text-xs font-bold text-gray-900">项目经验</h4>
-                            <div className="bg-gray-50 rounded-lg p-3">
-                                <div className="flex justify-between text-[10px] mb-1">
-                                    <span className="font-semibold text-gray-900">电商平台开发</span>
-                                    <span className="text-teal-600">2023</span>
-                                </div>
-                                <div className="h-1 bg-gradient-to-r from-teal-500 to-cyan-500 rounded w-full"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )
-        }
-    ];
 
     const nextSlide = () => {
         setCurrentIndex((prev) => (prev + 1) % templates.length);
@@ -231,21 +595,22 @@ export const StyleCarousel: React.FC<{ language: 'en' | 'zh' }> = ({ language })
 
     // Auto-play carousel
     useEffect(() => {
-        if (!isDragging) {
-            const interval = setInterval(nextSlide, 5000);
-            return () => clearInterval(interval);
-        }
-    }, [isDragging, currentIndex]);
+        const interval = setInterval(nextSlide, 5000);
+        return () => clearInterval(interval);
+    }, [currentIndex]);
+
+    const currentTemplate = templates[currentIndex];
+    const PreviewComponent = previewComponents[currentTemplate.id];
 
     return (
         <section className="py-20 px-4 bg-gradient-to-b from-white to-gray-50 relative overflow-hidden">
             {/* Background decoration */}
-            <div className="absolute top-0 left-0 w-full h-full opacity-30 pointer-events-none">
+            <div className="absolute top-0 left-0 w-full h-full opacity-20 pointer-events-none">
                 <div className="absolute top-20 left-10 w-72 h-72 bg-blue-200 rounded-full blur-3xl"></div>
                 <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-200 rounded-full blur-3xl"></div>
             </div>
 
-            <div className="max-w-7xl mx-auto relative z-10">
+            <div className="max-w-6xl mx-auto relative z-10">
                 {/* Header */}
                 <div className="text-center mb-12 space-y-4">
                     <motion.h2
@@ -269,36 +634,33 @@ export const StyleCarousel: React.FC<{ language: 'en' | 'zh' }> = ({ language })
                 {/* Carousel */}
                 <div className="relative">
                     {/* Main Display Area */}
-                    <div className="relative h-[500px] md:h-[600px] mb-8">
+                    <div className="relative mb-8">
                         <AnimatePresence mode="wait">
                             <motion.div
                                 key={currentIndex}
-                                initial={{ opacity: 0, scale: 0.9, rotateY: 10 }}
-                                animate={{ opacity: 1, scale: 1, rotateY: 0 }}
-                                exit={{ opacity: 0, scale: 0.9, rotateY: -10 }}
-                                transition={{ duration: 0.5 }}
-                                className="absolute inset-0 flex items-center justify-center"
+                                initial={{ opacity: 0, x: 50 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: -50 }}
+                                transition={{ duration: 0.4 }}
+                                className="flex justify-center"
                             >
-                                <div className="w-full max-w-md md:max-w-lg lg:max-w-xl h-full px-4">
-                                    {/* Template Card */}
-                                    <div className="relative h-full">
-                                        {/* Gradient background */}
-                                        <div className={`absolute -inset-4 bg-gradient-to-r ${templates[currentIndex].color} opacity-20 rounded-3xl blur-xl`}></div>
-
-                                        {/* Template Name Badge */}
-                                        <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-20">
-                                            <div className={`bg-gradient-to-r ${templates[currentIndex].color} text-white px-6 py-2 rounded-full shadow-lg flex items-center gap-2`}>
-                                                <Sparkles size={16} />
-                                                <span className="font-bold text-sm">
-                                                    {language === 'zh' ? templates[currentIndex].name : templates[currentIndex].nameEn}
-                                                </span>
-                                            </div>
+                                <div className="relative">
+                                    {/* Template Name Badge */}
+                                    <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-20">
+                                        <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-full shadow-lg flex items-center gap-2">
+                                            <Sparkles size={16} />
+                                            <span className="font-bold text-sm">
+                                                {currentTemplate.name}
+                                            </span>
+                                            <span className="text-white/70 text-xs ml-2">
+                                                {language === 'zh' ? currentTemplate.category : currentTemplate.categoryEn}
+                                            </span>
                                         </div>
+                                    </div>
 
-                                        {/* Template Preview */}
-                                        <div className="relative h-full mt-4">
-                                            {templates[currentIndex].preview}
-                                        </div>
+                                    {/* Template Preview - A4 ratio */}
+                                    <div className="w-[320px] h-[452px] md:w-[400px] md:h-[566px] lg:w-[480px] lg:h-[679px] bg-white rounded-xl shadow-2xl overflow-hidden mt-6 border border-gray-100">
+                                        {PreviewComponent && <PreviewComponent />}
                                     </div>
                                 </div>
                             </motion.div>
@@ -320,45 +682,42 @@ export const StyleCarousel: React.FC<{ language: 'en' | 'zh' }> = ({ language })
                     </div>
 
                     {/* Thumbnail Navigation */}
-                    <div className="flex justify-center gap-3 flex-wrap px-4">
-                        {templates.map((template, idx) => (
-                            <button
-                                key={template.id}
-                                onClick={() => setCurrentIndex(idx)}
-                                className={`relative group transition-all duration-300 ${
-                                    idx === currentIndex
-                                        ? 'scale-110'
-                                        : 'scale-100 hover:scale-105 opacity-60 hover:opacity-100'
-                                }`}
-                            >
-                                <div className={`w-20 h-24 md:w-24 md:h-28 rounded-lg border-2 transition-all ${
-                                    idx === currentIndex
-                                        ? `border-transparent shadow-xl bg-gradient-to-r ${template.color}`
-                                        : 'border-gray-200 bg-white shadow-sm'
-                                }`}>
-                                    <div className={`w-full h-full rounded-md overflow-hidden ${
-                                        idx === currentIndex ? 'p-0.5' : ''
+                    <div className="flex justify-center gap-2 md:gap-3 px-4 overflow-x-auto pb-4">
+                        {templates.map((template, idx) => {
+                            const ThumbPreview = previewComponents[template.id];
+                            return (
+                                <button
+                                    key={template.id}
+                                    onClick={() => setCurrentIndex(idx)}
+                                    className={`relative flex-shrink-0 transition-all duration-300 ${
+                                        idx === currentIndex
+                                            ? 'scale-105'
+                                            : 'scale-100 hover:scale-105 opacity-70 hover:opacity-100'
+                                    }`}
+                                >
+                                    <div className={`w-16 h-[90px] md:w-20 md:h-[113px] rounded-lg overflow-hidden border-2 transition-all ${
+                                        idx === currentIndex
+                                            ? 'border-blue-500 shadow-lg shadow-blue-500/30'
+                                            : 'border-gray-200 hover:border-gray-300'
                                     }`}>
-                                        <div className="w-full h-full bg-white rounded-md overflow-hidden scale-[0.35] origin-top-left transform">
-                                            {template.preview}
+                                        <div className="w-full h-full overflow-hidden">
+                                            {ThumbPreview && <ThumbPreview />}
                                         </div>
                                     </div>
-                                </div>
-                                <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
-                                    <span className={`text-xs font-medium transition-all ${
-                                        idx === currentIndex
-                                            ? 'text-gray-900 font-bold'
-                                            : 'text-gray-500'
+                                    <div className={`absolute -bottom-5 left-1/2 transform -translate-x-1/2 whitespace-nowrap transition-all ${
+                                        idx === currentIndex ? 'opacity-100' : 'opacity-0'
                                     }`}>
-                                        {language === 'zh' ? template.name : template.nameEn}
-                                    </span>
-                                </div>
-                            </button>
-                        ))}
+                                        <span className="text-xs font-bold text-gray-700">
+                                            {template.name}
+                                        </span>
+                                    </div>
+                                </button>
+                            );
+                        })}
                     </div>
 
                     {/* Progress Indicators */}
-                    <div className="flex justify-center gap-2 mt-16">
+                    <div className="flex justify-center gap-2 mt-8">
                         {templates.map((_, idx) => (
                             <button
                                 key={idx}
@@ -367,8 +726,8 @@ export const StyleCarousel: React.FC<{ language: 'en' | 'zh' }> = ({ language })
                             >
                                 <div className={`h-1.5 rounded-full transition-all duration-300 ${
                                     idx === currentIndex
-                                        ? 'w-12 bg-gradient-to-r from-blue-500 to-purple-600'
-                                        : 'w-6 bg-gray-300 hover:bg-gray-400'
+                                        ? 'w-10 bg-gradient-to-r from-blue-500 to-purple-600'
+                                        : 'w-4 bg-gray-300 hover:bg-gray-400'
                                 }`}></div>
                             </button>
                         ))}
