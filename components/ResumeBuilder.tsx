@@ -657,31 +657,30 @@ const ResumeBuilder: React.FC = () => {
                             key="preview"
                             initial={{ opacity: 0, y: 50 }}
                             animate={{ opacity: 1, y: 0 }}
-                            className="flex flex-col lg:flex-row gap-8 px-4 md:px-12 max-w-[1800px] mx-auto w-full"
+                            className="flex flex-col lg:flex-row gap-6 lg:gap-8 px-4 md:px-12 max-w-[1800px] mx-auto w-full"
                         >
-                            {/* Controls Sidebar (Left on Desktop) */}
-                            <div className="lg:w-80 shrink-0 flex flex-col gap-6 order-2 lg:order-1 no-print">
-                                <div className="bg-white border border-ink/10 rounded-3xl p-6 space-y-6 sticky top-24 shadow-xl">
+                            {/* Controls - Top on Mobile, Left Sidebar on Desktop */}
+                            <div className="lg:w-80 shrink-0 flex flex-col gap-4 lg:gap-6 order-1 no-print">
+                                <div className="bg-white border border-ink/10 rounded-2xl lg:rounded-3xl p-4 lg:p-6 space-y-4 lg:space-y-6 lg:sticky lg:top-24 shadow-xl">
                                     <div>
-                                        <h3 className="font-display font-bold text-xl mb-1 text-ink">{t.action_center}</h3>
+                                        <h3 className="font-display font-bold text-lg lg:text-xl mb-1 text-ink">{t.action_center}</h3>
                                         <p className="text-xs text-ink-light font-medium">{t.review_desc}</p>
                                     </div>
 
-                                    {/* Category Toggle - Vertical Layout */}
-                                    <div className="flex flex-col gap-3">
+                                    {/* Category Toggle - Horizontal on Mobile, Vertical on Desktop */}
+                                    <div className="flex flex-col gap-2 lg:gap-3">
                                         <label className="text-[10px] font-bold tracking-widest text-ink-light uppercase flex items-center gap-2">
                                             <Layout size={12} /> CATEGORY
                                         </label>
-                                        <div className="flex flex-col gap-2 bg-paper p-2 rounded-xl border border-ink/5">
+                                        {/* Mobile: Horizontal scroll */}
+                                        <div className="flex lg:flex-col gap-2 overflow-x-auto lg:overflow-visible pb-2 lg:pb-0 -mx-1 px-1 lg:mx-0 lg:px-0 lg:bg-paper lg:p-2 lg:rounded-xl lg:border lg:border-ink/5">
                                             <button
                                                 onClick={() => { setCategory('classic'); setTemplate('standard'); }}
-                                                className={`w-full px-4 py-3 text-xs font-bold rounded-lg transition-all flex items-center justify-between group ${category === 'classic' ? 'bg-white shadow-sm text-ink border border-ink/5' : 'text-ink-light hover:text-ink hover:bg-white/50'}`}
+                                                className={`shrink-0 px-4 py-2.5 lg:py-3 text-xs font-bold rounded-lg transition-all flex items-center gap-2 ${category === 'classic' ? 'bg-white shadow-sm text-ink border border-ink/10' : 'bg-paper lg:bg-transparent text-ink-light hover:text-ink hover:bg-white/50 border border-transparent'}`}
                                             >
-                                                <div className="flex items-center gap-2">
-                                                    <Briefcase size={14} className={category === 'classic' ? 'text-accent' : 'text-ink-light'} />
-                                                    <span>{t.cat_classic}</span>
-                                                </div>
-                                                {category === 'classic' && <CheckCircle2 size={14} className="text-accent" />}
+                                                <Briefcase size={14} className={category === 'classic' ? 'text-accent' : 'text-ink-light'} />
+                                                <span className="whitespace-nowrap">{t.cat_classic}</span>
+                                                {category === 'classic' && <CheckCircle2 size={14} className="text-accent hidden lg:block" />}
                                             </button>
                                             <button
                                                 onClick={() => {
@@ -692,13 +691,11 @@ const ResumeBuilder: React.FC = () => {
                                                     setCategory('bento');
                                                     setTemplate('rio');
                                                 }}
-                                                className={`w-full px-4 py-3 text-xs font-bold rounded-lg transition-all flex items-center justify-between group ${category === 'bento' ? 'bg-white shadow-sm text-ink border border-ink/5' : 'text-ink-light hover:text-ink hover:bg-white/50'}`}
+                                                className={`shrink-0 px-4 py-2.5 lg:py-3 text-xs font-bold rounded-lg transition-all flex items-center gap-2 ${category === 'bento' ? 'bg-white shadow-sm text-ink border border-ink/10' : 'bg-paper lg:bg-transparent text-ink-light hover:text-ink hover:bg-white/50 border border-transparent'}`}
                                             >
-                                                <div className="flex items-center gap-2">
-                                                    <Grid size={14} className={category === 'bento' ? 'text-accent' : 'text-ink-light'} />
-                                                    <span>{t.cat_bento}</span>
-                                                </div>
-                                                {category === 'bento' && <CheckCircle2 size={14} className="text-accent" />}
+                                                <Grid size={14} className={category === 'bento' ? 'text-accent' : 'text-ink-light'} />
+                                                <span className="whitespace-nowrap">{t.cat_bento}</span>
+                                                {category === 'bento' && <CheckCircle2 size={14} className="text-accent hidden lg:block" />}
                                             </button>
                                             <button
                                                 onClick={() => {
@@ -709,34 +706,33 @@ const ResumeBuilder: React.FC = () => {
                                                     setCategory('gradient');
                                                     setTemplate('aurora');
                                                 }}
-                                                className={`w-full px-4 py-3 text-xs font-bold rounded-lg transition-all flex items-center justify-between group ${category === 'gradient' ? 'bg-white shadow-sm text-ink border border-ink/5' : 'text-ink-light hover:text-ink hover:bg-white/50'}`}
+                                                className={`shrink-0 px-4 py-2.5 lg:py-3 text-xs font-bold rounded-lg transition-all flex items-center gap-2 ${category === 'gradient' ? 'bg-white shadow-sm text-ink border border-ink/10' : 'bg-paper lg:bg-transparent text-ink-light hover:text-ink hover:bg-white/50 border border-transparent'}`}
                                             >
-                                                <div className="flex items-center gap-2">
-                                                    <Palette size={14} className={category === 'gradient' ? 'text-accent' : 'text-ink-light'} />
-                                                    <span>{t.cat_gradient}</span>
-                                                </div>
-                                                {category === 'gradient' && <CheckCircle2 size={14} className="text-accent" />}
+                                                <Palette size={14} className={category === 'gradient' ? 'text-accent' : 'text-ink-light'} />
+                                                <span className="whitespace-nowrap">{t.cat_gradient}</span>
+                                                {category === 'gradient' && <CheckCircle2 size={14} className="text-accent hidden lg:block" />}
                                             </button>
                                         </div>
                                     </div>
 
-                                    {/* Template List */}
-                                    <div className="space-y-3">
+                                    {/* Template List - Horizontal scroll on Mobile, Vertical on Desktop */}
+                                    <div className="space-y-2 lg:space-y-3">
                                         <label className="text-[10px] font-bold tracking-widest text-ink-light uppercase flex items-center gap-2">
                                             <Layout size={12} /> {t.template_label}
                                         </label>
-                                        <div className="grid grid-cols-1 gap-2 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+                                        {/* Mobile: Horizontal scroll */}
+                                        <div className="flex lg:grid lg:grid-cols-1 gap-2 overflow-x-auto lg:overflow-visible lg:max-h-[300px] lg:overflow-y-auto pb-2 lg:pb-0 lg:pr-2 -mx-1 px-1 lg:mx-0 lg:px-0 custom-scrollbar">
                                             {getTemplatesByCategory().map((tid) => (
                                                 <button
                                                     key={tid}
                                                     onClick={() => setTemplate(tid)}
-                                                    className={`text-left px-4 py-3 text-sm font-bold rounded-xl border transition-all flex justify-between items-center ${template === tid
-                                                        ? 'bg-blue-50 text-blue-700 border-blue-200 shadow-sm scale-[1.02]'
+                                                    className={`shrink-0 text-left px-4 py-2.5 lg:py-3 text-sm font-bold rounded-xl border transition-all flex items-center gap-2 lg:justify-between ${template === tid
+                                                        ? 'bg-blue-50 text-blue-700 border-blue-200 shadow-sm'
                                                         : 'bg-paper text-ink-light border-transparent hover:bg-white hover:border-ink/20 hover:text-ink'
                                                         }`}
                                                 >
-                                                    {t.templates[tid]}
-                                                    {template === tid && <div className="w-2 h-2 rounded-full bg-blue-600" />}
+                                                    <span className="whitespace-nowrap">{t.templates[tid]}</span>
+                                                    {template === tid && <div className="w-2 h-2 rounded-full bg-blue-600 shrink-0" />}
                                                 </button>
                                             ))}
                                         </div>
@@ -744,11 +740,12 @@ const ResumeBuilder: React.FC = () => {
 
                                     <hr className="border-ink/5" />
 
-                                    <div className="space-y-3">
+                                    {/* Action Buttons */}
+                                    <div className="flex lg:flex-col gap-3">
                                         <button
                                             onClick={downloadPDF}
                                             disabled={isGeneratingPDF}
-                                            className={`w-full text-white py-4 rounded-xl font-bold transition-all active:scale-[0.98] shadow-lg flex items-center justify-center gap-2 ${isGeneratingPDF ? 'opacity-50 cursor-not-allowed' : ''} ${isPaid ? 'bg-gradient-to-r from-yellow-400 via-orange-500 to-blue-600 hover:shadow-orange-500/40 text-sm' : 'bg-accent hover:bg-blue-700 shadow-accent/20'}`}
+                                            className={`flex-1 lg:w-full text-white py-3 lg:py-4 rounded-xl font-bold text-sm transition-all active:scale-[0.98] shadow-lg flex items-center justify-center gap-2 ${isGeneratingPDF ? 'opacity-50 cursor-not-allowed' : ''} ${isPaid ? 'bg-gradient-to-r from-yellow-400 via-orange-500 to-blue-600 hover:shadow-orange-500/40' : 'bg-accent hover:bg-blue-700 shadow-accent/20'}`}
                                         >
                                             {isGeneratingPDF ? (
                                                 <div className="flex items-center gap-2">
@@ -773,21 +770,22 @@ const ResumeBuilder: React.FC = () => {
 
                                         <button
                                             onClick={reset}
-                                            className="w-full bg-transparent border border-ink/20 text-ink py-3 rounded-xl font-bold text-xs hover:bg-paper transition-colors"
+                                            className="flex-1 lg:w-full bg-transparent border border-ink/20 text-ink py-2.5 lg:py-3 rounded-xl font-bold text-xs hover:bg-paper transition-colors"
                                         >
                                             {t.create_new}
                                         </button>
                                     </div>
 
-                                    <div className="p-4 bg-blue-50 rounded-xl text-xs text-blue-800 leading-relaxed border border-blue-100">
+                                    {/* Download tip - hidden on mobile */}
+                                    <div className="hidden lg:block p-4 bg-blue-50 rounded-xl text-xs text-blue-800 leading-relaxed border border-blue-100">
                                         <p className="font-medium flex items-center gap-1.5"><Download size={12} /> {t.download_tip}</p>
                                     </div>
                                 </div>
                             </div>
 
-                            {/* Resume Canvas (Right on Desktop) */}
-                            <div className="flex-1 flex justify-center order-1 lg:order-2 mb-12 lg:mb-0 overflow-visible">
-                                <div className="transform origin-top scale-[0.5] sm:scale-[0.6] md:scale-[0.7] lg:scale-[0.8] xl:scale-[0.9] 2xl:scale-100 transition-transform duration-500">
+                            {/* Resume Canvas (Below controls on Mobile, Right on Desktop) */}
+                            <div className="flex-1 flex justify-center order-2 mb-8 lg:mb-0 overflow-visible">
+                                <div className="transform origin-top scale-[0.45] sm:scale-[0.55] md:scale-[0.65] lg:scale-[0.8] xl:scale-[0.9] 2xl:scale-100 transition-transform duration-500">
                                     <ResumeDesign
                                         data={resumeData}
                                         template={template}
