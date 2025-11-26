@@ -159,11 +159,13 @@ const ResumeBuilder: React.FC = () => {
             console.log('Initial session check:', session);
             setUser(session?.user ?? null);
 
-            if (session?.user?.user_metadata?.subscription_status === 'active') {
-                setIsPro(true);
-            }
             if (session?.user) {
-                checkAdminStatus(session.user.id);
+                // Check metadata first
+                if (session.user.user_metadata?.subscription_status === 'active') {
+                    setIsPro(true);
+                }
+                // Then check DB (allows manual override)
+                fetchUserProfile(session.user.id);
             }
         };
 
@@ -173,11 +175,17 @@ const ResumeBuilder: React.FC = () => {
         const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
             console.log('Auth state change:', _event, session);
             setUser(session?.user ?? null);
+
             if (session?.user) {
-                checkAdminStatus(session.user.id);
+                // Reset pro status to metadata value or false before checking DB
+                const isMetadataPro = session.user.user_metadata?.subscription_status === 'active';
+                setIsPro(isMetadataPro);
+
+                fetchUserProfile(session.user.id);
             } else {
                 setIsAdmin(false);
                 setShowAdmin(false);
+                setIsPro(false);
             }
         });
 
@@ -198,12 +206,27 @@ const ResumeBuilder: React.FC = () => {
         }
 
         return () => subscription.unsubscribe();
-    }, [language]); // Removed user dependency to prevent loop, logic handles updates via onAuthStateChange
+    }, [language]);
 
-    const checkAdminStatus = async (userId: string) => {
-        const { data } = await supabase.from('profiles').select('is_admin').eq('id', userId).single();
-        if (data?.is_admin) {
-            setIsAdmin(true);
+    const fetchUserProfile = async (userId: string) => {
+        try {
+            const { data } = await supabase
+                .from('profiles')
+                .select('is_admin, subscription_status')
+                .eq('id', userId)
+                .single();
+
+            if (data) {
+                if (data.is_admin) {
+                    setIsAdmin(true);
+                }
+                // Allow 'pro' status from DB to override/supplement metadata
+                if (data.subscription_status === 'pro') {
+                    setIsPro(true);
+                }
+            }
+        } catch (error) {
+            console.error('Error fetching user profile:', error);
         }
     };
 
