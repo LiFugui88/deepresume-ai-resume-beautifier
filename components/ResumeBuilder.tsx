@@ -9,7 +9,7 @@ import { ResumeDesign, TemplateId, Language } from './ResumeDesign';
 import { Logo } from './Logo';
 import { AuthModal } from './AuthModal';
 import { User as SupabaseUser } from '@supabase/supabase-js';
-import { StyleShowcase } from './StyleShowcase';
+import { StyleCarousel } from './StyleCarousel';
 import { SEOContent } from './SEOContent';
 import { toPng } from 'html-to-image';
 import jsPDF from 'jspdf';
@@ -555,7 +555,7 @@ const ResumeBuilder: React.FC = () => {
                                 </div>
                             </div>
 
-                            <StyleShowcase language={language} />
+                            <StyleCarousel language={language} />
                             <SEOContent language={language} />
                         </motion.div>
                     )}
