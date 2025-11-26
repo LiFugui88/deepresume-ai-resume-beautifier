@@ -508,11 +508,25 @@ export const StyleCarousel: React.FC<{ language: 'en' | 'zh' }> = ({ language })
     const PreviewComponent = previewComponents[currentTemplate.id];
 
     return (
-        <section className="py-20 px-4 bg-gradient-to-b from-white to-gray-50 relative overflow-hidden">
-            {/* Background decoration */}
-            <div className="absolute top-0 left-0 w-full h-full opacity-20 pointer-events-none">
-                <div className="absolute top-20 left-10 w-72 h-72 bg-blue-200 rounded-full blur-3xl"></div>
-                <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-200 rounded-full blur-3xl"></div>
+        <section className="py-20 px-4 relative overflow-hidden">
+            {/* Background with grid pattern */}
+            <div className="absolute inset-0 bg-gradient-to-b from-gray-50/80 to-white">
+                <div
+                    className="absolute inset-0 opacity-[0.4]"
+                    style={{
+                        backgroundImage: `
+                            linear-gradient(to right, #e5e7eb 1px, transparent 1px),
+                            linear-gradient(to bottom, #e5e7eb 1px, transparent 1px)
+                        `,
+                        backgroundSize: '40px 40px'
+                    }}
+                />
+            </div>
+
+            {/* Decorative blurs */}
+            <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
+                <div className="absolute top-20 left-10 w-72 h-72 bg-blue-200 rounded-full blur-3xl opacity-30"></div>
+                <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-200 rounded-full blur-3xl opacity-30"></div>
             </div>
 
             <div className="max-w-6xl mx-auto relative z-10">

@@ -578,6 +578,9 @@ const ResumeBuilder: React.FC = () => {
                                 </div>
                             </div>
 
+                            {/* Spacer between upload section and style carousel */}
+                            <div className="h-20 md:h-32" />
+
                             <StyleCarousel language={language} />
                             <SEOContent language={language} />
                         </motion.div>
