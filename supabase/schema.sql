@@ -62,6 +62,9 @@ create policy "Admins can view config." on app_config
 create policy "Admins can update config." on app_config
   for update using (exists (select 1 from profiles where id = auth.uid() and is_admin = true));
 
+create policy "Admins can insert config." on app_config
+  for insert with check (exists (select 1 from profiles where id = auth.uid() and is_admin = true));
+
 -- Function to handle new user signup
 create or replace function public.handle_new_user()
 returns trigger as $$
