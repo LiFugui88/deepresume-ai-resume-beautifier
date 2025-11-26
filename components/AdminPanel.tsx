@@ -4,16 +4,16 @@ import { supabase } from '../services/supabase';
 import {
     Users,
     FileText,
-    DollarSign,
-    Settings,
-    Save,
     TrendingUp,
     Calendar,
     Crown,
     Layout,
     RefreshCw,
     ChevronDown,
-    ChevronUp
+    ChevronUp,
+    Eye,
+    Download,
+    MousePointer
 } from 'lucide-react';
 
 interface UserStats {
@@ -30,6 +30,29 @@ interface ResumeStats {
     todayNew: number;
     weekNew: number;
     byTemplate: Record<string, number>;
+}
+
+interface AnalyticsStats {
+    pageViews: {
+        total: number;
+        today: number;
+        week: number;
+        loggedIn: number;
+        anonymous: number;
+    };
+    resumeGenerations: {
+        total: number;
+        today: number;
+        week: number;
+        loggedIn: number;
+        anonymous: number;
+    };
+    pdfDownloads: {
+        total: number;
+        today: number;
+        week: number;
+        byTemplate: Record<string, number>;
+    };
 }
 
 interface RecentUser {
@@ -55,11 +78,12 @@ export const AdminPanel: React.FC = () => {
         weekNew: 0,
         byTemplate: {},
     });
-    const [recentUsers, setRecentUsers] = useState<RecentUser[]>([]);
-    const [config, setConfig] = useState({
-        geminiKey: '',
-        creemKey: '',
+    const [analyticsStats, setAnalyticsStats] = useState<AnalyticsStats>({
+        pageViews: { total: 0, today: 0, week: 0, loggedIn: 0, anonymous: 0 },
+        resumeGenerations: { total: 0, today: 0, week: 0, loggedIn: 0, anonymous: 0 },
+        pdfDownloads: { total: 0, today: 0, week: 0, byTemplate: {} },
     });
+    const [recentUsers, setRecentUsers] = useState<RecentUser[]>([]);
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
     const [showAllUsers, setShowAllUsers] = useState(false);
@@ -73,8 +97,8 @@ export const AdminPanel: React.FC = () => {
         await Promise.all([
             fetchUserStats(),
             fetchResumeStats(),
+            fetchAnalyticsStats(),
             fetchRecentUsers(),
-            fetchConfig(),
         ]);
         setRefreshing(false);
         setLoading(false);
@@ -87,30 +111,25 @@ export const AdminPanel: React.FC = () => {
             const weekStart = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString();
             const monthStart = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString();
 
-            // Total users
             const { count: totalCount } = await supabase
                 .from('profiles')
                 .select('*', { count: 'exact', head: true });
 
-            // Pro users
             const { count: proCount } = await supabase
                 .from('profiles')
                 .select('*', { count: 'exact', head: true })
                 .eq('subscription_status', 'pro');
 
-            // Today's new users
             const { count: todayCount } = await supabase
                 .from('profiles')
                 .select('*', { count: 'exact', head: true })
                 .gte('created_at', todayStart);
 
-            // This week's new users
             const { count: weekCount } = await supabase
                 .from('profiles')
                 .select('*', { count: 'exact', head: true })
                 .gte('created_at', weekStart);
 
-            // This month's new users
             const { count: monthCount } = await supabase
                 .from('profiles')
                 .select('*', { count: 'exact', head: true })
@@ -135,24 +154,20 @@ export const AdminPanel: React.FC = () => {
             const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
             const weekStart = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString();
 
-            // Total resumes
             const { count: totalCount } = await supabase
                 .from('resumes')
                 .select('*', { count: 'exact', head: true });
 
-            // Today's resumes
             const { count: todayCount } = await supabase
                 .from('resumes')
                 .select('*', { count: 'exact', head: true })
                 .gte('created_at', todayStart);
 
-            // This week's resumes
             const { count: weekCount } = await supabase
                 .from('resumes')
                 .select('*', { count: 'exact', head: true })
                 .gte('created_at', weekStart);
 
-            // Template distribution
             const { data: templateData } = await supabase
                 .from('resumes')
                 .select('style');
@@ -176,6 +191,120 @@ export const AdminPanel: React.FC = () => {
         }
     };
 
+    const fetchAnalyticsStats = async () => {
+        try {
+            const now = new Date();
+            const todayDate = now.toISOString().split('T')[0];
+            const weekStart = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+
+            // Page views
+            const { count: pvTotal } = await supabase
+                .from('analytics')
+                .select('*', { count: 'exact', head: true })
+                .eq('event_type', 'page_view');
+
+            const { count: pvToday } = await supabase
+                .from('analytics')
+                .select('*', { count: 'exact', head: true })
+                .eq('event_type', 'page_view')
+                .eq('event_date', todayDate);
+
+            const { count: pvWeek } = await supabase
+                .from('analytics')
+                .select('*', { count: 'exact', head: true })
+                .eq('event_type', 'page_view')
+                .gte('event_date', weekStart);
+
+            const { count: pvLoggedIn } = await supabase
+                .from('analytics')
+                .select('*', { count: 'exact', head: true })
+                .eq('event_type', 'page_view')
+                .eq('is_logged_in', true);
+
+            // Resume generations
+            const { count: rgTotal } = await supabase
+                .from('analytics')
+                .select('*', { count: 'exact', head: true })
+                .eq('event_type', 'resume_generate');
+
+            const { count: rgToday } = await supabase
+                .from('analytics')
+                .select('*', { count: 'exact', head: true })
+                .eq('event_type', 'resume_generate')
+                .eq('event_date', todayDate);
+
+            const { count: rgWeek } = await supabase
+                .from('analytics')
+                .select('*', { count: 'exact', head: true })
+                .eq('event_type', 'resume_generate')
+                .gte('event_date', weekStart);
+
+            const { count: rgLoggedIn } = await supabase
+                .from('analytics')
+                .select('*', { count: 'exact', head: true })
+                .eq('event_type', 'resume_generate')
+                .eq('is_logged_in', true);
+
+            // PDF downloads
+            const { count: dlTotal } = await supabase
+                .from('analytics')
+                .select('*', { count: 'exact', head: true })
+                .eq('event_type', 'pdf_download');
+
+            const { count: dlToday } = await supabase
+                .from('analytics')
+                .select('*', { count: 'exact', head: true })
+                .eq('event_type', 'pdf_download')
+                .eq('event_date', todayDate);
+
+            const { count: dlWeek } = await supabase
+                .from('analytics')
+                .select('*', { count: 'exact', head: true })
+                .eq('event_type', 'pdf_download')
+                .gte('event_date', weekStart);
+
+            // PDF downloads by template
+            const { data: dlTemplateData } = await supabase
+                .from('analytics')
+                .select('template')
+                .eq('event_type', 'pdf_download')
+                .not('template', 'is', null);
+
+            const dlByTemplate: Record<string, number> = {};
+            if (dlTemplateData) {
+                dlTemplateData.forEach((item: any) => {
+                    const template = item.template || '未知';
+                    dlByTemplate[template] = (dlByTemplate[template] || 0) + 1;
+                });
+            }
+
+            setAnalyticsStats({
+                pageViews: {
+                    total: pvTotal || 0,
+                    today: pvToday || 0,
+                    week: pvWeek || 0,
+                    loggedIn: pvLoggedIn || 0,
+                    anonymous: (pvTotal || 0) - (pvLoggedIn || 0),
+                },
+                resumeGenerations: {
+                    total: rgTotal || 0,
+                    today: rgToday || 0,
+                    week: rgWeek || 0,
+                    loggedIn: rgLoggedIn || 0,
+                    anonymous: (rgTotal || 0) - (rgLoggedIn || 0),
+                },
+                pdfDownloads: {
+                    total: dlTotal || 0,
+                    today: dlToday || 0,
+                    week: dlWeek || 0,
+                    byTemplate: dlByTemplate,
+                },
+            });
+        } catch (error) {
+            console.error('获取访问统计失败:', error);
+        }
+    };
+
     const fetchRecentUsers = async () => {
         try {
             const { data } = await supabase
@@ -189,38 +318,6 @@ export const AdminPanel: React.FC = () => {
             }
         } catch (error) {
             console.error('获取最近用户失败:', error);
-        }
-    };
-
-    const fetchConfig = async () => {
-        try {
-            const { data } = await supabase.from('app_config').select('*');
-            if (data) {
-                const newConfig = { ...config };
-                data.forEach((item: any) => {
-                    if (item.key === 'gemini_api_key') newConfig.geminiKey = item.value;
-                    if (item.key === 'creem_api_key') newConfig.creemKey = item.value;
-                });
-                setConfig(newConfig);
-            }
-        } catch (error) {
-            console.error('获取配置失败:', error);
-        }
-    };
-
-    const handleSaveConfig = async () => {
-        try {
-            const updates = [
-                { key: 'gemini_api_key', value: config.geminiKey, description: 'Gemini API Key' },
-                { key: 'creem_api_key', value: config.creemKey, description: 'Creem API Key' },
-            ];
-
-            const { error } = await supabase.from('app_config').upsert(updates);
-            if (error) throw error;
-            alert('配置已保存！');
-        } catch (error) {
-            console.error('保存配置失败:', error);
-            alert('保存配置失败，请重试。');
         }
     };
 
@@ -278,11 +375,121 @@ export const AdminPanel: React.FC = () => {
                 </button>
             </div>
 
+            {/* Analytics Stats Section - NEW */}
+            <div className="mb-8">
+                <h2 className="text-lg font-bold text-ink mb-4 flex items-center gap-2">
+                    <MousePointer size={20} className="text-orange-600" />
+                    访问统计（含匿名用户）
+                </h2>
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    {/* Page Views */}
+                    <div className="bg-white p-6 rounded-2xl shadow-sm border border-ink/5">
+                        <h3 className="text-sm font-bold text-ink mb-4 flex items-center gap-2">
+                            <Eye size={16} className="text-blue-500" />
+                            页面访问
+                        </h3>
+                        <div className="space-y-3">
+                            <div className="flex justify-between items-center">
+                                <span className="text-sm text-ink-light">总访问量</span>
+                                <span className="text-xl font-bold text-ink">{analyticsStats.pageViews.total}</span>
+                            </div>
+                            <div className="flex justify-between items-center">
+                                <span className="text-sm text-ink-light">今日</span>
+                                <span className="text-lg font-bold text-green-600">+{analyticsStats.pageViews.today}</span>
+                            </div>
+                            <div className="flex justify-between items-center">
+                                <span className="text-sm text-ink-light">本周</span>
+                                <span className="text-lg font-bold text-blue-600">+{analyticsStats.pageViews.week}</span>
+                            </div>
+                            <hr className="border-ink/5" />
+                            <div className="flex justify-between items-center text-xs">
+                                <span className="text-ink-light">已登录</span>
+                                <span className="font-mono text-ink">{analyticsStats.pageViews.loggedIn}</span>
+                            </div>
+                            <div className="flex justify-between items-center text-xs">
+                                <span className="text-ink-light">匿名访客</span>
+                                <span className="font-mono text-ink">{analyticsStats.pageViews.anonymous}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Resume Generations */}
+                    <div className="bg-white p-6 rounded-2xl shadow-sm border border-ink/5">
+                        <h3 className="text-sm font-bold text-ink mb-4 flex items-center gap-2">
+                            <FileText size={16} className="text-purple-500" />
+                            简历生成
+                        </h3>
+                        <div className="space-y-3">
+                            <div className="flex justify-between items-center">
+                                <span className="text-sm text-ink-light">总生成数</span>
+                                <span className="text-xl font-bold text-ink">{analyticsStats.resumeGenerations.total}</span>
+                            </div>
+                            <div className="flex justify-between items-center">
+                                <span className="text-sm text-ink-light">今日</span>
+                                <span className="text-lg font-bold text-green-600">+{analyticsStats.resumeGenerations.today}</span>
+                            </div>
+                            <div className="flex justify-between items-center">
+                                <span className="text-sm text-ink-light">本周</span>
+                                <span className="text-lg font-bold text-blue-600">+{analyticsStats.resumeGenerations.week}</span>
+                            </div>
+                            <hr className="border-ink/5" />
+                            <div className="flex justify-between items-center text-xs">
+                                <span className="text-ink-light">登录用户生成</span>
+                                <span className="font-mono text-ink">{analyticsStats.resumeGenerations.loggedIn}</span>
+                            </div>
+                            <div className="flex justify-between items-center text-xs">
+                                <span className="text-ink-light">匿名用户生成</span>
+                                <span className="font-mono text-ink">{analyticsStats.resumeGenerations.anonymous}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* PDF Downloads */}
+                    <div className="bg-white p-6 rounded-2xl shadow-sm border border-ink/5">
+                        <h3 className="text-sm font-bold text-ink mb-4 flex items-center gap-2">
+                            <Download size={16} className="text-green-500" />
+                            PDF 下载
+                        </h3>
+                        <div className="space-y-3">
+                            <div className="flex justify-between items-center">
+                                <span className="text-sm text-ink-light">总下载数</span>
+                                <span className="text-xl font-bold text-ink">{analyticsStats.pdfDownloads.total}</span>
+                            </div>
+                            <div className="flex justify-between items-center">
+                                <span className="text-sm text-ink-light">今日</span>
+                                <span className="text-lg font-bold text-green-600">+{analyticsStats.pdfDownloads.today}</span>
+                            </div>
+                            <div className="flex justify-between items-center">
+                                <span className="text-sm text-ink-light">本周</span>
+                                <span className="text-lg font-bold text-blue-600">+{analyticsStats.pdfDownloads.week}</span>
+                            </div>
+                            {Object.keys(analyticsStats.pdfDownloads.byTemplate).length > 0 && (
+                                <>
+                                    <hr className="border-ink/5" />
+                                    <div className="text-xs text-ink-light mb-2">按模板分布</div>
+                                    <div className="space-y-1 max-h-[100px] overflow-y-auto">
+                                        {Object.entries(analyticsStats.pdfDownloads.byTemplate)
+                                            .sort((a, b) => b[1] - a[1])
+                                            .slice(0, 5)
+                                            .map(([template, count]) => (
+                                                <div key={template} className="flex justify-between items-center text-xs">
+                                                    <span className="text-ink-light">{templateNames[template] || template}</span>
+                                                    <span className="font-mono text-ink">{count}</span>
+                                                </div>
+                                            ))}
+                                    </div>
+                                </>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             {/* User Stats Section */}
             <div className="mb-8">
                 <h2 className="text-lg font-bold text-ink mb-4 flex items-center gap-2">
                     <Users size={20} className="text-blue-600" />
-                    用户统计
+                    注册用户统计
                 </h2>
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
                     <div className="bg-white p-5 rounded-2xl shadow-sm border border-ink/5">
@@ -315,18 +522,17 @@ export const AdminPanel: React.FC = () => {
                 </div>
             </div>
 
-            {/* Resume Stats Section */}
+            {/* Resume Stats Section (Registered Users) */}
             <div className="mb-8">
                 <h2 className="text-lg font-bold text-ink mb-4 flex items-center gap-2">
                     <FileText size={20} className="text-purple-600" />
-                    简历统计
+                    简历存储统计（仅登录用户）
                 </h2>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    {/* Resume counts */}
                     <div className="bg-white p-6 rounded-2xl shadow-sm border border-ink/5">
                         <h3 className="text-sm font-bold text-ink mb-4 flex items-center gap-2">
                             <TrendingUp size={16} />
-                            生成数量
+                            保存数量
                         </h3>
                         <div className="grid grid-cols-3 gap-4">
                             <div className="text-center p-4 bg-paper rounded-xl">
@@ -344,7 +550,6 @@ export const AdminPanel: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* Template distribution */}
                     <div className="bg-white p-6 rounded-2xl shadow-sm border border-ink/5">
                         <h3 className="text-sm font-bold text-ink mb-4 flex items-center gap-2">
                             <Layout size={16} />
@@ -434,50 +639,6 @@ export const AdminPanel: React.FC = () => {
                             </button>
                         </div>
                     )}
-                </div>
-            </div>
-
-            {/* Configuration Section */}
-            <div className="mb-8">
-                <h2 className="text-lg font-bold text-ink mb-4 flex items-center gap-2">
-                    <Settings size={20} className="text-gray-600" />
-                    系统配置
-                </h2>
-                <div className="bg-white rounded-2xl shadow-sm border border-ink/5 overflow-hidden">
-                    <div className="p-6 space-y-6">
-                        <div>
-                            <label className="block text-sm font-bold text-ink mb-2">Gemini API Key</label>
-                            <input
-                                type="password"
-                                value={config.geminiKey}
-                                onChange={(e) => setConfig({ ...config, geminiKey: e.target.value })}
-                                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-accent focus:ring-2 focus:ring-accent/20 outline-none transition-all font-mono text-sm"
-                                placeholder="AIzaSy..."
-                            />
-                            <p className="mt-1 text-xs text-ink-light">用于简历内容解析的 AI 服务</p>
-                        </div>
-                        <div>
-                            <label className="block text-sm font-bold text-ink mb-2">Creem API Key</label>
-                            <input
-                                type="password"
-                                value={config.creemKey}
-                                onChange={(e) => setConfig({ ...config, creemKey: e.target.value })}
-                                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-accent focus:ring-2 focus:ring-accent/20 outline-none transition-all font-mono text-sm"
-                                placeholder="sk_live_..."
-                            />
-                            <p className="mt-1 text-xs text-ink-light">用于支付处理的服务密钥</p>
-                        </div>
-                        <div className="pt-4 flex items-center justify-between">
-                            <button
-                                onClick={handleSaveConfig}
-                                className="bg-ink text-white px-6 py-3 rounded-xl font-bold text-sm hover:bg-accent transition-colors flex items-center gap-2"
-                            >
-                                <Save size={16} />
-                                保存配置
-                            </button>
-                            <p className="text-xs text-ink-light">修改后需要重新部署才能生效</p>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>

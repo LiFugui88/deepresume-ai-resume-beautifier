@@ -47,23 +47,29 @@ create policy "Users can update own resumes." on resumes
 create policy "Users can delete own resumes." on resumes
   for delete using (auth.uid() = user_id);
 
--- Create a table for app configuration (Admin only)
-create table app_config (
-  key text primary key,
-  value text,
-  description text
+-- Create a table for analytics (tracks anonymous usage)
+create table analytics (
+  id uuid default uuid_generate_v4() primary key,
+  event_type text not null, -- 'page_view', 'resume_generate', 'pdf_download'
+  event_date date default current_date not null,
+  template text, -- for resume_generate events
+  is_logged_in boolean default false,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 
-alter table app_config enable row level security;
+-- Create index for faster date-based queries
+create index analytics_event_date_idx on analytics(event_date);
+create index analytics_event_type_idx on analytics(event_type);
 
-create policy "Admins can view config." on app_config
+alter table analytics enable row level security;
+
+-- Anyone can insert analytics (for tracking anonymous users)
+create policy "Anyone can insert analytics." on analytics
+  for insert with check (true);
+
+-- Only admins can view analytics
+create policy "Admins can view analytics." on analytics
   for select using (exists (select 1 from profiles where id = auth.uid() and is_admin = true));
-
-create policy "Admins can update config." on app_config
-  for update using (exists (select 1 from profiles where id = auth.uid() and is_admin = true));
-
-create policy "Admins can insert config." on app_config
-  for insert with check (exists (select 1 from profiles where id = auth.uid() and is_admin = true));
 
 -- Function to handle new user signup
 create or replace function public.handle_new_user()

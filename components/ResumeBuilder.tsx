@@ -111,7 +111,7 @@ import { ManualEntryForm } from './ManualEntryForm';
 import { PrivacyPolicyModal, TermsOfServiceModal, RefundPolicyModal, ContactUsModal } from './LegalModals';
 
 import { initiateCheckout } from '../services/creemService';
-import { trackEvent, AnalyticsEvents } from '../services/analytics';
+import { trackEvent, AnalyticsEvents, trackAnalytics } from '../services/analytics';
 
 import { useNavigate } from 'react-router-dom';
 
@@ -146,6 +146,11 @@ const ResumeBuilder: React.FC = () => {
     const resumeRef = useRef<HTMLDivElement>(null);
     const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
     const t = UI_TEXT[language];
+
+    useEffect(() => {
+        // Track page view on mount
+        trackAnalytics('page_view', { isLoggedIn: !!user });
+    }, []);
 
     useEffect(() => {
         // Check active session
@@ -224,6 +229,7 @@ const ResumeBuilder: React.FC = () => {
             setResumeData(data);
             setState(AppState.PREVIEW);
             trackEvent(AnalyticsEvents.ANALYSIS_SUCCESS, { method: 'upload' });
+            trackAnalytics('resume_generate', { isLoggedIn: !!user });
         } catch (err: any) {
             console.error(err);
             setState(AppState.ERROR);
@@ -257,6 +263,7 @@ const ResumeBuilder: React.FC = () => {
             setResumeData(data);
             setState(AppState.PREVIEW);
             trackEvent(AnalyticsEvents.ANALYSIS_SUCCESS, { method: 'manual' });
+            trackAnalytics('resume_generate', { isLoggedIn: !!user });
         } catch (err: any) {
             console.error(err);
             setState(AppState.ERROR);
@@ -316,6 +323,9 @@ const ResumeBuilder: React.FC = () => {
             // Download
             const timestamp = new Date().toISOString().slice(0, 10).replace(/-/g, '');
             pdf.save(`DeepResume-${timestamp}.pdf`);
+
+            // Track PDF download
+            trackAnalytics('pdf_download', { template, isLoggedIn: !!user });
 
         } catch (error) {
             console.error('Error generating PDF:', error);
