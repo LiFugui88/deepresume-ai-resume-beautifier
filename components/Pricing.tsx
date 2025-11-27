@@ -102,6 +102,7 @@ export const Pricing: React.FC = () => {
                     setShowAuthModal(false);
                     setPendingPayment(false);
                 }}
+                language="en"
             />
 
             {/* Nav */}

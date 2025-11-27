@@ -17,7 +17,7 @@ interface OrderRequest {
 const PLANS = {
     pro_lifetime: {
         name: 'DeepResume Pro (Lifetime)',
-        price: '9.99',
+        price: '0.10',  // 测试价格
         currency: 'USD'
     }
 };
