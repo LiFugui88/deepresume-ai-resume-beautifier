@@ -1,16 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { Zap, Layout, Download, Star, ArrowLeft, Loader2 } from 'lucide-react';
+import { Zap, Layout, Download, Star, ArrowLeft, Loader2, LogIn } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Logo } from './Logo';
 import { createPayPalOrder, redirectToPayPal } from '../services/paypal';
 import { supabase } from '../services/supabase';
 import { User } from '@supabase/supabase-js';
+import { AuthModal } from './AuthModal';
 
 export const Pricing: React.FC = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [user, setUser] = useState<User | null>(null);
+    const [showAuthModal, setShowAuthModal] = useState(false);
+    const [pendingPayment, setPendingPayment] = useState(false);
 
     useEffect(() => {
         supabase.auth.getSession().then(({ data: { session } }) => {
@@ -19,10 +22,15 @@ export const Pricing: React.FC = () => {
 
         const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
             setUser(session?.user ?? null);
+            // 如果用户刚登录且有待支付，自动继续支付流程
+            if (session?.user && pendingPayment) {
+                setPendingPayment(false);
+                initiatePayment(session.user);
+            }
         });
 
         return () => subscription.unsubscribe();
-    }, []);
+    }, [pendingPayment]);
 
     const features = [
         {
@@ -47,15 +55,15 @@ export const Pricing: React.FC = () => {
         }
     ];
 
-    const handlePayment = async () => {
+    const initiatePayment = async (currentUser: User) => {
         setIsLoading(true);
         setError(null);
 
         try {
             const response = await createPayPalOrder(
                 'pro_lifetime',
-                user?.id,
-                user?.email || undefined
+                currentUser.id,
+                currentUser.email || undefined
             );
 
             if (response.approvalUrl) {
@@ -70,10 +78,31 @@ export const Pricing: React.FC = () => {
         }
     };
 
+    const handlePayment = async () => {
+        // 如果未登录，先弹出登录框
+        if (!user) {
+            setPendingPayment(true);
+            setShowAuthModal(true);
+            return;
+        }
+
+        // 已登录，直接发起支付
+        await initiatePayment(user);
+    };
+
     return (
         <div className="min-h-screen bg-paper font-body relative overflow-hidden">
             {/* Background Grid */}
             <div className="fixed inset-0 bg-grid-pattern bg-[size:40px_40px] opacity-40 pointer-events-none" />
+
+            {/* Auth Modal */}
+            <AuthModal
+                isOpen={showAuthModal}
+                onClose={() => {
+                    setShowAuthModal(false);
+                    setPendingPayment(false);
+                }}
+            />
 
             {/* Nav */}
             <nav className="fixed top-0 left-0 w-full h-16 border-b border-ink/10 bg-paper/80 backdrop-blur-md z-50 flex items-center justify-between px-6 md:px-12">
@@ -172,6 +201,11 @@ export const Pricing: React.FC = () => {
                                             <Loader2 className="animate-spin" size={20} />
                                             Processing...
                                         </>
+                                    ) : !user ? (
+                                        <>
+                                            <LogIn size={20} />
+                                            Login to Purchase
+                                        </>
                                     ) : (
                                         <>
                                             <Zap size={20} />
@@ -181,7 +215,10 @@ export const Pricing: React.FC = () => {
                                 </button>
 
                                 <p className="text-xs text-ink-light/60">
-                                    Secure payment via PayPal. 30-day money-back guarantee.
+                                    {!user
+                                        ? "Please login first to complete your purchase."
+                                        : "Secure payment via PayPal. 30-day money-back guarantee."
+                                    }
                                 </p>
                             </div>
                         </div>
