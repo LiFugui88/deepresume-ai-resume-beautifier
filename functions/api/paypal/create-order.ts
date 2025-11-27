@@ -16,7 +16,7 @@ interface OrderRequest {
 
 const PLANS = {
     pro_lifetime: {
-        name: 'DeepResume Pro (Lifetime)',
+        name: 'CVGoPro Pro (Lifetime)',
         price: '0.10',  // 测试价格
         currency: 'USD'
     }
@@ -103,7 +103,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
                     }
                 }],
                 application_context: {
-                    brand_name: 'DeepResume',
+                    brand_name: 'CVGoPro',
                     locale: 'en-US',
                     landing_page: 'LOGIN',
                     user_action: 'PAY_NOW',

@@ -6,9 +6,9 @@ export const StyleShowcase: React.FC<{ language: 'en' | 'zh' }> = ({ language })
     const t = {
         en: {
             title: "Transform Your Resume into a Masterpiece",
-            subtitle: "See the difference DeepResume makes. From cluttered to clear, from basic to beautiful.",
+            subtitle: "See the difference CVGoPro makes. From cluttered to clear, from basic to beautiful.",
             before: "Traditional Resume",
-            after: "DeepResume Bento Style",
+            after: "CVGoPro Bento Style",
             features: [
                 "Professional Typography",
                 "Grid-based Layouts",
@@ -18,9 +18,9 @@ export const StyleShowcase: React.FC<{ language: 'en' | 'zh' }> = ({ language })
         },
         zh: {
             title: "将简历转化为艺术品",
-            subtitle: "体验 DeepResume 的蜕变之力。从杂乱到清晰，从平庸到惊艳。",
+            subtitle: "体验 CVGoPro 的蜕变之力。从杂乱到清晰，从平庸到惊艳。",
             before: "传统简历",
-            after: "DeepResume Bento 风格",
+            after: "CVGoPro Bento 风格",
             features: [
                 "专业排版设计",
                 "网格化布局系统",

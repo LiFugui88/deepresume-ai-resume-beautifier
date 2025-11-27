@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Sparkles, Mail, Phone, Globe } from 'lucide-react';
 
-// Sample resume data based on DeepResume CEO
+// Sample resume data based on CVGoPro CEO
 const SAMPLE_DATA = {
-    fullName: "DeepResume",
+    fullName: "CVGoPro",
     title: "CEO",
     email: "support@cvgopro.com",
     phone: "888-88888",
@@ -12,7 +12,7 @@ const SAMPLE_DATA = {
     summary: "I excel in blending aesthetic visual design with ATS (Applicant Tracking System) compatibility to create high-impact resumes.",
     experience: [
         {
-            company: "DeepResume",
+            company: "CVGoPro",
             role: "CEO",
             duration: "2025 - 2046",
             description: [
@@ -25,7 +25,7 @@ const SAMPLE_DATA = {
     ],
     education: [
         {
-            institution: "DeepResume",
+            institution: "CVGoPro",
             degree: "PhD in Design",
             year: "2025 - 2046"
         }

@@ -10,7 +10,7 @@ const LegalLayout: React.FC<{ title: string; children: React.ReactNode }> = ({ t
             <Link to="/" className="flex items-center gap-3 cursor-pointer group">
                 <Logo size={32} />
                 <div className="flex flex-col">
-                    <span className="font-display font-bold text-lg tracking-tight leading-none text-ink group-hover:text-accent transition-colors">DeepResume</span>
+                    <span className="font-display font-bold text-lg tracking-tight leading-none text-ink group-hover:text-accent transition-colors">CVGoPro</span>
                 </div>
             </Link>
             <Link to="/" className="flex items-center gap-2 text-sm font-bold text-ink hover:text-accent transition-colors">
@@ -27,7 +27,7 @@ const LegalLayout: React.FC<{ title: string; children: React.ReactNode }> = ({ t
         </main>
 
         <footer className="py-8 text-center text-ink-light/40 text-[10px] font-mono uppercase tracking-widest">
-            <p>© 2025 DeepResume AI. All rights reserved.</p>
+            <p>© 2025 CVGoPro AI. All rights reserved.</p>
         </footer>
     </div>
 );
@@ -35,7 +35,7 @@ const LegalLayout: React.FC<{ title: string; children: React.ReactNode }> = ({ t
 export const PrivacyPage: React.FC = () => (
     <LegalLayout title="Privacy Policy">
         <p><strong>Last Updated: November 2025</strong></p>
-        <p>Welcome to DeepResume ("we," "our," or "us"). We are committed to protecting your privacy and ensuring the security of your personal information. This Privacy Policy explains how we collect, use, and safeguard your data when you use our website and services.</p>
+        <p>Welcome to CVGoPro ("we," "our," or "us"). We are committed to protecting your privacy and ensuring the security of your personal information. This Privacy Policy explains how we collect, use, and safeguard your data when you use our website and services.</p>
 
         <h3 className="text-xl font-bold text-gray-900 mt-8 mb-4">1. Information We Collect</h3>
         <ul className="list-disc pl-5 space-y-2">
@@ -74,7 +74,7 @@ export const PrivacyPage: React.FC = () => (
 export const TermsPage: React.FC = () => (
     <LegalLayout title="Terms of Service">
         <p><strong>Last Updated: November 2025</strong></p>
-        <p>Please read these Terms of Service ("Terms") carefully before using DeepResume, operated by <strong>DeepResume Inc.</strong> ("us", "we", or "our").</p>
+        <p>Please read these Terms of Service ("Terms") carefully before using CVGoPro, operated by <strong>CVGoPro Inc.</strong> ("us", "we", or "our").</p>
 
         <h3 className="text-xl font-bold text-gray-900 mt-8 mb-4">1. Acceptance of Terms</h3>
         <p>By accessing or using our services, you agree to be bound by these Terms. If you do not agree to these Terms, you may not use our services.</p>
@@ -83,7 +83,7 @@ export const TermsPage: React.FC = () => (
         <p>You agree to use our services only for lawful purposes and in accordance with these Terms. You are responsible for the accuracy of the information you provide in your resume.</p>
 
         <h3 className="text-xl font-bold text-gray-900 mt-8 mb-4">3. Intellectual Property</h3>
-        <p>The content, features, and functionality of DeepResume are owned by us and are protected by international copyright, trademark, and other intellectual property laws. You retain ownership of the content you submit to create your resume.</p>
+        <p>The content, features, and functionality of CVGoPro are owned by us and are protected by international copyright, trademark, and other intellectual property laws. You retain ownership of the content you submit to create your resume.</p>
 
         <h3 className="text-xl font-bold text-gray-900 mt-8 mb-4">4. User Accounts</h3>
         <p>You may need to create an account to access certain features. You are responsible for maintaining the confidentiality of your account credentials and for all activities that occur under your account.</p>
@@ -92,7 +92,7 @@ export const TermsPage: React.FC = () => (
         <p>Premium features are billed in advance. All fees are non-refundable unless otherwise required by law.</p>
 
         <h3 className="text-xl font-bold text-gray-900 mt-8 mb-4">6. Limitation of Liability</h3>
-        <p>To the fullest extent permitted by law, DeepResume shall not be liable for any indirect, incidental, special, consequential, or punitive damages, or any loss of profits or revenues.</p>
+        <p>To the fullest extent permitted by law, CVGoPro shall not be liable for any indirect, incidental, special, consequential, or punitive damages, or any loss of profits or revenues.</p>
 
         <h3 className="text-xl font-bold text-gray-900 mt-8 mb-4">7. Changes to Terms</h3>
         <p>We reserve the right to modify these Terms at any time. We will notify you of any changes by posting the new Terms on this page.</p>
@@ -105,7 +105,7 @@ export const TermsPage: React.FC = () => (
 export const RefundPage: React.FC = () => (
     <LegalLayout title="Refund Policy">
         <p><strong>Last Updated: November 2025</strong></p>
-        <p>At DeepResume Inc., we are committed to ensuring your satisfaction with our AI-powered resume beautification service.</p>
+        <p>At CVGoPro Inc., we are committed to ensuring your satisfaction with our AI-powered resume beautification service.</p>
 
         <h3 className="text-xl font-bold text-gray-900 mt-8 mb-4">30-Day Money-Back Guarantee</h3>
         <p>We offer a full, no-questions-asked refund within <strong>30 days</strong> of your purchase.</p>

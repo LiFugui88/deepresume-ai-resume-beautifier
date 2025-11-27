@@ -9,7 +9,7 @@ export const Logo: React.FC<LogoProps> = ({ className = "", size = 32 }) => {
     return (
         <img
             src="/logo.png"
-            alt="DeepResume Logo"
+            alt="CVGoPro Logo"
             className={`rounded-lg ${className}`}
             style={{
                 width: typeof size === 'number' ? `${size}px` : size,

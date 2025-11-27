@@ -51,7 +51,7 @@ export const SEOContent: React.FC<{ language: 'en' | 'zh' }> = ({ language }) =>
                 title: "Frequently Asked Questions",
                 items: [
                     {
-                        q: "Is DeepResume really free?",
+                        q: "Is CVGoPro really free?",
                         a: "Yes! You can generate and download standard resumes for free. We also offer a Pro plan for exclusive templates and advanced features."
                     },
                     {
@@ -117,7 +117,7 @@ export const SEOContent: React.FC<{ language: 'en' | 'zh' }> = ({ language }) =>
                 title: "常见问题解答",
                 items: [
                     {
-                        q: "DeepResume 真的是免费的吗？",
+                        q: "CVGoPro 真的是免费的吗？",
                         a: "是的！您可以免费生成并下载标准简历。我们也提供包含独家模板和高级功能的专业版。"
                     },
                     {

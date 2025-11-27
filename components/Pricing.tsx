@@ -110,7 +110,7 @@ export const Pricing: React.FC = () => {
                 <Link to="/" className="flex items-center gap-3 cursor-pointer group">
                     <Logo size={32} />
                     <div className="flex flex-col">
-                        <span className="font-display font-bold text-lg tracking-tight leading-none text-ink group-hover:text-accent transition-colors">DeepResume</span>
+                        <span className="font-display font-bold text-lg tracking-tight leading-none text-ink group-hover:text-accent transition-colors">CVGoPro</span>
                     </div>
                 </Link>
                 <Link to="/" className="flex items-center gap-2 text-sm font-bold text-ink hover:text-accent transition-colors">
@@ -228,7 +228,7 @@ export const Pricing: React.FC = () => {
             </main>
 
             <footer className="py-8 text-center text-ink-light/40 text-[10px] font-mono uppercase tracking-widest">
-                <p>© 2025 DeepResume AI. All rights reserved.</p>
+                <p>© 2025 CVGoPro AI. All rights reserved.</p>
             </footer>
         </div>
     );

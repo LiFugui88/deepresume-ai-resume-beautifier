@@ -97,8 +97,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
             headers: {
                 "Authorization": `Bearer ${env.OPENROUTER_API_KEY}`,
                 "Content-Type": "application/json",
-                "HTTP-Referer": "https://deepresume.ai", // Optional, for OpenRouter rankings
-                "X-Title": "DeepResume", // Optional
+                "HTTP-Referer": "https://cvgopro.com", // Optional, for OpenRouter rankings
+                "X-Title": "CVGoPro", // Optional
             },
             body: JSON.stringify({
                 model: MODEL_NAME,

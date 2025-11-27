@@ -57,7 +57,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
 export const PrivacyPolicyModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpen, onClose }) => (
     <Modal isOpen={isOpen} onClose={onClose} title="Privacy Policy">
         <p><strong>Last Updated: November 2025</strong></p>
-        <p>Welcome to DeepResume ("we," "our," or "us"). We are committed to protecting your privacy and ensuring the security of your personal information. This Privacy Policy explains how we collect, use, and safeguard your data when you use our website and services.</p>
+        <p>Welcome to CVGoPro ("we," "our," or "us"). We are committed to protecting your privacy and ensuring the security of your personal information. This Privacy Policy explains how we collect, use, and safeguard your data when you use our website and services.</p>
 
         <h3 className="text-lg font-bold text-gray-900 mt-4">1. Information We Collect</h3>
         <ul className="list-disc pl-5 space-y-1">
@@ -96,7 +96,7 @@ export const PrivacyPolicyModal: React.FC<{ isOpen: boolean; onClose: () => void
 export const TermsOfServiceModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpen, onClose }) => (
     <Modal isOpen={isOpen} onClose={onClose} title="Terms of Service">
         <p><strong>Last Updated: November 2025</strong></p>
-        <p>Please read these Terms of Service ("Terms") carefully before using DeepResume, operated by <strong>DeepResume Inc.</strong> ("us", "we", or "our").</p>
+        <p>Please read these Terms of Service ("Terms") carefully before using CVGoPro, operated by <strong>CVGoPro Inc.</strong> ("us", "we", or "our").</p>
 
         <h3 className="text-lg font-bold text-gray-900 mt-4">1. Acceptance of Terms</h3>
         <p>By accessing or using our services, you agree to be bound by these Terms. If you do not agree to these Terms, you may not use our services.</p>
@@ -105,7 +105,7 @@ export const TermsOfServiceModal: React.FC<{ isOpen: boolean; onClose: () => voi
         <p>You agree to use our services only for lawful purposes and in accordance with these Terms. You are responsible for the accuracy of the information you provide in your resume.</p>
 
         <h3 className="text-lg font-bold text-gray-900 mt-4">3. Intellectual Property</h3>
-        <p>The content, features, and functionality of DeepResume are owned by us and are protected by international copyright, trademark, and other intellectual property laws. You retain ownership of the content you submit to create your resume.</p>
+        <p>The content, features, and functionality of CVGoPro are owned by us and are protected by international copyright, trademark, and other intellectual property laws. You retain ownership of the content you submit to create your resume.</p>
 
         <h3 className="text-lg font-bold text-gray-900 mt-4">4. User Accounts</h3>
         <p>You may need to create an account to access certain features. You are responsible for maintaining the confidentiality of your account credentials and for all activities that occur under your account.</p>
@@ -114,7 +114,7 @@ export const TermsOfServiceModal: React.FC<{ isOpen: boolean; onClose: () => voi
         <p>Premium features are billed in advance. All fees are non-refundable unless otherwise required by law.</p>
 
         <h3 className="text-lg font-bold text-gray-900 mt-4">6. Limitation of Liability</h3>
-        <p>To the fullest extent permitted by law, DeepResume shall not be liable for any indirect, incidental, special, consequential, or punitive damages, or any loss of profits or revenues.</p>
+        <p>To the fullest extent permitted by law, CVGoPro shall not be liable for any indirect, incidental, special, consequential, or punitive damages, or any loss of profits or revenues.</p>
 
         <h3 className="text-lg font-bold text-gray-900 mt-4">7. Changes to Terms</h3>
         <p>We reserve the right to modify these Terms at any time. We will notify you of any changes by posting the new Terms on this page.</p>
@@ -127,7 +127,7 @@ export const TermsOfServiceModal: React.FC<{ isOpen: boolean; onClose: () => voi
 export const RefundPolicyModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpen, onClose }) => (
     <Modal isOpen={isOpen} onClose={onClose} title="Refund Policy">
         <p><strong>Last Updated: November 2025</strong></p>
-        <p>At DeepResume Inc., we are committed to ensuring your satisfaction with our AI-powered resume beautification service.</p>
+        <p>At CVGoPro Inc., we are committed to ensuring your satisfaction with our AI-powered resume beautification service.</p>
 
         <h3 className="text-lg font-bold text-gray-900 mt-4">30-Day Money-Back Guarantee</h3>
         <p>We offer a full, no-questions-asked refund within <strong>30 days</strong> of your purchase.</p>
@@ -162,7 +162,7 @@ export const ContactUsModal: React.FC<{ isOpen: boolean; onClose: () => void }> 
                 <div>
                     <h3 className="font-bold text-gray-900">Mailing Address</h3>
                     <p className="text-sm text-gray-600">
-                        DeepResume Inc.<br />
+                        CVGoPro Inc.<br />
                         Room 1101, Unit 4, Building 6, Shanyu Fengming Mansion<br />
                         Yuhang Sub-district, Yuhang District, Hangzhou City<br />
                         Zhejiang Province, P.R. China

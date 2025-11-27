@@ -19,7 +19,7 @@ const UI_TEXT = {
     en: {
         slogan: "Forever Free Resume Beautifier",
         upload_title: "ELEVATE YOUR CAREER",
-        upload_desc: "DeepResume transforms your existing CV into a high-end, Bento-style architectural masterpiece using Gemini AI. Completely free, forever.",
+        upload_desc: "CVGoPro transforms your existing CV into a high-end, Bento-style architectural masterpiece using Gemini AI. Completely free, forever.",
         upload_btn: "UPLOAD PDF RESUME",
         analyzing: "DECONSTRUCTING",
         analyzing_desc: "AI is optimizing your content structure...",
@@ -62,7 +62,7 @@ const UI_TEXT = {
     zh: {
         slogan: "永久免费的简历美化工具",
         upload_title: "重塑职业形象",
-        upload_desc: "DeepResume 使用 AI 将您的简历转化为高端 Bento 风格的设计杰作。永久免费。",
+        upload_desc: "CVGoPro 使用 AI 将您的简历转化为高端 Bento 风格的设计杰作。永久免费。",
         upload_btn: "上传 PDF 简历",
         analyzing: "正在解构",
         analyzing_desc: "AI 正在优化您的内容结构...",
@@ -345,7 +345,7 @@ const ResumeBuilder: React.FC = () => {
 
             // Download
             const timestamp = new Date().toISOString().slice(0, 10).replace(/-/g, '');
-            pdf.save(`DeepResume-${timestamp}.pdf`);
+            pdf.save(`CVGoPro-${timestamp}.pdf`);
 
             // Track PDF download
             trackAnalytics('pdf_download', { template, isLoggedIn: !!user });
@@ -412,7 +412,7 @@ const ResumeBuilder: React.FC = () => {
                 <div className="flex items-center gap-3 cursor-pointer group" onClick={reset}>
                     <Logo size={32} />
                     <div className="flex flex-col">
-                        <span className="font-display font-bold text-lg tracking-tight leading-none text-ink group-hover:text-accent transition-colors">DeepResume</span>
+                        <span className="font-display font-bold text-lg tracking-tight leading-none text-ink group-hover:text-accent transition-colors">CVGoPro</span>
                         <span className="text-[9px] font-mono text-ink-light tracking-wider mt-0.5 uppercase">{t.slogan}</span>
                     </div>
                 </div>
@@ -805,7 +805,7 @@ const ResumeBuilder: React.FC = () => {
                         <a href="/refund" className="hover:text-ink-light transition-colors">Refund Policy</a>
                         <button onClick={() => setShowContact(true)} className="hover:text-ink-light transition-colors">Contact Us</button>
                     </div>
-                    <p>© 2025 DeepResume AI. All rights reserved.</p>
+                    <p>© 2025 CVGoPro AI. All rights reserved.</p>
                 </footer>
 
             </main>
