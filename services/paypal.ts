@@ -6,32 +6,21 @@ interface CreateOrderResponse {
     approvalUrl: string;
 }
 
-export type PlanType = 'pro_monthly' | 'pro_yearly';
+export type PlanType = 'pro_lifetime';
 
 export const PLAN_DETAILS = {
-    pro_monthly: {
-        name: 'Pro Monthly',
+    pro_lifetime: {
+        name: 'Lifetime Pro',
         price: '$9.99',
         priceValue: 9.99,
-        period: '/month',
+        period: 'one-time',
         features: [
             'Unlimited resume generations',
             'All premium templates',
             'PDF downloads',
             'No watermarks',
-            'Priority support'
-        ]
-    },
-    pro_yearly: {
-        name: 'Pro Yearly',
-        price: '$79.99',
-        priceValue: 79.99,
-        period: '/year',
-        discount: 'Save 33%',
-        features: [
-            'Everything in Monthly',
-            '4 months free',
-            'Early access to new features'
+            'Priority support',
+            'Lifetime access'
         ]
     }
 } as const;

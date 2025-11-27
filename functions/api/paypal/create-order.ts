@@ -9,20 +9,15 @@ interface Env {
 }
 
 interface OrderRequest {
-    plan: 'pro_monthly' | 'pro_yearly';
+    plan: 'pro_lifetime';
     userId?: string;
     email?: string;
 }
 
 const PLANS = {
-    pro_monthly: {
-        name: 'DeepResume Pro (Monthly)',
+    pro_lifetime: {
+        name: 'DeepResume Pro (Lifetime)',
         price: '9.99',
-        currency: 'USD'
-    },
-    pro_yearly: {
-        name: 'DeepResume Pro (Yearly)',
-        price: '79.99',
         currency: 'USD'
     }
 };
