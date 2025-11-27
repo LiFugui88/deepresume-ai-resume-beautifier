@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://deep-resume.xyz/sitemap.xml
+Sitemap: https://cvgopro.com/sitemap.xml

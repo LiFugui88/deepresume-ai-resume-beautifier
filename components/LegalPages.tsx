@@ -67,7 +67,7 @@ export const PrivacyPage: React.FC = () => (
         <p>Depending on your location, you may have the right to access, correct, delete, or restrict the use of your personal information. Contact us to exercise these rights.</p>
 
         <h3 className="text-xl font-bold text-gray-900 mt-8 mb-4">6. Contact Us</h3>
-        <p>If you have any questions about this Privacy Policy, please contact us at deepresume@deep-resume.xyz.</p>
+        <p>If you have any questions about this Privacy Policy, please contact us at support@cvgopro.com.</p>
     </LegalLayout>
 );
 
@@ -98,7 +98,7 @@ export const TermsPage: React.FC = () => (
         <p>We reserve the right to modify these Terms at any time. We will notify you of any changes by posting the new Terms on this page.</p>
 
         <h3 className="text-xl font-bold text-gray-900 mt-8 mb-4">8. Contact Us</h3>
-        <p>If you have any questions about these Terms, please contact us at deepresume@deep-resume.xyz.</p>
+        <p>If you have any questions about these Terms, please contact us at support@cvgopro.com.</p>
     </LegalLayout>
 );
 
@@ -112,7 +112,7 @@ export const RefundPage: React.FC = () => (
         <p className="mt-4">If you are not completely satisfied with our service for any reason, simply contact us within 30 days of your order to request a full refund.</p>
 
         <h3 className="text-xl font-bold text-gray-900 mt-8 mb-4">How to Request a Refund</h3>
-        <p>To initiate a refund, please contact our support team at <a href="mailto:deepresume@deep-resume.xyz" className="text-blue-600 hover:underline">deepresume@deep-resume.xyz</a> with your order details.</p>
+        <p>To initiate a refund, please contact our support team at <a href="mailto:support@cvgopro.com" className="text-blue-600 hover:underline">support@cvgopro.com</a> with your order details.</p>
         <p className="mt-2">We will process your refund request within 3-5 business days. The refund will be issued to the original payment method used during the purchase.</p>
     </LegalLayout>
 );

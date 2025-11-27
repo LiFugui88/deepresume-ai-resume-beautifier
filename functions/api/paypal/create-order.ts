@@ -108,8 +108,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
                     landing_page: 'LOGIN',
                     user_action: 'PAY_NOW',
                     shipping_preference: 'NO_SHIPPING',
-                    return_url: 'https://deep-resume.xyz/payment/success',
-                    cancel_url: 'https://deep-resume.xyz/payment/cancel'
+                    return_url: 'https://cvgopro.com/payment/success',
+                    cancel_url: 'https://cvgopro.com/payment/cancel'
                 }
             })
         });

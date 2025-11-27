@@ -6,9 +6,9 @@ import { ChevronLeft, ChevronRight, Sparkles, Mail, Phone, Globe } from 'lucide-
 const SAMPLE_DATA = {
     fullName: "DeepResume",
     title: "CEO",
-    email: "deepresume@deep-resume.xyz",
+    email: "support@cvgopro.com",
     phone: "888-88888",
-    website: "https://deep-resume.xyz/",
+    website: "https://cvgopro.com/",
     summary: "I excel in blending aesthetic visual design with ATS (Applicant Tracking System) compatibility to create high-impact resumes.",
     experience: [
         {
