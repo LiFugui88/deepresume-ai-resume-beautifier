@@ -145,8 +145,10 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
             });
         }
 
-        // Find the approval URL
-        const approvalLink = orderData.links.find(link => link.rel === 'payer-action');
+        // Find the approval URL (could be 'approve' or 'payer-action')
+        const approvalLink = orderData.links.find(link =>
+            link.rel === 'approve' || link.rel === 'payer-action'
+        );
 
         return new Response(
             JSON.stringify({
