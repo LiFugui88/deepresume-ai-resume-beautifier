@@ -102,18 +102,14 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
                         value: selectedPlan.price
                     }
                 }],
-                payment_source: {
-                    paypal: {
-                        experience_context: {
-                            payment_method_preference: 'IMMEDIATE_PAYMENT_REQUIRED',
-                            brand_name: 'DeepResume',
-                            locale: 'en-US',
-                            landing_page: 'LOGIN',
-                            user_action: 'PAY_NOW',
-                            return_url: 'https://deep-resume.xyz/payment/success',
-                            cancel_url: 'https://deep-resume.xyz/payment/cancel'
-                        }
-                    }
+                application_context: {
+                    brand_name: 'DeepResume',
+                    locale: 'en-US',
+                    landing_page: 'LOGIN',
+                    user_action: 'PAY_NOW',
+                    shipping_preference: 'NO_SHIPPING',
+                    return_url: 'https://deep-resume.xyz/payment/success',
+                    cancel_url: 'https://deep-resume.xyz/payment/cancel'
                 }
             })
         });
