@@ -1,10 +1,30 @@
-import React from 'react';
-import { CheckCircle2, Zap, Layout, Download, Star, ArrowLeft } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { CheckCircle2, Zap, Layout, Download, Star, ArrowLeft, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Logo } from './Logo';
+import { createPayPalOrder, redirectToPayPal, PlanType, PLAN_DETAILS } from '../services/paypal';
+import { supabase } from '../services/supabase';
+import { User } from '@supabase/supabase-js';
 
 export const Pricing: React.FC = () => {
+    const [selectedPlan, setSelectedPlan] = useState<PlanType>('pro_yearly');
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const [user, setUser] = useState<User | null>(null);
+
+    useEffect(() => {
+        supabase.auth.getSession().then(({ data: { session } }) => {
+            setUser(session?.user ?? null);
+        });
+
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+            setUser(session?.user ?? null);
+        });
+
+        return () => subscription.unsubscribe();
+    }, []);
+
     const features = [
         {
             icon: <Zap className="text-yellow-500" />,
@@ -27,6 +47,29 @@ export const Pricing: React.FC = () => {
             desc: "Get faster responses from our dedicated support team."
         }
     ];
+
+    const handlePayment = async () => {
+        setIsLoading(true);
+        setError(null);
+
+        try {
+            const response = await createPayPalOrder(
+                selectedPlan,
+                user?.id,
+                user?.email || undefined
+            );
+
+            if (response.approvalUrl) {
+                redirectToPayPal(response.approvalUrl);
+            } else {
+                throw new Error('No approval URL received');
+            }
+        } catch (err: any) {
+            console.error('Payment error:', err);
+            setError(err.message || 'Failed to initiate payment');
+            setIsLoading(false);
+        }
+    };
 
     return (
         <div className="min-h-screen bg-paper font-body relative overflow-hidden">
@@ -56,7 +99,7 @@ export const Pricing: React.FC = () => {
                             className="inline-block"
                         >
                             <span className="bg-accent/10 text-accent px-4 py-1.5 rounded-full text-xs font-bold tracking-wider uppercase border border-accent/20">
-                                Simple Pricing
+                                Choose Your Plan
                             </span>
                         </motion.div>
                         <motion.h1
@@ -65,8 +108,8 @@ export const Pricing: React.FC = () => {
                             transition={{ delay: 0.1 }}
                             className="font-display text-5xl md:text-6xl font-bold text-ink"
                         >
-                            One Payment.<br />
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-orange-500 to-blue-600">Lifetime Access.</span>
+                            Upgrade to<br />
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-orange-500 to-blue-600">DeepResume Pro</span>
                         </motion.h1>
                         <motion.p
                             initial={{ opacity: 0, y: 20 }}
@@ -74,7 +117,7 @@ export const Pricing: React.FC = () => {
                             transition={{ delay: 0.2 }}
                             className="text-xl text-ink-light max-w-2xl mx-auto"
                         >
-                            No subscriptions. No hidden fees. Just a one-time payment of <span className="font-bold text-ink">$9.99</span> to unlock everything forever.
+                            Unlock all premium features and templates. Cancel anytime.
                         </motion.p>
                     </div>
 
@@ -104,25 +147,85 @@ export const Pricing: React.FC = () => {
                                 </div>
                             </div>
 
-                            <div className="bg-paper rounded-2xl p-8 flex flex-col justify-center items-center text-center space-y-6 border border-ink/5">
-                                <div>
-                                    <p className="text-sm text-ink-light font-bold uppercase tracking-widest mb-2">LIFETIME MEMBERSHIP</p>
-                                    <div className="flex items-baseline justify-center gap-1">
-                                        <span className="text-5xl font-bold text-ink">$9.99</span>
-                                        <span className="text-ink-light">USD</span>
-                                    </div>
+                            <div className="space-y-6">
+                                {/* Plan Selection */}
+                                <div className="space-y-3">
+                                    {/* Yearly Plan */}
+                                    <button
+                                        onClick={() => setSelectedPlan('pro_yearly')}
+                                        className={`w-full p-4 rounded-xl border-2 transition-all text-left relative ${
+                                            selectedPlan === 'pro_yearly'
+                                                ? 'border-accent bg-accent/5'
+                                                : 'border-ink/10 hover:border-ink/20'
+                                        }`}
+                                    >
+                                        {PLAN_DETAILS.pro_yearly.discount && (
+                                            <span className="absolute -top-3 right-4 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+                                                {PLAN_DETAILS.pro_yearly.discount}
+                                            </span>
+                                        )}
+                                        <div className="flex justify-between items-center">
+                                            <div>
+                                                <p className="font-bold text-ink">{PLAN_DETAILS.pro_yearly.name}</p>
+                                                <p className="text-sm text-ink-light">Billed annually</p>
+                                            </div>
+                                            <div className="text-right">
+                                                <p className="text-2xl font-bold text-ink">{PLAN_DETAILS.pro_yearly.price}</p>
+                                                <p className="text-sm text-ink-light">{PLAN_DETAILS.pro_yearly.period}</p>
+                                            </div>
+                                        </div>
+                                    </button>
+
+                                    {/* Monthly Plan */}
+                                    <button
+                                        onClick={() => setSelectedPlan('pro_monthly')}
+                                        className={`w-full p-4 rounded-xl border-2 transition-all text-left ${
+                                            selectedPlan === 'pro_monthly'
+                                                ? 'border-accent bg-accent/5'
+                                                : 'border-ink/10 hover:border-ink/20'
+                                        }`}
+                                    >
+                                        <div className="flex justify-between items-center">
+                                            <div>
+                                                <p className="font-bold text-ink">{PLAN_DETAILS.pro_monthly.name}</p>
+                                                <p className="text-sm text-ink-light">Billed monthly</p>
+                                            </div>
+                                            <div className="text-right">
+                                                <p className="text-2xl font-bold text-ink">{PLAN_DETAILS.pro_monthly.price}</p>
+                                                <p className="text-sm text-ink-light">{PLAN_DETAILS.pro_monthly.period}</p>
+                                            </div>
+                                        </div>
+                                    </button>
                                 </div>
 
+                                {/* Error Message */}
+                                {error && (
+                                    <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-xl text-sm">
+                                        {error}
+                                    </div>
+                                )}
+
+                                {/* Payment Button */}
                                 <button
-                                    onClick={() => alert("Payment system is currently undergoing scheduled maintenance/upgrades. Please check back later.")}
-                                    className="w-full bg-gray-400 text-white py-4 rounded-xl font-bold text-lg cursor-not-allowed flex items-center justify-center gap-2"
+                                    onClick={handlePayment}
+                                    disabled={isLoading}
+                                    className="w-full bg-gradient-to-r from-yellow-400 via-orange-500 to-blue-600 text-white py-4 rounded-xl font-bold text-lg hover:opacity-90 transition-opacity flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
-                                    <Zap size={20} />
-                                    Upgrading Payment System...
+                                    {isLoading ? (
+                                        <>
+                                            <Loader2 className="animate-spin" size={20} />
+                                            Processing...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Zap size={20} />
+                                            Continue with PayPal
+                                        </>
+                                    )}
                                 </button>
 
-                                <p className="text-xs text-ink-light/60">
-                                    Secure payment via Stripe/Creem. 30-day money-back guarantee.
+                                <p className="text-xs text-ink-light/60 text-center">
+                                    Secure payment via PayPal. Cancel anytime.
                                 </p>
                             </div>
                         </div>

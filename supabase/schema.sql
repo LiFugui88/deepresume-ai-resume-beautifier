@@ -71,6 +71,46 @@ create policy "Anyone can insert analytics." on analytics
 create policy "Admins can view analytics." on analytics
   for select using (exists (select 1 from profiles where id = auth.uid() and is_admin = true));
 
+-- Create a table for payment orders
+create table payment_orders (
+  id uuid default uuid_generate_v4() primary key,
+  order_id text unique not null, -- PayPal order ID
+  user_id uuid references auth.users,
+  email text,
+  plan text not null, -- 'pro_monthly', 'pro_yearly'
+  amount text not null,
+  currency text default 'USD',
+  status text default 'CREATED', -- 'CREATED', 'APPROVED', 'COMPLETED', 'DENIED', 'REFUNDED'
+  provider text default 'paypal',
+  payer_email text,
+  payer_id text,
+  capture_id text,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null,
+  updated_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+-- Create index for faster queries
+create index payment_orders_order_id_idx on payment_orders(order_id);
+create index payment_orders_user_id_idx on payment_orders(user_id);
+create index payment_orders_status_idx on payment_orders(status);
+
+alter table payment_orders enable row level security;
+
+-- Users can view their own orders
+create policy "Users can view own orders." on payment_orders
+  for select using (auth.uid() = user_id);
+
+-- Only service role can insert/update (via webhook)
+create policy "Service role can insert orders." on payment_orders
+  for insert with check (true);
+
+create policy "Service role can update orders." on payment_orders
+  for update using (true);
+
+-- Admins can view all orders
+create policy "Admins can view all orders." on payment_orders
+  for select using (exists (select 1 from profiles where id = auth.uid() and is_admin = true));
+
 -- Function to handle new user signup
 create or replace function public.handle_new_user()
 returns trigger as $$
