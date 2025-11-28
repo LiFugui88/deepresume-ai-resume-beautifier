@@ -418,9 +418,21 @@ const ResumeBuilder: React.FC = () => {
                 </div>
 
                 <div className="flex items-center gap-6">
-                    <div className="hidden md:flex gap-6 font-mono text-[10px] uppercase tracking-widest text-ink-light">
-                        <span>Bento Design System</span>
-                    </div>
+                    {/* Product Hunt Badge */}
+                    <a
+                        href="https://www.producthunt.com/products/cvgopro?embed=true&utm_source=badge-featured&utm_medium=badge&utm_source=badge-cvgopro"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hidden lg:block"
+                    >
+                        <img
+                            src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1043492&theme=light&t=1764326217185"
+                            alt="CVGoPro - AI Resume Beautifier | Product Hunt"
+                            style={{ width: '200px', height: '43px' }}
+                            width="200"
+                            height="43"
+                        />
+                    </a>
                     <button
                         onClick={toggleLanguage}
                         className="flex items-center gap-2 font-mono text-xs border border-ink/20 px-3 py-1.5 rounded-full hover:bg-ink hover:text-white transition-colors uppercase bg-white shadow-sm"

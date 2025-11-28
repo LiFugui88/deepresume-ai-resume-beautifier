@@ -17,7 +17,7 @@ interface OrderRequest {
 const PLANS = {
     pro_lifetime: {
         name: 'CVGoPro Pro (Lifetime)',
-        price: '0.10',  // 测试价格
+        price: '9.99',  // 正式价格
         currency: 'USD'
     }
 };
