@@ -112,7 +112,7 @@ export const RefundPage: React.FC = () => (
         <p className="mt-4">If you are not completely satisfied with our service for any reason, simply contact us within 30 days of your order to request a full refund.</p>
 
         <h3 className="text-xl font-bold text-gray-900 mt-8 mb-4">How to Request a Refund</h3>
-        <p>To initiate a refund, please contact our support team at <a href="mailto:support@cvgopro.com" className="text-blue-600 hover:underline">support@cvgopro.com</a> with your order details.</p>
+        <p>To initiate a refund, please contact our support team at <a href="mailto:support@cvgopro.com" className="text-accent hover:underline">support@cvgopro.com</a> with your order details.</p>
         <p className="mt-2">We will process your refund request within 3-5 business days. The refund will be issued to the original payment method used during the purchase.</p>
     </LegalLayout>
 );

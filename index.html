@@ -57,12 +57,14 @@
     rel="stylesheet">
   <style>
     :root {
-      --color-accent: #0052D4;
-      /* Brand Blue from Logo */
-      --color-secondary: #FF6B6B;
-      /* Coral from Logo */
-      --color-dark: #0F172A;
-      --color-paper: #F8FAFC;
+      --color-accent: #F04E23;
+      /* Brand Orange-Red from Logo */
+      --color-secondary: #FF7A4D;
+      /* Light Orange */
+      --color-dark: #2D2926;
+      /* Warm Dark */
+      --color-paper: #FDF8F3;
+      /* Warm Cream Background */
     }
 
     body {
@@ -119,12 +121,25 @@
             sans: ['DM Sans', 'Noto Sans SC', 'sans-serif'],
           },
           colors: {
-            accent: '#0052D4', // Brand Blue from Logo
-            secondary: '#FF6B6B', // Coral from Logo
-            paper: '#F8FAFC',
-            ink: '#0F172A',
-            'ink-light': '#64748B',
-            // Map standard blue to our new brand blue
+            accent: '#F04E23', // Brand Orange-Red from Logo
+            secondary: '#FF7A4D', // Light Orange
+            paper: '#FDF8F3', // Warm Cream
+            ink: '#2D2926', // Warm Dark
+            'ink-light': '#6B5B54', // Warm Gray
+            // Map orange palette
+            orange: {
+              50: '#FFF7F3',
+              100: '#FFEDE5',
+              200: '#FFD9C9',
+              300: '#FFC0A3',
+              400: '#FF9B6F',
+              500: '#FF7A4D',
+              600: '#F04E23', // Primary Brand Orange
+              700: '#D93D14',
+              800: '#B83010',
+              900: '#8F250D',
+            },
+            // Keep blue for accent uses
             blue: {
               50: '#eff6ff',
               100: '#dbeafe',
@@ -132,14 +147,14 @@
               300: '#93c5fd',
               400: '#60a5fa',
               500: '#3b82f6',
-              600: '#0052D4', // Primary Brand Blue
-              700: '#0047b8',
-              800: '#003d9c',
-              900: '#003380',
+              600: '#2563eb',
+              700: '#1d4ed8',
+              800: '#1e40af',
+              900: '#1e3a8a',
             }
           },
           backgroundImage: {
-            'grid-pattern': "linear-gradient(to right, #e2e8f0 1px, transparent 1px), linear-gradient(to bottom, #e2e8f0 1px, transparent 1px)",
+            'grid-pattern': "linear-gradient(to right, #E8DFD8 1px, transparent 1px), linear-gradient(to bottom, #E8DFD8 1px, transparent 1px)",
           }
         }
       }

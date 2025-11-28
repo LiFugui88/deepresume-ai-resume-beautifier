@@ -525,8 +525,8 @@ export const StyleCarousel: React.FC<{ language: 'en' | 'zh' }> = ({ language })
 
             {/* Decorative blurs */}
             <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
-                <div className="absolute top-20 left-10 w-72 h-72 bg-blue-200 rounded-full blur-3xl opacity-30"></div>
-                <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-200 rounded-full blur-3xl opacity-30"></div>
+                <div className="absolute top-20 left-10 w-72 h-72 bg-orange-200 rounded-full blur-3xl opacity-30"></div>
+                <div className="absolute bottom-20 right-10 w-96 h-96 bg-red-200 rounded-full blur-3xl opacity-30"></div>
             </div>
 
             <div className="max-w-6xl mx-auto relative z-10">
@@ -566,7 +566,7 @@ export const StyleCarousel: React.FC<{ language: 'en' | 'zh' }> = ({ language })
                                 <div className="relative">
                                     {/* Template Name Badge */}
                                     <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-20">
-                                        <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-full shadow-lg flex items-center gap-2">
+                                        <div className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-6 py-2 rounded-full shadow-lg flex items-center gap-2">
                                             <Sparkles size={16} />
                                             <span className="font-bold text-sm">
                                                 {currentTemplate.name}
@@ -612,7 +612,7 @@ export const StyleCarousel: React.FC<{ language: 'en' | 'zh' }> = ({ language })
                             >
                                 <div className={`w-3 h-3 rounded-full transition-all ${
                                     idx === currentIndex
-                                        ? 'bg-gradient-to-r from-blue-500 to-purple-600 scale-125'
+                                        ? 'bg-gradient-to-r from-orange-500 to-red-500 scale-125'
                                         : 'bg-gray-300 hover:bg-gray-400'
                                 }`}></div>
                                 <span className={`text-xs font-medium transition-all ${

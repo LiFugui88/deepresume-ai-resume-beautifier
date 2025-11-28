@@ -134,7 +134,7 @@ export const RefundPolicyModal: React.FC<{ isOpen: boolean; onClose: () => void 
         <p className="mt-2">If you are not completely satisfied with our service for any reason, simply contact us within 30 days of your order to request a full refund.</p>
 
         <h3 className="text-lg font-bold text-gray-900 mt-4">How to Request a Refund</h3>
-        <p>To initiate a refund, please contact our support team at <a href="mailto:support@cvgopro.com" className="text-blue-600 hover:underline">support@cvgopro.com</a> with your order details.</p>
+        <p>To initiate a refund, please contact our support team at <a href="mailto:support@cvgopro.com" className="text-accent hover:underline">support@cvgopro.com</a> with your order details.</p>
         <p className="mt-2">We will process your refund request within 3-5 business days. The refund will be issued to the original payment method used during the purchase.</p>
     </Modal>
 );
@@ -145,7 +145,7 @@ export const ContactUsModal: React.FC<{ isOpen: boolean; onClose: () => void }> 
 
         <div className="mt-6 space-y-6">
             <div className="flex items-start gap-4">
-                <div className="p-3 bg-blue-50 rounded-lg text-blue-600">
+                <div className="p-3 bg-orange-50 rounded-lg text-accent">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="16" x="2" y="4" rx="2" /><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" /></svg>
                 </div>
                 <div>
@@ -156,7 +156,7 @@ export const ContactUsModal: React.FC<{ isOpen: boolean; onClose: () => void }> 
             </div>
 
             <div className="flex items-start gap-4">
-                <div className="p-3 bg-blue-50 rounded-lg text-blue-600">
+                <div className="p-3 bg-orange-50 rounded-lg text-accent">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" /><circle cx="12" cy="10" r="3" /></svg>
                 </div>
                 <div>

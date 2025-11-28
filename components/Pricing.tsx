@@ -39,7 +39,7 @@ export const Pricing: React.FC = () => {
             desc: "Generate as many resumes as you need with our advanced Gemini AI."
         },
         {
-            icon: <Layout className="text-blue-500" />,
+            icon: <Layout className="text-orange-500" />,
             title: "All Premium Templates",
             desc: "Access our exclusive Bento and Gradient style collections."
         },
@@ -138,7 +138,7 @@ export const Pricing: React.FC = () => {
                             className="font-display text-5xl md:text-6xl font-bold text-ink"
                         >
                             One Payment.<br />
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-orange-500 to-blue-600">Lifetime Access.</span>
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 via-red-500 to-orange-600">Lifetime Access.</span>
                         </motion.h1>
                         <motion.p
                             initial={{ opacity: 0, y: 20 }}
@@ -156,7 +156,7 @@ export const Pricing: React.FC = () => {
                         transition={{ delay: 0.3 }}
                         className="bg-white rounded-3xl shadow-xl border border-ink/5 overflow-hidden relative"
                     >
-                        <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-yellow-400 via-orange-500 to-blue-600" />
+                        <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-orange-400 via-red-500 to-orange-600" />
 
                         <div className="grid md:grid-cols-2 gap-8 p-8 md:p-12">
                             <div className="space-y-8">
@@ -195,7 +195,7 @@ export const Pricing: React.FC = () => {
                                 <button
                                     onClick={handlePayment}
                                     disabled={isLoading}
-                                    className="w-full bg-gradient-to-r from-yellow-400 via-orange-500 to-blue-600 text-white py-4 rounded-xl font-bold text-lg hover:opacity-90 transition-opacity flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="w-full bg-gradient-to-r from-orange-400 via-red-500 to-orange-600 text-white py-4 rounded-xl font-bold text-lg hover:opacity-90 transition-opacity flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                     {isLoading ? (
                                         <>

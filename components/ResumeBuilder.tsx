@@ -433,7 +433,7 @@ const ResumeBuilder: React.FC = () => {
                         <div className="flex items-center gap-3">
                             <button
                                 onClick={handleUpgrade}
-                                className="hidden md:flex items-center gap-2 font-mono text-xs bg-gradient-to-r from-yellow-300 to-orange-400 text-white px-4 py-1.5 rounded-full hover:shadow-lg hover:scale-105 transition-all uppercase font-bold shadow-lg shadow-orange-500/30"
+                                className="hidden md:flex items-center gap-2 font-mono text-xs bg-gradient-to-r from-orange-400 to-red-500 text-white px-4 py-1.5 rounded-full hover:shadow-lg hover:scale-105 transition-all uppercase font-bold shadow-lg shadow-orange-500/30"
                             >
                                 <Lock size={12} />
                                 {t.lifetime}
@@ -461,7 +461,7 @@ const ResumeBuilder: React.FC = () => {
                         <div className="flex items-center gap-3">
                             <button
                                 onClick={() => navigate('/pricing')}
-                                className="hidden md:flex items-center gap-2 font-mono text-xs bg-gradient-to-r from-yellow-300 to-orange-400 text-white px-4 py-1.5 rounded-full hover:shadow-lg hover:scale-105 transition-all uppercase font-bold shadow-lg shadow-orange-500/30"
+                                className="hidden md:flex items-center gap-2 font-mono text-xs bg-gradient-to-r from-orange-400 to-red-500 text-white px-4 py-1.5 rounded-full hover:shadow-lg hover:scale-105 transition-all uppercase font-bold shadow-lg shadow-orange-500/30"
                             >
                                 <Lock size={12} />
                                 {t.lifetime}
@@ -503,12 +503,12 @@ const ResumeBuilder: React.FC = () => {
                                             {language === 'en' ? (
                                                 <>
                                                     ELEVATE YOUR <br />
-                                                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-orange-500 to-blue-600">CAREER</span>
+                                                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 via-red-500 to-orange-600">CAREER</span>
                                                 </>
                                             ) : (
                                                 <>
                                                     重塑 <br />
-                                                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-orange-500 to-blue-600">职业形象</span>
+                                                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 via-red-500 to-orange-600">职业形象</span>
                                                 </>
                                             )}
                                         </h1>
@@ -535,10 +535,10 @@ const ResumeBuilder: React.FC = () => {
 
                                     {inputMode === 'upload' ? (
                                         <div className="relative group w-full">
-                                            <div className="absolute -inset-1 bg-gradient-to-r from-yellow-400 via-orange-500 to-blue-600 rounded-3xl blur opacity-20 group-hover:opacity-40 transition duration-1000 group-hover:duration-200" />
+                                            <div className="absolute -inset-1 bg-gradient-to-r from-orange-400 via-red-500 to-orange-600 rounded-3xl blur opacity-20 group-hover:opacity-40 transition duration-1000 group-hover:duration-200" />
                                             <label className="relative flex flex-col items-center justify-center w-full h-64 border-2 border-dashed border-ink/10 rounded-2xl bg-white/50 hover:bg-white hover:border-accent/50 transition-all cursor-pointer overflow-hidden backdrop-blur-sm">
                                                 <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                                                    <div className="w-16 h-16 mb-4 rounded-2xl bg-blue-50 text-accent flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                                                    <div className="w-16 h-16 mb-4 rounded-2xl bg-orange-50 text-accent flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                                                         <UploadCloud size={32} />
                                                     </div>
                                                     <p className="mb-2 text-lg font-bold text-ink">
@@ -727,12 +727,12 @@ const ResumeBuilder: React.FC = () => {
                                                     key={tid}
                                                     onClick={() => setTemplate(tid)}
                                                     className={`shrink-0 text-left px-4 py-2.5 lg:py-3 text-sm font-bold rounded-xl border transition-all flex items-center gap-2 lg:justify-between ${template === tid
-                                                        ? 'bg-blue-50 text-blue-700 border-blue-200 shadow-sm'
+                                                        ? 'bg-orange-50 text-orange-700 border-orange-200 shadow-sm'
                                                         : 'bg-paper text-ink-light border-transparent hover:bg-white hover:border-ink/20 hover:text-ink'
                                                         }`}
                                                 >
                                                     <span className="whitespace-nowrap">{t.templates[tid]}</span>
-                                                    {template === tid && <div className="w-2 h-2 rounded-full bg-blue-600 shrink-0" />}
+                                                    {template === tid && <div className="w-2 h-2 rounded-full bg-orange-600 shrink-0" />}
                                                 </button>
                                             ))}
                                         </div>
@@ -745,7 +745,7 @@ const ResumeBuilder: React.FC = () => {
                                         <button
                                             onClick={downloadPDF}
                                             disabled={isGeneratingPDF}
-                                            className={`flex-1 lg:w-full text-white py-3 lg:py-4 rounded-xl font-bold text-sm transition-all active:scale-[0.98] shadow-lg flex items-center justify-center gap-2 ${isGeneratingPDF ? 'opacity-50 cursor-not-allowed' : ''} ${isPaid ? 'bg-gradient-to-r from-yellow-400 via-orange-500 to-blue-600 hover:shadow-orange-500/40' : 'bg-accent hover:bg-blue-700 shadow-accent/20'}`}
+                                            className={`flex-1 lg:w-full text-white py-3 lg:py-4 rounded-xl font-bold text-sm transition-all active:scale-[0.98] shadow-lg flex items-center justify-center gap-2 ${isGeneratingPDF ? 'opacity-50 cursor-not-allowed' : ''} ${isPaid ? 'bg-gradient-to-r from-orange-400 via-red-500 to-orange-600 hover:shadow-orange-500/40' : 'bg-accent hover:bg-orange-700 shadow-accent/20'}`}
                                         >
                                             {isGeneratingPDF ? (
                                                 <div className="flex items-center gap-2">
@@ -777,7 +777,7 @@ const ResumeBuilder: React.FC = () => {
                                     </div>
 
                                     {/* Download tip - hidden on mobile */}
-                                    <div className="hidden lg:block p-4 bg-blue-50 rounded-xl text-xs text-blue-800 leading-relaxed border border-blue-100">
+                                    <div className="hidden lg:block p-4 bg-orange-50 rounded-xl text-xs text-orange-800 leading-relaxed border border-orange-100">
                                         <p className="font-medium flex items-center gap-1.5"><Download size={12} /> {t.download_tip}</p>
                                     </div>
                                 </div>
