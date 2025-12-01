@@ -27,7 +27,8 @@ const LegalLayout: React.FC<{ title: string; children: React.ReactNode }> = ({ t
         </main>
 
         <footer className="py-8 text-center text-ink-light/40 text-[10px] font-mono uppercase tracking-widest">
-            <p>© 2025 CVGoPro AI. All rights reserved.</p>
+            <p>© {new Date().getFullYear()} CVGoPro. All rights reserved.</p>
+            <p className="mt-2 text-ink-light/30">support@cvgopro.com</p>
         </footer>
     </div>
 );

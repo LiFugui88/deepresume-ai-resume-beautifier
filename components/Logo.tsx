@@ -8,8 +8,8 @@ interface LogoProps {
 export const Logo: React.FC<LogoProps> = ({ className = "", size = 32 }) => {
     return (
         <img
-            src="/logo.png"
-            alt="CVGoPro Logo"
+            src="/cvgopro-logo.png"
+            alt="CVGoPro - AI Resume Beautifier Logo"
             className={`rounded-lg ${className}`}
             style={{
                 width: typeof size === 'number' ? `${size}px` : size,

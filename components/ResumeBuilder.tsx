@@ -817,7 +817,8 @@ const ResumeBuilder: React.FC = () => {
                         <a href="/refund" className="hover:text-ink-light transition-colors">Refund Policy</a>
                         <button onClick={() => setShowContact(true)} className="hover:text-ink-light transition-colors">Contact Us</button>
                     </div>
-                    <p>© 2025 CVGoPro AI. All rights reserved.</p>
+                    <p>© {new Date().getFullYear()} CVGoPro. All rights reserved.</p>
+                    <p className="mt-2 text-ink-light/30">support@cvgopro.com</p>
                 </footer>
 
             </main>
