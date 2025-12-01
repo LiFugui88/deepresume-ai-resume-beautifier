@@ -3,6 +3,8 @@ import { Routes, Route, useLocation } from 'react-router-dom';
 import ResumeBuilder from './components/ResumeBuilder';
 import { Pricing } from './components/Pricing';
 import { PrivacyPage, TermsPage, RefundPage } from './components/LegalPages';
+import { TemplatesIndexPage } from './components/TemplatesIndexPage';
+import { TemplateLandingPage } from './components/TemplateLandingPage';
 import { useEffect } from 'react';
 
 const App: React.FC = () => {
@@ -20,6 +22,8 @@ const App: React.FC = () => {
             <Route path="/privacy" element={<PrivacyPage />} />
             <Route path="/terms" element={<TermsPage />} />
             <Route path="/refund" element={<RefundPage />} />
+            <Route path="/templates" element={<TemplatesIndexPage />} />
+            <Route path="/templates/:slug" element={<TemplateLandingPage />} />
         </Routes>
     );
 };
