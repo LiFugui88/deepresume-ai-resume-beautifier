@@ -1,5 +1,5 @@
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { UploadCloud, Download, RefreshCw, AlertCircle, Layout, Globe2, Briefcase, Grid, Palette, CheckCircle2, Lock, LogIn, LogOut, User } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { analyzeResume } from '../services/geminiService';
@@ -145,7 +145,9 @@ const ResumeBuilder: React.FC = () => {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const resumeRef = useRef<HTMLDivElement>(null);
     const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
-    const t = UI_TEXT[language];
+
+    // Memoize translations to prevent unnecessary recalculations
+    const t = useMemo(() => UI_TEXT[language], [language]);
 
     useEffect(() => {
         // Track page view on mount
@@ -230,9 +232,9 @@ const ResumeBuilder: React.FC = () => {
         }
     };
 
-    const toggleLanguage = () => {
+    const toggleLanguage = useCallback(() => {
         setLanguage(prev => prev === 'en' ? 'zh' : 'en');
-    };
+    }, []);
 
     const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
@@ -358,30 +360,30 @@ const ResumeBuilder: React.FC = () => {
         }
     };
 
-    const reset = () => {
+    const reset = useCallback(() => {
         setResumeData(null);
         setFileName('');
         setState(AppState.IDLE);
         if (fileInputRef.current) fileInputRef.current.value = '';
-    };
+    }, []);
 
-    const handleLogout = async () => {
+    const handleLogout = useCallback(async () => {
         await supabase.auth.signOut();
-    };
+    }, []);
 
-    // Template groups
-    const classicTemplates: TemplateId[] = ['standard', 'minimal', 'modern', 'executive', 'bold'];
-    const bentoTemplates: TemplateId[] = ['rio', 'tokyo', 'oslo', 'milan', 'nyc'];
-    const gradientTemplates: TemplateId[] = ['aurora', 'midnight', 'sunrise', 'azure', 'bloom'];
+    // Template groups - memoized to prevent recreation on each render
+    const classicTemplates: TemplateId[] = useMemo(() => ['standard', 'minimal', 'modern', 'executive', 'bold'], []);
+    const bentoTemplates: TemplateId[] = useMemo(() => ['rio', 'tokyo', 'oslo', 'milan', 'nyc'], []);
+    const gradientTemplates: TemplateId[] = useMemo(() => ['aurora', 'midnight', 'sunrise', 'azure', 'bloom'], []);
 
-    const getTemplatesByCategory = () => {
+    const getTemplatesByCategory = useCallback(() => {
         switch (category) {
             case 'classic': return classicTemplates;
             case 'bento': return bentoTemplates;
             case 'gradient': return gradientTemplates;
             default: return bentoTemplates;
         }
-    };
+    }, [category, classicTemplates, bentoTemplates, gradientTemplates]);
 
     const isPaid = category !== 'classic';
 
@@ -418,7 +420,7 @@ const ResumeBuilder: React.FC = () => {
                 </div>
 
                 <div className="flex items-center gap-6">
-                    {/* Product Hunt Badge */}
+                    {/* Product Hunt Badge - lazy loaded to improve LCP */}
                     <a
                         href="https://www.producthunt.com/products/cvgopro?embed=true&utm_source=badge-featured&utm_medium=badge&utm_source=badge-cvgopro"
                         target="_blank"
@@ -431,6 +433,9 @@ const ResumeBuilder: React.FC = () => {
                             style={{ width: '200px', height: '43px' }}
                             width="200"
                             height="43"
+                            loading="lazy"
+                            decoding="async"
+                            fetchPriority="low"
                         />
                     </a>
                     <button
